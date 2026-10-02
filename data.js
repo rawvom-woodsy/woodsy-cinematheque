@@ -39,5 +39,4 @@ function statusFor(w,mid){const r=recordFor(w);const inMonth=months[mid]&&(month
 function progress(mid){const ids=months[mid].core;const d=ids.filter(id=>isDone(mid,id)).length;return {done:d,total:ids.length,pct:Math.round(d/ids.length*100)}}
 function setMonth(mid){state.selectedMonth=mid;save();location.hash='#home';render()}
 function navTo(route){location.hash=route}
-window.addEventListener('hashchange',render);
 function route(){return location.hash||'#home'}

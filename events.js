@@ -26,6 +26,9 @@
     if(code==='exportBackup()') return exportBackup();
     if(code==='addBook()') return addBook();
     if(code==='resetAll()') return resetAll();
+    if(code==='saveAdminMonth()') return saveAdminMonth();
+    if(code==='saveAdminWork()') return saveAdminWork();
+    if(code==='resetAdminOverrides()') return resetAdminOverrides();
     if(code==='history.back()') return history.back();
   }
 
@@ -49,6 +52,8 @@
     if(code.includes('_libType')){window._libType=el.value;render();return;}
     if(code.includes('_libStatus')){window._libStatus=el.value;render();return;}
     if(code.startsWith('restoreBackup(')){restoreBackup(el.files?.[0]);return;}
+    if(code.startsWith('adminSelectMonth(')){adminSelectMonth(el.value);return;}
+    if(code.startsWith('adminSelectWork(')){adminSelectWork(el.value);return;}
   });
 
   const app=document.getElementById('app');

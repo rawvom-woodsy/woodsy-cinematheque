@@ -1,5 +1,6 @@
 const APP_KEY='woodsy-cinematheque-v3';
 const LIB_KEY='woodsy-cinematheque-library-v3';
+const ADMIN_KEY='woodsy-cinematheque-admin-v1';
 const DEFAULT_STATE={selectedMonth:'2026-10',completed:{},notes:{},monthNotes:{},added:{}};
 const seedLibrary=[
   {id:'book-convenience-store-woman',title:'편의점 인간',originalTitle:'コンビニ人間',type:'book',year:2016,creator:'무라타 사야카',rating:null,historicalStatus:'read',source:'manual',sourceUrl:'',tags:['existing-read']},
@@ -18,16 +19,20 @@ W('first-love','퍼스트 러브 하츠코이','First Love','series','Kanchiku Y
 W('passing','패싱','Passing','film','Rebecca Hall',2021),W('priscilla','프리실라','Priscilla','film','Sofia Coppola',2023),W('return-seoul','리턴 투 서울','Return to Seoul','film','Davy Chou',2022),W('45-years','45년 후','45 Years','film','Andrew Haigh',2015),W('lost-daughter','로스트 도터','The Lost Daughter','film','Maggie Gyllenhaal',2021),W('private-life','프라이빗 라이프','Private Life','film','Tamara Jenkins',2018),W('things-to-come','다가오는 것들','Things to Come','film','Mia Hansen-Løve',2016),W('columbus','콜럼버스','Columbus','film','Kogonada',2017),
 W('unorthodox','그리고 베를린에서','Unorthodox','series','Anna Winger / Alexa Karolinski',2020,'LONG FORM'),W('one-day','원 데이','One Day','series','Nicole Taylor',2024,'LONG FORM'),W('pachinko','파친코','Pachinko','series','Soo Hugh',2022,'EXPLORE'),W('lessons-chemistry','레슨 인 케미스트리','Lessons in Chemistry','series','Lee Eisenberg',2023,'EXPLORE'),W('book-passing','패싱','Passing','book','Nella Larsen',1929,'READING'),W('territory-light','빛의 영역','Territory of Light','book','쓰시마 유코',1979,'READING'),W('lowland','저지대','The Lowland','book','Jhumpa Lahiri',2013,'READING'),W('years','세월','Les Années','book','Annie Ernaux',2008,'READING'),
 W('taste-things','프렌치 수프','The Taste of Things','film','Trần Anh Hùng',2023),W('a-separation','씨민과 나데르의 별거','A Separation','film','Asghar Farhadi',2011),W('after-love','사랑 후의 두 여자','After Love','film','Aleem Khan',2020),W('the-father','더 파더','The Father','film','Florian Zeller',2020),W('petite-maman','쁘띠 마망','Petite Maman','film','Céline Sciamma',2021),W('paterson','패터슨','Paterson','film','Jim Jarmusch',2016),W('ghost-story','고스트 스토리','A Ghost Story','film','David Lowery',2017),W('memoria','메모리아','Memoria','film','Apichatpong Weerasethakul',2021),
-W('hill-house','힐 하우스의 유령','The Haunting of Hill House','series','Mike Flanagan',2018,'LONG FORM'),W('maid','조용한 희망','Maid','series','Molly Smith Metzler',2021,'EXPLORE'),W('archive81','아카이브 81','Archive 81','series','Rebecca Sonnenshine',2022,'EXPLORE'),W('housekeeping','하우스키핑','Housekeeping','book','Marilynne Robinson',1980,'READING'),W('austerlitz','아우스터리츠','Austerlitz','book','W. G. Sebald',2001,'READING'),W('memory-police','은밀핔 결정','The Memory Police','book','Yoko Ogawa',1994,'READING'),W('poetics-space','공간의 시학','La Poétique de l’espace','book','Gaston Bachelard',1958,'READING'),
+W('hill-house','힐 하우스의 유령','The Haunting of Hill House','series','Mike Flanagan',2018,'LONG FORM'),W('maid','조용한 희망','Maid','series','Molly Smith Metzler',2021,'EXPLORE'),W('archive81','아카이브 81','Archive 81','series','Rebecca Sonnenshine',2022,'EXPLORE'),W('housekeeping','하우스키핑','Housekeeping','book','Marilynne Robinson',1980,'READING'),W('austerlitz','아우스터리츠','Austerlitz','book','W. G. Sebald',2001,'READING'),W('memory-police','은밀한 결정','The Memory Police','book','Yoko Ogawa',1994,'READING'),W('poetics-space','공간의 시학','La Poétique de l’espace','book','Gaston Bachelard',1958,'READING'),
 W('wrestler','더 레슬러','The Wrestler','film','Darren Aronofsky',2008),W('neon-demon','네온 데몬','The Neon Demon','film','Nicolas Winding Refn',2016),W('black-swan','블랙 스완','Black Swan','film','Darren Aronofsky',2010),W('piano-teacher','피아니스트','La Pianiste','film','Michael Haneke',2001),W('shame','셰임','Shame','film','Steve McQueen',2011),W('different-man','어 디퍼런트 맨','A Different Man','film','Aaron Schimberg',2024),W('saint-maud','세인트 모드','Saint Maud','film','Rose Glass',2019),W('titane','티탄','Titane','film','Julia Ducournau',2021),
 W('severance','세브란스: 단절','Severance','series','Dan Erickson',2022,'LONG FORM'),W('mask-girl','마스크걸','Mask Girl','series','Kim Yong-hoon',2023,'EXPLORE'),W('goffman','자아 연출의 사회학','The Presentation of Self in Everyday Life','book','Erving Goffman',1956,'READING'),W('argonauts','아르고호의 선원들','The Argonauts','book','Maggie Nelson',2015,'READING'),W('piano-player-book','피아노 치는 여자','Die Klavierspielerin','book','Elfriede Jelinek',1983,'READING'),W('confessions-mask','가면의 고백','仮面の告白','book','Yukio Mishima',1949,'READING'),
 ...seedLibrary.map(x=>W(x.id,x.title,x.originalTitle,x.type,x.creator,x.year,'CONNECTED'))
 ];
 const byId=Object.fromEntries(works.map(w=>[w.id,w]));
 let state=loadJson(APP_KEY,DEFAULT_STATE);let library=mergeSeed(loadJson(LIB_KEY,seedLibrary));
+let admin=loadJson(ADMIN_KEY,{months:{},works:{},stills:{}});
+Object.entries(admin.months||{}).forEach(([id,o])=>{if(months[id])Object.assign(months[id],o)});
+Object.entries(admin.works||{}).forEach(([id,o])=>{if(byId[id])Object.assign(byId[id],o)});
 function loadJson(k,fallback){try{const v=JSON.parse(localStorage.getItem(k));return v?{...fallback,...v}:structuredClone(fallback)}catch{return structuredClone(fallback)}}
 function mergeSeed(items){const arr=Array.isArray(items)?items:[];for(const s of seedLibrary){if(!arr.some(x=>x.id===s.id))arr.push({...s});}return arr}
 function save(){try{localStorage.setItem(APP_KEY,JSON.stringify(state));localStorage.setItem(LIB_KEY,JSON.stringify(library));}catch(e){toast('브라우저 저장 공간이 부족하거나 차단되어 있습니다. 현재 세션에서는 계속 사용할 수 있어요.')}}
+function saveAdmin(){try{localStorage.setItem(ADMIN_KEY,JSON.stringify(admin));}catch(e){toast('관리자 수정 내용을 저장하지 못했어요.')}}
 function formatTitle(w){if(!w)return'';return w.type==='book'?`『${w.title}』`:w.type==='article'?`「${w.title}」`:`《${w.title}》`}
 function month(){return months[state.selectedMonth]||months['2026-10']}
 function compKey(mid,wid){return `${mid}:${wid}`}
@@ -37,6 +42,6 @@ function recordFor(w){const norm=normalize(w.title);return library.find(r=>r.can
 function normalize(s){return String(s||'').toLowerCase().replace(/[《》『』「」<>:：・,.!?'"\-\s]/g,'')}
 function statusFor(w,mid){const r=recordFor(w);const inMonth=months[mid]&&(months[mid].core.includes(w.id)||months[mid].supp.includes(w.id));if(r&&inMonth)return 'REVISIT';if(r)return r.historicalStatus==='read'?'ALREADY READ':'ALREADY WATCHED';if(w.role==='CONNECTED')return 'CONNECTED';return 'NEW'}
 function progress(mid){const ids=months[mid].core;const d=ids.filter(id=>isDone(mid,id)).length;return {done:d,total:ids.length,pct:Math.round(d/ids.length*100)}}
-function setMonth(mid){state.selectedMonth=mid;save();location.hash='#home';render()}
+function setMonth(mid){state.selectedMonth=mid;save();render()}
 function navTo(route){location.hash=route}
 function route(){return location.hash||'#home'}

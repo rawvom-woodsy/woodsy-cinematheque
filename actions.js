@@ -9,4 +9,5 @@ function addBook(){const title=document.getElementById('book-title').value.trim(
 function exportBackup(){const blob=new Blob([JSON.stringify({app:'Personal Cinematheque for WOODSY',version:3,exportedAt:new Date().toISOString(),state,library},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`woodsy-cinematheque-${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
 async function restoreBackup(file){if(!file)return;try{const d=JSON.parse(await file.text());if(!d.state||!Array.isArray(d.library))throw new Error();state={...DEFAULT_STATE,...d.state};library=mergeSeed(d.library);save();toast('백업을 복원했어요.');render()}catch{toast('복원할 수 있는 백업 파일이 아니에요.')}}
 function resetAll(){if(!confirm('모든 진행률, 메모, 가져온 라이브러리를 초기화할까요?'))return;state=structuredClone(DEFAULT_STATE);library=mergeSeed([]);save();render()}
+window.addEventListener('hashchange',render);
 if(!location.hash)location.hash='#home';render();

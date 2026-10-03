@@ -1411,7 +1411,7 @@ function connectionIds(id){return (editorialFor(id)?.connections||byId[id]?.conn
 function conceptIds(id){return editorialFor(id)?.concepts||byId[id]?.concepts||[]}
 function serviceFor(id){const e=editorialFor(id)||{};return e.service||byId[id]?.service||'—'}
 function focalFor(id){return (admin.stills?.[id]?.position||admin.importedStills?.[id]?.position||editorialFor(id)?.focal||byId[id]?.focal||'50% 50%')}
-function visualFor(id){const e=editorialFor(id)||{},i=admin.importedStills?.[id]||{},a=admin.stills?.[id]||{};const base=e.visual||{};return {...base,...(i.visualType?{type:i.visualType}:{}),...(i.url?{url:i.url}:{}),...(i.source?{source:i.source}:{}),...(i.position?{position:i.position}:{}),...(a.visualType?{type:a.visualType}:{}),...(a.url?{url:a.url}:{}),...(a.source?{source:a.source}:{}),...(a.position?{position:a.position}:{})}}
+function visualFor(id){const e=editorialFor(id)||{},i=admin.importedStills?.[id]||{},a=admin.stills?.[id]||{};const base=e.visual||{};return {...base,...(i.visualType?{type:i.visualType}:{}),...(i.url?{url:i.url}:{}),...(i.local?{local:i.local}:{}),...(i.fallback?{fallback:i.fallback}:{}),...(i.source?{source:i.source}:{}),...(i.position?{position:i.position}:{}),...(a.visualType?{type:a.visualType}:{}),...(a.url?{url:a.url}:{}),...(a.local?{local:a.local}:{}),...(a.fallback?{fallback:a.fallback}:{}),...(a.source?{source:a.source}:{}),...(a.position?{position:a.position}:{})}}
 function addedKey(mid,id){return mid+':'+id}
 function isAdded(mid,id){return !!state.added?.[addedKey(mid,id)]}
 function toggleAdded(mid,id){const k=addedKey(mid,id);if(state.added[k])delete state.added[k];else state.added[k]=new Date().toISOString();save();render()}

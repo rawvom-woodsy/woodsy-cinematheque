@@ -1,0 +1,106 @@
+{
+  "schema": "woodsy-cinematheque-import-v2",
+  "site": {
+    "brandName": "WOODSY FILM CLUB",
+    "brandJoiner": "with",
+    "brandOwner": "WOODSY",
+    "title": "WOODSY FILM CLUB with WOODSY",
+    "footer": "WOODSY FILM CLUB · Screening & discussion curriculum"
+  },
+  "month": {
+    "id": "2027-03",
+    "label": "MARCH 2027",
+    "title": "SEASON TITLE",
+    "titleLines": [
+      "SEASON",
+      "TITLE"
+    ],
+    "ko": "모임의 한국어 소제목",
+    "note": "이번 모임/시즌의 프로그램 노트",
+    "concepts": [
+      "DISCUSSION",
+      "FORM",
+      "THEME"
+    ],
+    "core": [
+      "film-club-film-1"
+    ],
+    "supp": [
+      "film-club-reading-1"
+    ],
+    "featureId": "film-club-film-1"
+  },
+  "works": [
+    {
+      "id": "film-club-film-1",
+      "title": "영화 제목",
+      "originalTitle": "Original Title",
+      "type": "film",
+      "creator": "Director",
+      "year": 2026,
+      "role": "CORE",
+      "service": "Streaming / screening source",
+      "checked": "2027-03",
+      "connections": [
+        "film-club-reading-1"
+      ],
+      "concepts": [
+        "DISCUSSION",
+        "THEME"
+      ],
+      "editorial": {
+        "logline": "상영 전 소개용 짧은 큐레이션 문장",
+        "viewingPoints": [
+          "함께 볼 포인트 1",
+          "함께 볼 포인트 2"
+        ],
+        "keywords": [
+          "키워드 1",
+          "키워드 2"
+        ],
+        "references": [
+          "Reference 1"
+        ]
+      },
+      "visual": {
+        "type": "still",
+        "local": "./assets/stills/film-club-film-1.jpg",
+        "url": "https://example.com/still.jpg",
+        "fallback": "https://example.com/fallback-still.jpg",
+        "source": "Source",
+        "position": "50% 50%"
+      }
+    },
+    {
+      "id": "film-club-reading-1",
+      "title": "보조 텍스트",
+      "originalTitle": "Reading Title",
+      "type": "book",
+      "creator": "Author",
+      "year": 2025,
+      "role": "READING",
+      "connections": [
+        "film-club-film-1"
+      ],
+      "concepts": [
+        "THEME"
+      ],
+      "editorial": {
+        "logline": "상영 후 토론을 확장하는 읽기",
+        "viewingPoints": [
+          "토론 전에 읽으며 표시할 질문"
+        ],
+        "keywords": [
+          "키워드"
+        ]
+      },
+      "visual": {
+        "type": "cover",
+        "local": "./assets/covers/film-club-reading-1.jpg",
+        "url": "https://example.com/cover.jpg",
+        "fallback": "https://example.com/fallback-cover.jpg",
+        "source": "Publisher"
+      }
+    }
+  ]
+}

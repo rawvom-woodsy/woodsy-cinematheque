@@ -1,7 +1,7 @@
 const APP_KEY='woodsy-cinematheque-v3';
 const LIB_KEY='woodsy-cinematheque-library-v3';
 const ADMIN_KEY='woodsy-cinematheque-admin-v1';
-const DEFAULT_STATE={selectedMonth:'2026-10',completed:{},notes:{},monthNotes:{},added:{}};
+const DEFAULT_STATE={selectedMonth:'2026-10',completed:{},notes:{},monthNotes:{},added:{},noteUpdated:{},monthNoteUpdated:{}};
 const seedLibrary=[
   {id:'book-convenience-store-woman',title:'편의점 인간',originalTitle:'コンビニ人間',type:'book',year:2016,creator:'무라타 사야카',rating:null,historicalStatus:'read',source:'manual',sourceUrl:'',tags:['existing-read']},
   {id:'book-face-of-another',title:'타인의 얼굴',originalTitle:'他人の顔',type:'book',year:1964,creator:'아베 고보',rating:null,historicalStatus:'read',source:'manual',sourceUrl:'',tags:['existing-read']}
@@ -303,7 +303,7 @@ function loadJson(k,fallback){try{const v=JSON.parse(localStorage.getItem(k));re
 function mergeSeed(items){const arr=Array.isArray(items)?items:[];for(const s of seedLibrary){if(!arr.some(x=>x.id===s.id))arr.push({...s});}return arr}
 function save(){try{localStorage.setItem(APP_KEY,JSON.stringify(state));localStorage.setItem(LIB_KEY,JSON.stringify(library));}catch(e){toast('브라우저 저장 공간이 부족하거나 차단되어 있습니다. 현재 세션에서는 계속 사용할 수 있어요.')}}
 function saveAdmin(){try{localStorage.setItem(ADMIN_KEY,JSON.stringify(admin));}catch(e){toast('관리자 수정 내용을 저장하지 못했어요.')}}
-function formatTitle(w){if(!w)return'';return w.type==='book'?`『${w.title}』`:w.type==='article'?`「${w.title}」`:`《${w.title}》`}
+function formatTitle(w){if(!w)return'';return w.type==='book'?`『${w.title}』`:w.type==='article'?`「${w.title}」`:`<${w.title}>`}
 function month(){return months[state.selectedMonth]||months['2026-10']}
 function compKey(mid,wid){return `${mid}:${wid}`}
 function isDone(mid,wid){return !!state.completed[compKey(mid,wid)]}

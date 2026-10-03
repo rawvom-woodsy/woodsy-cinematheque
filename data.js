@@ -24,6 +24,264 @@ W('wrestler','더 레슬러','The Wrestler','film','Darren Aronofsky',2008),W('n
 W('severance','세브란스: 단절','Severance','series','Dan Erickson',2022,'LONG FORM'),W('mask-girl','마스크걸','Mask Girl','series','Kim Yong-hoon',2023,'EXPLORE'),W('goffman','자아 연출의 사회학','The Presentation of Self in Everyday Life','book','Erving Goffman',1956,'READING'),W('argonauts','아르고호의 선원들','The Argonauts','book','Maggie Nelson',2015,'READING'),W('piano-player-book','피아노 치는 여자','Die Klavierspielerin','book','Elfriede Jelinek',1983,'READING'),W('confessions-mask','가면의 고백','仮面の告白','book','Yukio Mishima',1949,'READING'),
 ...seedLibrary.map(x=>W(x.id,x.title,x.originalTitle,x.type,x.creator,x.year,'CONNECTED'))
 ];
+
+const editorial={
+  "hiroshima": {
+    "logline": "히로시마에서 만난 두 사람이 서로의 기억을 번갈아 발음하는 동안, 영화는 증언과 사랑을 같은 문장 안에 둔다.",
+    "viewingPoints": [
+      "대사가 이미지를 설명하지 않고, 이미지와 다른 시간대를 말한다는 점에 주의할 것.",
+      "느베르의 삽입 쇼트가 등장하는 위치 — 현재 장면의 어떤 단어 뒤에 끼어드는지.",
+      "'너는 히로시마에서 아무것도 보지 못했다'라는 부정문이 영화 전체의 방법론이 되는 과정."
+    ],
+    "keywords": [
+      "기억",
+      "증언",
+      "반복되는 부정",
+      "도시와 신체"
+    ],
+    "quote": {
+      "text": "너는 히로시마에서 아무것도 보지 못했다. 아무것도.",
+      "source": "Marguerite Duras, 시나리오 서두"
+    },
+    "references": [
+      "Marguerite Duras, 『히로시마 내 사랑』 (시나리오)",
+      "Alain Resnais, 〈밤과 안개〉 (1956)"
+    ]
+  },
+  "asako": {
+    "logline": "사라진 첫사랑과 똑같은 얼굴의 남자가 나타난다. 하마구치는 이 우연을 설명하지 않고 그대로 살게 한다.",
+    "viewingPoints": [
+      "같은 배우의 두 인물이 다른 방식으로 호명되는 장면들.",
+      "일상적 리액션 연기가 멜로드라마적 사건을 중화시키는 리듬.",
+      "강물과 홍수 — 되돌릴 수 없음이 풍경으로 등장하는 지점."
+    ],
+    "keywords": [
+      "분신",
+      "첫사랑",
+      "우연",
+      "되돌릴 수 없음"
+    ],
+    "quote": {
+      "text": "최악이야. 그런데 아름답네.",
+      "source": "영화 후반, 강가 장면"
+    },
+    "references": [
+      "시바사키 도모카, 『꿈에서도 깨어서도』",
+      "하마구치 류스케, 〈해피 아워〉 (2015)"
+    ]
+  },
+  "personal-shopper": {
+    "logline": "타인의 옷을 사는 일을 하는 영매가, 죽은 쌍둥이의 신호를 기다린다. 유령은 결국 문자 메시지의 형식으로 도착한다.",
+    "viewingPoints": [
+      "스마트폰 대화 시퀀스가 어떻게 서스펜스의 주요 매체가 되는지.",
+      "남의 옷을 입어 보는 장면에서 신체와 소유의 경계.",
+      "마지막 대답 — 누가 말하고 있는가에 대한 결론을 영화가 미루는 방식."
+    ],
+    "keywords": [
+      "유령",
+      "쌍둥이",
+      "소비와 신체",
+      "기다림"
+    ],
+    "quote": {
+      "text": "거기 있는 게 너야? 아니면 그냥 나야?",
+      "source": "영화 마지막 장면"
+    },
+    "references": [
+      "Olivier Assayas, 〈클라우즈 오브 실스 마리아〉 (2014)",
+      "Hilma af Klint 관련 자료"
+    ]
+  },
+  "atlantics": {
+    "logline": "바다로 떠난 청년들이 돌아오지 않는다. 다카르에 남은 연인에게 그들은 다른 형식으로 되돌아온다.",
+    "viewingPoints": [
+      "노동과 임금이라는 현실이 초자연적 장르로 번역되는 전환점.",
+      "미완성 타워 — 미래가 공사 중인 채 방치된 상태의 이미지.",
+      "밤의 조명과 전기 — 유령이 켜고 끄는 사회적 인프라."
+    ],
+    "keywords": [
+      "이주",
+      "바다",
+      "빙의",
+      "미완성"
+    ],
+    "quote": {
+      "text": "그들은 돌아왔다. 다만 우리가 아는 몸으로는 아니었다.",
+      "source": "프로그램 노트"
+    },
+    "references": [
+      "Mati Diop, 〈Atlantiques〉 (2009, 단편)",
+      "Djibril Diop Mambéty, 〈투키 부키〉 (1973)"
+    ]
+  },
+  "holy-motors": {
+    "logline": "리무진을 타고 하루 동안 아홉 개의 삶을 연기하는 남자. 카메라가 사라진 시대의 배우에 관한 우화.",
+    "viewingPoints": [
+      "리무진 내부 = 분장실 = 영화사(史) 그 자체라는 삼중 구조.",
+      "각 '약속' 사이의 이행 장면에서 피로가 축적되는 방식.",
+      "아코디언 인터미션 — 서사를 멈추고 리듬만 남기는 선택."
+    ],
+    "keywords": [
+      "연기",
+      "변신",
+      "영화의 죽음",
+      "하루"
+    ],
+    "quote": {
+      "text": "행위의 아름다움이요. 보는 사람이 없어도 남아 있는 것.",
+      "source": "리무진 안의 대화"
+    },
+    "references": [
+      "Leos Carax, 〈퐁네프의 연인들〉 (1991)",
+      "Georges Franju 관련 자료"
+    ]
+  },
+  "perfect-days": {
+    "logline": "도쿄의 공공 화장실을 청소하는 남자의 반복되는 하루. 같은 동작 속에서 빛이 매일 조금씩 달라진다.",
+    "viewingPoints": [
+      "아침 루틴의 반복 — 몇 번째 반복에서 차이가 감지되는지 세어볼 것.",
+      "코모레비(나뭇잎 사이 햇빛)의 흑백 삽입 쇼트가 놓이는 위치.",
+      "마지막 얼굴 — 하나의 감정으로 환원되지 않는 표정에 머무는 시간."
+    ],
+    "keywords": [
+      "루틴",
+      "빛",
+      "고독",
+      "충분함"
+    ],
+    "quote": {
+      "text": "다음은 다음이고, 지금은 지금이야.",
+      "source": "강가의 대화"
+    },
+    "references": [
+      "幸田文 관련 산문",
+      "Wim Wenders, 〈도쿄가〉 (1985)"
+    ]
+  },
+  "the-master": {
+    "logline": "전쟁에서 돌아온 남자가 새로운 교의를 만든 자를 만난다. 치유의 언어가 지배의 언어로 미끄러지는 과정.",
+    "viewingPoints": [
+      "프로세싱 장면의 롱테이크 — 질문이 반복될 때 발생하는 생리적 압력.",
+      "바다와 모래 여자 — 시작과 끝이 같은 이미지로 닫히는 구조.",
+      "두 사람의 관계를 사제·연인·주인·동물 중 어떤 틀로도 고정하지 못하게 만드는 장면들."
+    ],
+    "keywords": [
+      "교의",
+      "지배",
+      "전후",
+      "충동"
+    ],
+    "quote": {
+      "text": "주인이 없는 삶을 찾았다면, 꼭 알려주게.",
+      "source": "마지막 만남"
+    },
+    "references": [
+      "John Steinbeck 관련 자료",
+      "PTA, 〈데어 윌 비 블러드〉 (2007)"
+    ]
+  },
+  "ending-things": {
+    "logline": "남자친구의 부모를 만나러 가는 눈길 위의 드라이브. 이름과 직업, 나이가 문장마다 바뀌기 시작한다.",
+    "viewingPoints": [
+      "차 안 대화의 인용 — 누가 말하는 문장인지 출처가 미끄러지는 지점.",
+      "집 안에서 부모의 나이가 장면마다 재배열되는 편집 규칙.",
+      "학교 시퀀스 — 서사가 완전히 다른 장르로 교체되는 문턱."
+    ],
+    "keywords": [
+      "의식의 흐름",
+      "인용",
+      "노년",
+      "눈"
+    ],
+    "quote": {
+      "text": "모든 것은 다른 사람의 머릿속에서 더 오래 산다.",
+      "source": "프로그램 노트"
+    },
+    "references": [
+      "Iain Reid, 『I'm Thinking of Ending Things』",
+      "Charlie Kaufman, 〈시네도키, 뉴욕〉 (2008)"
+    ]
+  },
+  "first-love": {
+    "logline": "기억을 잃은 쪽과 기억을 안고 사는 쪽. 〈아사코〉의 '같은 얼굴, 다른 시간'을 시리즈의 길이로 늘려 놓은 작품.",
+    "viewingPoints": [
+      "눈(雪)과 비행기 — 시간대 전환의 고정 신호를 추적해볼 것.",
+      "같은 노래가 다른 나이에 다시 들릴 때의 의미 변화."
+    ],
+    "keywords": [
+      "기억상실",
+      "첫사랑",
+      "두 시간대"
+    ],
+    "quote": {
+      "text": "그 노래를 다시 들으면, 그때의 내가 먼저 대답한다.",
+      "source": "프로그램 노트"
+    },
+    "references": [
+      "宇多田ヒカル, 「First Love」"
+    ]
+  },
+  "duras-hiroshima": {
+    "logline": "영화의 대사 이전에 존재했던 텍스트. 지시문과 시가 구분되지 않는 문장들이 레네의 이미지보다 먼저 기억을 구성한다.",
+    "viewingPoints": [
+      "시나리오 부록의 '느베르 노트'를 영화의 삽입 쇼트와 대조해 읽을 것.",
+      "반복되는 '아무것도'의 문장 구조를 필사해볼 것."
+    ],
+    "keywords": [
+      "시나리오",
+      "반복",
+      "증언 불가능성"
+    ],
+    "quote": {
+      "text": "나는 모든 것을 보았다. 모든 것을.",
+      "source": "Duras, 시나리오"
+    },
+    "references": [
+      "Marguerite Duras, 『모데라토 칸타빌레』"
+    ]
+  },
+  "ripley": {
+    "logline": "타인의 이름으로 사는 법. 흑백의 이탈리아에서 수행되는 자아가 점점 더 정교한 노동이 되어간다.",
+    "viewingPoints": [
+      "계단과 복도 — 신분이 교체되는 공간의 기하학.",
+      "서류, 서명, 타자기 — 정체성이 사무 작업으로 만들어지는 과정."
+    ],
+    "keywords": [
+      "사칭",
+      "흑백",
+      "수행",
+      "계단"
+    ],
+    "quote": {
+      "text": "이름을 바꾸는 데 필요한 것은 용기가 아니라 서류다.",
+      "source": "프로그램 노트"
+    },
+    "references": [
+      "Patricia Highsmith, 『재능 있는 리플리 씨』"
+    ]
+  },
+  "maiko": {
+    "logline": "교토의 오키야에서 매일 밥을 짓는 아이. 〈퍼펙트 데이즈〉의 반복을 공동체의 규모로 확장한 이야기.",
+    "viewingPoints": [
+      "하루의 조리 과정이 수련과 동일한 형식으로 다뤄지는 방식.",
+      "계절 재료 — 시간의 경과를 식탁으로만 표시하는 선택."
+    ],
+    "keywords": [
+      "반복",
+      "식사",
+      "수련",
+      "공동체"
+    ],
+    "quote": {
+      "text": "같은 국을 백 번 끓이면 백 번째의 손이 달라진다.",
+      "source": "프로그램 노트"
+    },
+    "references": [
+      "小山愛子, 『마이코네 행복한 밥상』 (만화)"
+    ]
+  }
+};
+function editorialFor(id){return editorial[id]||null}
 const byId=Object.fromEntries(works.map(w=>[w.id,w]));
 let state=loadJson(APP_KEY,DEFAULT_STATE);let library=mergeSeed(loadJson(LIB_KEY,seedLibrary));
 let admin=loadJson(ADMIN_KEY,{months:{},works:{},stills:{}});

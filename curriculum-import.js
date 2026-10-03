@@ -101,6 +101,8 @@ function importCinemathequePackage(){
   admin.importedCuration=admin.importedCuration||{};
   admin.importedEditorial=admin.importedEditorial||{};
   admin.importedStills=admin.importedStills||{};
+  admin.site=admin.site||{};
+  if(pkg.site&&typeof pkg.site==='object') admin.site={...admin.site,...pkg.site};
   for(const w of incoming){
     const id=String(w.id),basic=basicFromImport(w);
     admin.importedWorks[id]={...(admin.importedWorks[id]||{}),...basic,id};
@@ -127,6 +129,8 @@ function importCinemathequePackage(){
         ...(admin.importedStills[id]||{}),
         visualType:vis.type||((basic.type||byId[id]?.type)==='book'?'cover':'still'),
         url:vis.url||'',
+        local:vis.local||'',
+        fallback:vis.fallback||'',
         source:vis.source||'',
         position:vis.position||vis.focal||cur.focal||'50% 50%'
       };

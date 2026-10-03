@@ -45,7 +45,7 @@ function home(){
           ${rec?`<div class="notice" style="margin-top:22px">YOUR LIBRARY CONNECTION · 기존 라이브러리에 이미 있는 작품입니다${rec.rating?` · ★ ${rec.rating}`:''}. 이번 달 완료 여부는 별도로 기록됩니다.</div>`:''}
           ${ed?.viewingPoints?.length?`<div class="editorial-block"><div class="eyebrow accent-label">VIEWING POINTS</div><ol class="viewing-points">${ed.viewingPoints.map((x,i)=>`<li><span>${String(i+1).padStart(2,'0')}</span><p>${escapeHtml(x)}</p></li>`).join('')}</ol></div>`:''}
           ${ed?.keywords?.length?`<div class="editorial-block"><div class="eyebrow accent-label">KEY CONCEPTS</div><div class="chips">${ed.keywords.map(x=>`<span class="chip">${escapeHtml(x)}</span>`).join('')}</div></div>`:''}
-          ${ed?.quote?`<blockquote class="direct-quote"><strong>“${escapeHtml(ed.quote.text)}”</strong><footer>${escapeHtml(ed.quote.source)}</footer></blockquote>`:''}
+          ${ed?.quote?`<blockquote class="direct-quote"><strong>“${escapeHtml(ed.quote.text)}”</strong>${ed.quote.en?`<p class="quote-en">${escapeHtml(ed.quote.en)}</p>`:'' }<footer>${escapeHtml(ed.quote.source)}</footer></blockquote>`:''}
           ${ed?.references?.length?`<div class="editorial-block"><div class="eyebrow accent-label">SOURCES / READING</div><ul class="reference-list">${ed.references.map(x=>`<li>— ${escapeHtml(x)}</li>`).join('')}</ul></div>`:''}
           <div class="actions"><button class="btn ${isDone(state.selectedMonth,w.id)?'secondary':''}" onclick="toggleDone('${state.selectedMonth}','${w.id}')">${isDone(state.selectedMonth,w.id)?'완료 해제':'감상 완료 표시'}</button><button class="btn secondary" onclick="navTo('#work/${w.id}')">노트 작성</button></div>
         </div>
@@ -120,7 +120,7 @@ function workPage(id){
         ${ed.keywords?.length?`<div class="editorial-block"><div class="eyebrow accent-label">KEYWORDS</div><div class="chips">${ed.keywords.map(x=>`<span class="chip">${escapeHtml(x)}</span>`).join('')}</div></div>`:''}
       </div>
       <div>
-        ${ed.quote?`<blockquote class="direct-quote detail-quote"><strong>“${escapeHtml(ed.quote.text)}”</strong><footer>${escapeHtml(ed.quote.source)}</footer></blockquote>`:''}
+        ${ed.quote?`<blockquote class="direct-quote detail-quote"><strong>“${escapeHtml(ed.quote.text)}”</strong>${ed.quote.en?`<p class="quote-en">${escapeHtml(ed.quote.en)}</p>`:'' }<footer>${escapeHtml(ed.quote.source)}</footer></blockquote>`:''}
         ${ed.references?.length?`<div class="editorial-block"><div class="eyebrow accent-label">REFERENCES</div><ul class="reference-list">${ed.references.map(x=>`<li>${escapeHtml(x)}</li>`).join('')}</ul></div>`:''}
       </div>
     </div></section>`:''}

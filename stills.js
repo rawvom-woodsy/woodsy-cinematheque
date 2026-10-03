@@ -34,21 +34,29 @@ const stills = {
 
 };
 Object.entries(admin?.stills||{}).forEach(([id,o])=>{stills[id]={...(stills[id]||{}),...o}});
-function stillError(img){
+function proxyStillUrl(raw){
+  if(!raw) return '';
+  return 'https://images.weserv.nl/?url='+encodeURIComponent(raw)+'&w=1400&fit=cover&output=jpg&q=88';
+}
+function visualImageError(img){
   const fallback=img.dataset.fallback||'';
-  if(fallback && img.src!==fallback){
+  if(fallback){
     img.dataset.fallback='';
     img.src=fallback;
     return;
   }
-  img.style.display='none';
-  const parent=img.parentElement;
-  if(parent){
-    parent.classList.remove('visual-still');
-    parent.classList.add('visual-fallback');
-    const layer=parent.querySelector('.fallback-layer');
-    if(layer) layer.style.display='flex';
+  img.remove();
+  const layer=img.parentElement?.querySelector?.('.fallback-layer');
+  if(layer) layer.style.display='flex';
+}
+function thumbImageError(img){
+  const fallback=img.dataset.fallback||'';
+  if(fallback){
+    img.dataset.fallback='';
+    img.src=fallback;
+    return;
   }
+  img.remove();
 }
 function visualHtml(w){
   const s=stills[w?.id];
@@ -58,16 +66,20 @@ function visualHtml(w){
       <div><div class="big">${escapeHtml(w?.title||'')}</div><div class="small" style="margin-top:10px;color:rgba(255,255,255,.65)">TYPOGRAPHIC VISUAL</div></div>
     </div>`;
   }
+  const primary=proxyStillUrl(s.url);
+  const direct=s.url||'';
   return `<div class="visual visual-still">
     <div class="fallback-layer" style="display:none"><div class="visual-top"><span class="eyebrow">${String(w?.type||'work').toUpperCase()} · ${w?.year||''}</span><span class="glyph">${escapeHtml(String((w?.year||'').toString().slice(-2)||'•'))}</span></div><div class="big">${escapeHtml(w?.title||'')}</div></div>
-    <img src="${s.url}" data-fallback="${escapeAttr(s.fallback||'')}" alt="${escapeAttr(w.title)} film still" referrerpolicy="no-referrer" loading="eager" onerror="stillError(this)">
+    <img src="${primary}" data-fallback="${escapeAttr(direct)}" alt="${escapeAttr(w.title)} film still" loading="eager" onerror="visualImageError(this)">
     <div class="still-credit">STILL · ${escapeHtml(s.source)}</div>
   </div>`;
 }
 function thumbHtml(w){
   const s=stills[w?.id];
   if(s){
-    return `<div class="work-thumb"><div class="work-thumb-fallback"><span>${escapeHtml(w?.title||'')}</span></div><img src="${s.url}" data-fallback="${escapeAttr(s.fallback||'')}" alt="" referrerpolicy="no-referrer" loading="lazy" onerror="stillError(this)"></div>`;
+    const primary=proxyStillUrl(s.url);
+    const direct=s.url||'';
+    return `<div class="work-thumb"><div class="work-thumb-fallback"><span>${escapeHtml(w?.title||'')}</span></div><img src="${primary}" data-fallback="${escapeAttr(direct)}" alt="" loading="lazy" onerror="thumbImageError(this)"></div>`;
   }
   return `<div class="work-thumb"><div class="work-thumb-fallback"><span>${escapeHtml(w?.title||'')}</span></div></div>`;
 }

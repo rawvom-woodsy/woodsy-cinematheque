@@ -1,6 +1,7 @@
 function appHeader(active){
   const tabs=[['#home','HOME'],['#curriculum','CURRICULUM'],['#library','MASTER LIBRARY'],['#notes','NOTES'],['#map','MAP'],['#archive','ARCHIVE'],['#import','IMPORT'],['#admin','ADMIN']];
-  return `<div class="topbar"><div class="topbar-inner"><a class="brand" href="#home">Personal Cinematheque <span class="muted">for</span> WOODSY<small>${month().label} · ${progress(state.selectedMonth).done}/${progress(state.selectedMonth).total}</small></a><div class="nav">${tabs.map(([r,l])=>`<a class="${active===r?'active':''}" href="${r}">${l}</a>`).join('')}</div></div><div class="mobile-nav">${tabs.map(([r,l])=>`<a class="${active===r?'active':''}" href="${r}">${l}</a>`).join('')}</div></div>`;
+  const p=progress(state.selectedMonth);
+  return `<div class="topbar"><div class="topbar-inner"><a class="brand" href="#home">Personal Cinematheque <span class="muted">for</span> WOODSY<small>${month().label} · ${p.done}/${p.total}</small></a><div class="nav">${tabs.map(([r,l])=>`<a class="${active===r?'active':''}" href="${r}">${l}</a>`).join('')}</div><button class="mobile-menu-button" onclick="toggleMobileMenu()" aria-label="메뉴 열기" aria-expanded="false"><span></span><span></span><span></span></button></div><div id="mobile-menu" class="mobile-menu">${tabs.map(([r,l])=>`<a class="${active===r?'active':''}" href="${r}">${l}</a>`).join('')}</div></div>`
 }
 function monthSwitcher(){
   return `<div class="month-switch">${Object.entries(months).map(([id,m])=>`<button class="${state.selectedMonth===id?'active':''}" onclick="setMonth('${id}')">${m.label.replace(' 20',' ’')}</button>`).join('')}</div>`;
@@ -9,17 +10,10 @@ function progressHtml(mid){
   const p=progress(mid);
   return `<div class="progress-wrap"><div class="progress-meta"><span>CORE PROGRESS</span><span>${p.done} / ${p.total}</span></div><div class="progress"><span style="width:${p.pct}%"></span></div></div>`;
 }
+function quoteHtml(q){if(!q)return'';const label=quoteLabel(q);return `<blockquote class="direct-quote ${q.kind==='curator'?'curator-quote':''}"><div class="eyebrow quote-kind">${label}</div><strong>“${escapeHtml(q.text||'')}”</strong>${q.original?`<p class="quote-original">${escapeHtml(q.original)}</p>`:''}${q.en?`<p class="quote-en">${escapeHtml(q.en)}</p>`:''}<footer>${escapeHtml(q.source||'')}</footer></blockquote>`}
 function workRow(id,i,mid){
-  const w=byId[id],done=isDone(mid,id),s=statusFor(w,mid);
-  return `<div class="work-row">
-    <div class="index">${String(i+1).padStart(2,'0')}</div>
-    <a href="#work/${w.id}" aria-label="${escapeAttr(w.title)} 상세">${thumbHtml(w)}</a>
-    <div>
-      <a href="#work/${w.id}"><div class="work-title">${formatTitle(w)}</div><div class="work-meta">${w.creator} · ${w.year} · ${w.type.toUpperCase()}</div></a>
-      <div class="chips"><span class="status-badge ${s==='REVISIT'?'revisit':''}">${s}</span>${w.tags.map(t=>`<span class="chip">${t}</span>`).join('')}</div>
-    </div>
-    <button class="complete-btn ${done?'done':''}" onclick="toggleDone('${mid}','${w.id}')">${done?'✓ 완료':'완료 표시'}</button>
-  </div>`;
+  const w=byId[id],done=isDone(mid,id),s=statusFor(w,mid),date=completionDate(mid,id);
+  return `<div class="work-row ${done?'is-complete':''}"><button class="row-check ${done?'done':''}" onclick="toggleDone('${mid}','${w.id}')" aria-label="${escapeAttr(w.title)} 완료 토글">${done?'✓':''}</button><div class="index">${String(i+1).padStart(2,'0')}</div><a class="row-thumb-link" href="#work/${w.id}">${thumbHtml(w)}</a><div class="row-copy"><a href="#work/${w.id}"><div class="work-title">${formatTitle(w)}</div></a><div class="work-meta">${w.creator} · ${w.year}${serviceFor(w.id)!=='—'?` · ${escapeHtml(serviceFor(w.id))}`:''}</div><div class="row-submeta"><span class="status-badge ${s==='REVISIT'?'revisit':''}">${s}</span>${date?`<span>${formatDateKo(date)} 완료</span>`:''}</div></div></div>`
 }
 function home(){
   const m=month(),p=progress(state.selectedMonth),next=m.core.find(id=>!isDone(state.selectedMonth,id))||m.core[0],w=byId[next],rec=recordFor(w),ed=editorialFor(w.id);

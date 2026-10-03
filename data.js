@@ -1,19 +1,23 @@
-const APP_KEY='woodsy-cinematheque-v3';
-const LIB_KEY='woodsy-cinematheque-library-v3';
-const ADMIN_KEY='woodsy-cinematheque-admin-v1';
-const DEFAULT_STATE={selectedMonth:'2026-10',completed:{},notes:{},monthNotes:{},added:{},noteUpdated:{},monthNoteUpdated:{}};
-const seedLibrary=[
+const SITE_CONFIG=window.SITE_CONFIG||{};
+const STORAGE_NS=SITE_CONFIG.storageNamespace||'woodsy-cinematheque';
+const APP_KEY=`${STORAGE_NS}-state-v3`;
+const LIB_KEY=`${STORAGE_NS}-library-v3`;
+const ADMIN_KEY=`${STORAGE_NS}-admin-v1`;
+const DEFAULT_STATE={selectedMonth:SITE_CONFIG.defaultMonth||'2026-10',completed:{},notes:{},monthNotes:{},added:{},noteUpdated:{},monthNoteUpdated:{}};
+const defaultSeedLibrary=[
   {id:'book-convenience-store-woman',title:'편의점 인간',originalTitle:'コンビニ人間',type:'book',year:2016,creator:'무라타 사야카',rating:null,historicalStatus:'read',source:'manual',sourceUrl:'',tags:['existing-read']},
   {id:'book-face-of-another',title:'타인의 얼굴',originalTitle:'他人の顔',type:'book',year:1964,creator:'아베 고보',rating:null,historicalStatus:'read',source:'manual',sourceUrl:'',tags:['existing-read']}
 ];
-const months={
+const seedLibrary=SITE_CONFIG.includeSeedLibrary===false?[]:defaultSeedLibrary;
+const seedMonths={
 '2026-10':{label:'OCTOBER 2026',title:'WHEN A FILM CHANGES ITS MIND',ko:'현실이 어느 순간 다른 감각으로 열리는 영화들',note:'익숙한 현실이 기억, 욕망, 상실, 정체성에 의해 다른 감각으로 열리는 순간을 따라간다. 장르와 시간, 공간의 규칙이 서서히 변하는 영화들을 한 달의 경로로 묶는다.',concepts:['ABSENCE','DOUBLENESS','REPETITION','UNSTABLE PERCEPTION','BODY / PERFORMANCE','GHOSTLINESS'],core:['hiroshima','asako','personal-shopper','atlantics','holy-motors','perfect-days','the-master','ending-things'],supp:['first-love','duras-hiroshima','ripley','maiko']},
 '2026-11':{label:'NOVEMBER 2026',title:'THE LIFE I COULD HAVE LIVED',ko:'내가 살 수도 있었던 삶',note:'현재의 삶 옆에 다른 이름으로 살았을 삶, 다른 사람과 함께했을 삶, 떠나지 않았다면 이어졌을 삶, 부모가 되었거나 되지 않았을 삶이 희미하게 남아 있다. 11월에는 선택하지 않은 삶이 현재에 어떤 흔적으로 남는가를 본다.',concepts:['UNLIVED LIFE','PASSING','CHOICE','MEMORY','FAMILY POSSIBILITY'],core:['passing','priscilla','return-seoul','45-years','lost-daughter','private-life','things-to-come','columbus'],supp:['unorthodox','one-day','pachinko','lessons-chemistry','book-passing','territory-light','lowland','years']},
 '2026-12':{label:'DECEMBER 2026',title:'THE HOUSE REMEMBERS',ko:'집은 기억한다',note:'생활하는 집에서 시작해 흔들리는 집, 떠난 사람이 남은 집, 기억이 불안정해진 집, 시간을 품은 집으로 이동한다. 감정이 설명되지 않고 공간과 소리, 반복되는 행위 속에 저장되는 영화들을 본다.',concepts:['HOME','PLACE MEMORY','REPETITION','LOSS','SOUND / SPACE'],core:['taste-things','a-separation','after-love','the-father','petite-maman','paterson','ghost-story','memoria'],supp:['hill-house','maid','archive81','housekeeping','austerlitz','memory-police','poetics-space']},
 '2027-01':{label:'JANUARY 2027',title:'PERFORMING A SELF',ko:'나라는 역할을 연기하기',note:'직업, 외모, 성별, 욕망, 사회가 요구하는 정상성. 사람이 자기 자신이라고 믿는 것이 얼마나 많은 연기와 반복으로 만들어지는지를 신체와 퍼포먼스를 통해 본다.',concepts:['PERFORMANCE','MASK','DISCIPLINE','GAZE','TRANSFORMATION'],core:['wrestler','neon-demon','black-swan','piano-teacher','shame','different-man','saint-maud','titane'],supp:['severance','ripley','mask-girl','goffman','argonauts','piano-player-book','confessions-mask','book-convenience-store-woman','book-face-of-another']}
 };
+const months=SITE_CONFIG.includeSeedCurriculum===false?{}:structuredClone(seedMonths);
 const W=(id,title,originalTitle,type,creator,year,role='CORE',tags=[])=>({id,title,originalTitle,type,creator,year,role,tags});
-const works=[
+const seedWorks=[
 W('hiroshima','히로시마 내 사랑','Hiroshima mon amour','film','Alain Resnais',1959),W('asako','아사코','寝ても覚めても','film','Ryusuke Hamaguchi',2018),W('personal-shopper','퍼스널 쇼퍼','Personal Shopper','film','Olivier Assayas',2016),W('atlantics','애틀랜틱스','Atlantique','film','Mati Diop',2019),W('holy-motors','홀리 모터스','Holy Motors','film','Leos Carax',2012),W('perfect-days','퍼펙트 데이즈','Perfect Days','film','Wim Wenders',2023),W('the-master','마스터','The Master','film','Paul Thomas Anderson',2012),W('ending-things','이제 그만 끝낼까 해',"I'm Thinking of Ending Things",'film','Charlie Kaufman',2020),
 W('first-love','퍼스트 러브 하츠코이','First Love','series','Kanchiku Yuri',2022,'EXPLORE'),W('duras-hiroshima','히로시마 내 사랑','Hiroshima mon amour','book','Marguerite Duras',1960,'READING'),W('ripley','리플리: 더 시리즈','Ripley','series','Steven Zaillian',2024,'EXPLORE'),W('maiko','마이코네 행복한 밥상','The Makanai','series','Hirokazu Kore-eda',2023,'EXPLORE'),
 W('passing','패싱','Passing','film','Rebecca Hall',2021),W('priscilla','프리실라','Priscilla','film','Sofia Coppola',2023),W('return-seoul','리턴 투 서울','Return to Seoul','film','Davy Chou',2022),W('45-years','45년 후','45 Years','film','Andrew Haigh',2015),W('lost-daughter','로스트 도터','The Lost Daughter','film','Maggie Gyllenhaal',2021),W('private-life','프라이빗 라이프','Private Life','film','Tamara Jenkins',2018),W('things-to-come','다가오는 것들','Things to Come','film','Mia Hansen-Løve',2016),W('columbus','콜럼버스','Columbus','film','Kogonada',2017),
@@ -24,6 +28,7 @@ W('wrestler','더 레슬러','The Wrestler','film','Darren Aronofsky',2008),W('n
 W('severance','세브란스: 단절','Severance','series','Dan Erickson',2022,'LONG FORM'),W('mask-girl','마스크걸','Mask Girl','series','Kim Yong-hoon',2023,'EXPLORE'),W('goffman','자아 연출의 사회학','The Presentation of Self in Everyday Life','book','Erving Goffman',1956,'READING'),W('argonauts','아르고호의 선원들','The Argonauts','book','Maggie Nelson',2015,'READING'),W('piano-player-book','피아노 치는 여자','Die Klavierspielerin','book','Elfriede Jelinek',1983,'READING'),W('confessions-mask','가면의 고백','仮面の告白','book','Yukio Mishima',1949,'READING'),
 ...seedLibrary.map(x=>W(x.id,x.title,x.originalTitle,x.type,x.creator,x.year,'CONNECTED'))
 ];
+const works=SITE_CONFIG.includeSeedCurriculum===false?[]:[...seedWorks];
 
 const editorial={
   "hiroshima": {
@@ -304,14 +309,14 @@ function mergeSeed(items){const arr=Array.isArray(items)?items:[];for(const s of
 function save(){try{localStorage.setItem(APP_KEY,JSON.stringify(state));localStorage.setItem(LIB_KEY,JSON.stringify(library));}catch(e){toast('브라우저 저장 공간이 부족하거나 차단되어 있습니다. 현재 세션에서는 계속 사용할 수 있어요.')}}
 function saveAdmin(){try{localStorage.setItem(ADMIN_KEY,JSON.stringify(admin));}catch(e){toast('관리자 수정 내용을 저장하지 못했어요.')}}
 function formatTitle(w){if(!w)return'';return w.type==='book'?`『${w.title}』`:w.type==='article'?`「${w.title}」` :`&lt;${w.title}&gt;`}
-function month(){return months[state.selectedMonth]||months['2026-10']}
+function month(){return months[state.selectedMonth]||Object.values(months)[0]||{id:'__empty__',label:'NO PROGRAM',title:'',ko:'',note:'',concepts:[],core:[],supp:[],featureId:null}}
 function compKey(mid,wid){return `${mid}:${wid}`}
 function isDone(mid,wid){return !!state.completed[compKey(mid,wid)]}
 function toggleDone(mid,wid){const k=compKey(mid,wid);if(state.completed[k])delete state.completed[k];else state.completed[k]=new Date().toISOString();save();render()}
 function recordFor(w){const norm=normalize(w.title);return library.find(r=>r.canonicalId===w.id)||library.find(r=>normalize(r.title)===norm && Number(r.year||0)===Number(w.year||0) && r.type===w.type)}
 function normalize(s){return String(s||'').toLowerCase().replace(/[《》『』「」<>:：・,.!?'"\-\s]/g,'')}
 function statusFor(w,mid){const r=recordFor(w);const inMonth=months[mid]&&(months[mid].core.includes(w.id)||months[mid].supp.includes(w.id));if(r&&inMonth)return 'REVISIT';if(r)return r.historicalStatus==='read'?'ALREADY READ':'ALREADY WATCHED';if(w.role==='CONNECTED')return 'CONNECTED';return 'NEW'}
-function progress(mid){const ids=months[mid].core;const d=ids.filter(id=>isDone(mid,id)).length;return {done:d,total:ids.length,pct:Math.round(d/ids.length*100)}}
+function progress(mid){const ids=months[mid]?.core||[];const d=ids.filter(id=>isDone(mid,id)).length;return {done:d,total:ids.length,pct:ids.length?Math.round(d/ids.length*100):0}}
 function setMonth(mid){state.selectedMonth=mid;save();render()}
 function navTo(route){location.hash=route}
 function route(){return location.hash||'#home'}

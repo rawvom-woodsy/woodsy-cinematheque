@@ -20,8 +20,10 @@ const SUPPLEMENTARY_VISUALS={
   },
   "duras-hiroshima": {
     "type": "cover",
-    "url": "https://covers.openlibrary.org/isbn/9780802131041-L.jpg",
-    "source": "Open Library"
+    "url": "https://contents.kyobobook.co.kr/sih/fit-in/458x0/pdt/9788937463495.jpg",
+    "fallback": "https://books.google.com/books/content?vid=ISBN9788937463495&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "source": "민음사 / 교보문고",
+    "isbn": "9788937463495"
   },
   "unorthodox": {
     "type": "still",
@@ -49,23 +51,31 @@ const SUPPLEMENTARY_VISUALS={
   },
   "book-passing": {
     "type": "cover",
-    "url": "https://covers.openlibrary.org/isbn/9780142437278-L.jpg",
-    "source": "Open Library"
+    "url": "https://contents.kyobobook.co.kr/sih/fit-in/458x0/pdt/9788937464935.jpg",
+    "fallback": "https://books.google.com/books/content?vid=ISBN9788937464935&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "source": "민음사 / 교보문고",
+    "isbn": "9788937464935"
   },
   "territory-light": {
     "type": "cover",
-    "url": "https://covers.openlibrary.org/isbn/9780374273218-L.jpg",
-    "source": "Open Library"
+    "url": "https://contents.kyobobook.co.kr/sih/fit-in/458x0/pdt/9791192667072.jpg",
+    "fallback": "https://books.google.com/books/content?vid=ISBN9791192667072&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "source": "마르코폴로 / 교보문고",
+    "isbn": "9791192667072"
   },
   "lowland": {
     "type": "cover",
-    "url": "https://covers.openlibrary.org/isbn/9780307278265-L.jpg",
-    "source": "Open Library"
+    "url": "https://contents.kyobobook.co.kr/sih/fit-in/458x0/pdt/9788960901834.jpg",
+    "fallback": "https://books.google.com/books/content?vid=ISBN9788960901834&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "source": "마음산책 / 교보문고",
+    "isbn": "9788960901834"
   },
   "years": {
     "type": "cover",
-    "url": "https://covers.openlibrary.org/isbn/9781609807870-L.jpg",
-    "source": "Open Library"
+    "url": "https://contents.kyobobook.co.kr/sih/fit-in/458x0/pdt/9791190533751.jpg",
+    "fallback": "https://books.google.com/books/content?vid=ISBN9791190533751&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "source": "THE CIRCLE PRESS / 교보문고",
+    "isbn": "9791190533751"
   },
   "hill-house": {
     "type": "still",
@@ -87,24 +97,31 @@ const SUPPLEMENTARY_VISUALS={
   },
   "housekeeping": {
     "type": "cover",
-    "url": "https://mpd-biblio-covers.imgix.net/9780374172084.jpg",
-    "source": "Macmillan",
-    "fallback": "https://covers.openlibrary.org/isbn/9780312424091-L.jpg"
+    "url": "https://contents.kyobobook.co.kr/sih/fit-in/458x0/pdt/9788960533417.jpg",
+    "fallback": "https://books.google.com/books/content?vid=ISBN9788960533417&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "source": "마로니에북스 / 교보문고",
+    "isbn": "9788960533417"
   },
   "austerlitz": {
     "type": "cover",
-    "url": "https://covers.openlibrary.org/isbn/9780375756566-L.jpg",
-    "source": "Open Library"
+    "url": "https://contents.kyobobook.co.kr/sih/fit-in/458x0/pdt/9788932403496.jpg",
+    "fallback": "https://books.google.com/books/content?vid=ISBN9788932403496&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "source": "을유문화사 / 교보문고",
+    "isbn": "9788932403496"
   },
   "memory-police": {
     "type": "cover",
-    "url": "https://covers.openlibrary.org/isbn/9781101870600-L.jpg",
-    "source": "Open Library"
+    "url": "https://contents.kyobobook.co.kr/sih/fit-in/458x0/pdt/9788954682473.jpg",
+    "fallback": "https://books.google.com/books/content?vid=ISBN9788954682473&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "source": "문학동네 / 교보문고",
+    "isbn": "9788954682473"
   },
   "poetics-space": {
     "type": "cover",
-    "url": "https://covers.openlibrary.org/isbn/9780143107521-L.jpg",
-    "source": "Open Library"
+    "url": "https://contents.kyobobook.co.kr/sih/fit-in/458x0/pdt/9788980389476.jpg",
+    "fallback": "https://books.google.com/books/content?vid=ISBN9788980389476&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "source": "동문선 / 교보문고",
+    "isbn": "9788980389476"
   },
   "severance": {
     "type": "still",
@@ -120,33 +137,45 @@ const SUPPLEMENTARY_VISUALS={
   },
   "goffman": {
     "type": "cover",
-    "url": "https://covers.openlibrary.org/isbn/9780385094023-L.jpg",
-    "source": "Open Library"
+    "url": "https://contents.kyobobook.co.kr/sih/fit-in/458x0/pdt/9788932317755.jpg",
+    "fallback": "https://books.google.com/books/content?vid=ISBN9788932317755&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "source": "현암사 / 교보문고",
+    "isbn": "9788932317755"
   },
   "argonauts": {
     "type": "cover",
-    "url": "https://covers.openlibrary.org/isbn/9781555977351-L.jpg",
-    "source": "Open Library"
+    "url": "https://contents.kyobobook.co.kr/sih/fit-in/458x0/pdt/9791190292276.jpg",
+    "fallback": "https://books.google.com/books/content?vid=ISBN9791190292276&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "source": "플레이타임 / 교보문고",
+    "isbn": "9791190292276"
   },
   "piano-player-book": {
     "type": "cover",
-    "url": "https://covers.openlibrary.org/isbn/9780802118066-L.jpg",
-    "source": "Open Library"
+    "url": "https://contents.kyobobook.co.kr/sih/fit-in/458x0/pdt/9788954609159.jpg",
+    "fallback": "https://books.google.com/books/content?vid=ISBN9788954609159&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "source": "문학동네 / 교보문고",
+    "isbn": "9788954609159"
   },
   "confessions-mask": {
     "type": "cover",
-    "url": "https://covers.openlibrary.org/isbn/9780811201186-L.jpg",
-    "source": "Open Library"
+    "url": "https://contents.kyobobook.co.kr/sih/fit-in/458x0/pdt/9788954609128.jpg",
+    "fallback": "https://books.google.com/books/content?vid=ISBN9788954609128&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "source": "문학동네 / 교보문고",
+    "isbn": "9788954609128"
   },
   "book-convenience-store-woman": {
     "type": "cover",
-    "url": "https://covers.openlibrary.org/isbn/9780802128256-L.jpg",
-    "source": "Open Library"
+    "url": "https://contents.kyobobook.co.kr/sih/fit-in/458x0/pdt/9788952235268.jpg",
+    "fallback": "https://books.google.com/books/content?vid=ISBN9788952235268&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "source": "살림 / 교보문고",
+    "isbn": "9788952235268"
   },
   "book-face-of-another": {
     "type": "cover",
-    "url": "https://covers.openlibrary.org/isbn/9780375726538-L.jpg",
-    "source": "Open Library"
+    "url": "https://contents.kyobobook.co.kr/sih/fit-in/458x0/pdt/9788931010732.jpg",
+    "fallback": "https://books.google.com/books/content?vid=ISBN9788931010732&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "source": "문예출판사 / 교보문고",
+    "isbn": "9788931010732"
   }
 };
 for(const [id,visual] of Object.entries(SUPPLEMENTARY_VISUALS)){

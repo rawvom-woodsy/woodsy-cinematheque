@@ -7,6 +7,10 @@ document.addEventListener('click',e=>{
   if(code==='toggleMobileMenu()'){e.preventDefault();return toggleMobileMenu()}
   if((m=code.match(/^toggleAdded\('([^']+)'\s*,\s*'([^']+)'\)$/))){e.preventDefault();return toggleAdded(m[1],m[2])}
 });
+document.addEventListener('click',e=>{
+  if(e.target?.id==='cinema-package-preview'){e.preventDefault();previewCinemathequePackage();}
+  if(e.target?.id==='cinema-package-import'){e.preventDefault();importCinemathequePackage();}
+});
 document.addEventListener('input',e=>{
   if(e.target?.id==='lib-q')filterLibraryRows();
 });

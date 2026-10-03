@@ -66,6 +66,7 @@ function previewCinemathequePackage(){
 function basicFromImport(w){
   const out={};
   for(const k of ['title','originalTitle','type','creator','year','role','tags'])if(w[k]!==undefined)out[k]=w[k];
+  if(out.creator===undefined&&w.author!==undefined)out.creator=w.author;
   if(out.role===undefined)out.role=(w.type==='book'?'READING':w.type==='series'?'EXPLORE':'CORE');
   return out;
 }
@@ -74,6 +75,7 @@ function editorialFromImport(pkg,w){
   for(const k of ['logline','viewingPoints','keywords','quote','references','connections','concepts','service','checked','focal','visual']){
     if(w[k]!==undefined&&out[k]===undefined)out[k]=w[k];
   }
+  if(out.logline===undefined&&w.intro!==undefined)out.logline=w.intro;
   return out;
 }
 function curationFromImport(pkg,w,ed){
@@ -111,7 +113,15 @@ function importCinemathequePackage(){
     const cur=curationFromImport(pkg,w,ed);
     admin.importedCuration[id]={...(admin.importedCuration[id]||{}),...cur};
     Object.assign(byId[id],cur);
-    const vis=w.visual||ed.visual||(pkg.visuals&&pkg.visuals[id])||null;
+    const aliasVisual=(
+      w.imageUrl||w.stillUrl||w.posterUrl||w.coverUrl||w.image
+    )?{
+      type:w.coverUrl?'cover':((basic.type||byId[id]?.type)==='book'?'cover':'still'),
+      url:w.coverUrl||w.stillUrl||w.posterUrl||w.imageUrl||w.image||'',
+      source:w.imageSource||w.visualSource||'Imported visual',
+      position:w.imagePosition||w.focal||cur.focal||'50% 50%'
+    }:null;
+    const vis=w.visual||ed.visual||(pkg.visuals&&pkg.visuals[id])||aliasVisual||null;
     if(vis){
       admin.importedStills[id]={
         ...(admin.importedStills[id]||{}),

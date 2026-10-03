@@ -180,8 +180,9 @@ const SUPPLEMENTARY_VISUALS={
 
   "easy-series": {
     "type": "still",
-    "url": "https://pics.filmaffinity.com/Easy_TV_Series-349236552-large.jpg",
-    "source": "FilmAffinity / Netflix",
+    "url": "https://www.serienjunkies.de/assets/images/33/47/33047072-serienposter-von-easy-netflix-N7a.jpg",
+    "fallback": "https://www.tvinsider.com/wp-content/uploads/2019/06/Easy_S03E04_14m22s01f_R.jpg",
+    "source": "Serienjunkies / Netflix · fallback TV Insider",
     "position": "50% 45%"
   },
   "feel-good-series": {

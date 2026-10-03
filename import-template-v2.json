@@ -66,7 +66,9 @@
         "type": "still",
         "url": "https://example.com/still.jpg",
         "source": "Source",
-        "position": "50% 50%"
+        "position": "50% 50%",
+        "local": "./assets/stills/film-id-1.jpg",
+        "fallback": "https://example.com/fallback-still.jpg"
       }
     },
     {
@@ -98,8 +100,17 @@
       "visual": {
         "type": "cover",
         "url": "https://example.com/cover.jpg",
-        "source": "Publisher / Open Library"
+        "source": "Publisher / Open Library",
+        "local": "./assets/covers/book-id-1.jpg",
+        "fallback": "https://example.com/fallback-cover.jpg"
       }
     }
-  ]
+  ],
+  "site": {
+    "brandName": "Optional Film Club Name",
+    "brandJoiner": "by",
+    "brandOwner": "Optional Host Name",
+    "title": "Optional Film Club Name by Optional Host Name",
+    "footer": "Optional footer copy"
+  }
 }

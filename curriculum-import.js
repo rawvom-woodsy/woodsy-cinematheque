@@ -59,3 +59,75 @@ function previewCinemathequePackage(){
   box.classList.toggle('error',!!plan.error);
   return plan;
 }
+
+function basicFromImport(w){
+  const out={};
+  for(const k of ['title','originalTitle','type','creator','year','role','tags'])if(w[k]!==undefined)out[k]=w[k];
+  if(out.role===undefined)out.role=(w.type==='book'?'READING':w.type==='series'?'EXPLORE':'CORE');
+  return out;
+}
+function editorialFromImport(pkg,w){
+  const top=(pkg.editorial&&pkg.editorial[w.id])||{},own=w.editorial||{},out={...top,...own};
+  for(const k of ['logline','viewingPoints','keywords','quote','references','connections','concepts','service','checked','focal','visual']){
+    if(w[k]!==undefined&&out[k]===undefined)out[k]=w[k];
+  }
+  return out;
+}
+function curationFromImport(pkg,w,ed){
+  const top=(pkg.curation&&pkg.curation[w.id])||{};
+  return {
+    ...top,
+    ...(ed.service!==undefined?{service:ed.service}:{}),
+    ...(ed.checked!==undefined?{checked:ed.checked}:{}),
+    ...(ed.connections!==undefined?{connections:ed.connections}:{}),
+    ...(ed.concepts!==undefined?{concepts:ed.concepts}:{}),
+    ...(ed.focal!==undefined?{focal:ed.focal}:{})
+  };
+}
+function importCinemathequePackage(){
+  const plan=parseCinemaPackage(),box=document.getElementById('cinema-package-result');
+  if(plan.error){
+    if(box){box.innerHTML=cinemaPackagePreviewHtml(plan);box.classList.add('error')}
+    return;
+  }
+  const {pkg,month:m,mid,incoming,core,supp}=plan;
+  admin.importedMonths=admin.importedMonths||{};
+  admin.importedWorks=admin.importedWorks||{};
+  admin.importedCuration=admin.importedCuration||{};
+  admin.importedEditorial=admin.importedEditorial||{};
+  admin.importedStills=admin.importedStills||{};
+  for(const w of incoming){
+    const id=String(w.id),basic=basicFromImport(w);
+    admin.importedWorks[id]={...(admin.importedWorks[id]||{}),...basic,id};
+    if(!byId[id]){
+      const nw=W(id,basic.title||id,basic.originalTitle||'',basic.type||'film',basic.creator||'',basic.year||'',basic.role||'CORE',basic.tags||[]);
+      Object.assign(nw,basic);works.push(nw);byId[id]=nw;
+    }else Object.assign(byId[id],basic);
+    const ed=editorialFromImport(pkg,w);
+    admin.importedEditorial[id]={...(admin.importedEditorial[id]||{}),...ed};
+    const cur=curationFromImport(pkg,w,ed);
+    admin.importedCuration[id]={...(admin.importedCuration[id]||{}),...cur};
+    Object.assign(byId[id],cur);
+    const vis=w.visual||ed.visual||(pkg.visuals&&pkg.visuals[id])||null;
+    if(vis){
+      admin.importedStills[id]={
+        ...(admin.importedStills[id]||{}),
+        visualType:vis.type||((basic.type||byId[id]?.type)==='book'?'cover':'still'),
+        url:vis.url||'',
+        source:vis.source||'',
+        position:vis.position||vis.focal||cur.focal||'50% 50%'
+      };
+    }
+  }
+  const saved={
+    id:mid,label:m.label||mid,title:m.title||mid,
+    titleLines:Array.isArray(m.titleLines)&&m.titleLines.length?m.titleLines:[m.title||mid],
+    ko:m.ko||m.subtitle||'',note:m.note||'',concepts:Array.isArray(m.concepts)?m.concepts:[],
+    core,supp,featureId:m.featureId||core[0]
+  };
+  admin.importedMonths[mid]={...(admin.importedMonths[mid]||{}),...saved};
+  months[mid]={...(months[mid]||{}),...saved};
+  saveAdmin();state.selectedMonth=mid;save();
+  toast((plan.exists?'기존 월을 업데이트했어요: ':'새 커리큘럼을 추가했어요: ')+(saved.label||mid));
+  location.hash='#home';location.reload();
+}

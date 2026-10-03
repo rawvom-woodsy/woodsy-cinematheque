@@ -85,3 +85,21 @@ resetAdminOverrides=function(){
   };
   saveAdmin();location.reload();
 };
+
+
+/* Books-aware full backup. Keeps legacy keys intact and adds Books as an additive payload. */
+exportBackup=function(){
+  const cfg={...(window.SITE_CONFIG||{}),...(admin.site||{})};
+  const payload={app:cfg.title||cfg.brandName||'Cinematheque',version:6,site:cfg,exportedAt:new Date().toISOString(),state,library,admin,books};
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`${cfg.storageNamespace||'cinematheque'}-${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)
+};
+restoreBackup=async function(file){
+  if(!file)return;
+  try{
+    const d=JSON.parse(await file.text());if(!d.state||!Array.isArray(d.library))throw new Error();
+    state={...DEFAULT_STATE,...d.state};library=mergeSeed(d.library);admin=d.admin||{months:{},works:{},stills:{}};
+    if(Array.isArray(d.books)){books=d.books;saveBooks()}
+    save();saveAdmin();toast('백업을 복원했어요.');location.reload()
+  }catch{toast('복원할 수 있는 백업 파일이 아니에요.')}
+};

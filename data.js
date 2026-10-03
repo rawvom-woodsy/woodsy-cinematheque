@@ -1,8 +1,8 @@
 const SITE_CONFIG=window.SITE_CONFIG||{};
 const STORAGE_NS=SITE_CONFIG.storageNamespace||'woodsy-cinematheque';
-const APP_KEY=`${STORAGE_NS}-state-v3`;
-const LIB_KEY=`${STORAGE_NS}-library-v3`;
-const ADMIN_KEY=`${STORAGE_NS}-admin-v1`;
+const APP_KEY=SITE_CONFIG.mode==='personal'?'woodsy-cinematheque-v3':`${STORAGE_NS}-state-v3`;
+const LIB_KEY=SITE_CONFIG.mode==='personal'?'woodsy-cinematheque-library-v3':`${STORAGE_NS}-library-v3`;
+const ADMIN_KEY=SITE_CONFIG.mode==='personal'?'woodsy-cinematheque-admin-v1':`${STORAGE_NS}-admin-v1`;
 const DEFAULT_STATE={selectedMonth:SITE_CONFIG.defaultMonth||'2026-10',completed:{},notes:{},monthNotes:{},added:{},noteUpdated:{},monthNoteUpdated:{}};
 const defaultSeedLibrary=[
   {id:'book-convenience-store-woman',title:'편의점 인간',originalTitle:'コンビニ人間',type:'book',year:2016,creator:'무라타 사야카',rating:null,historicalStatus:'read',source:'manual',sourceUrl:'',tags:['existing-read']},

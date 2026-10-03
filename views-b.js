@@ -28,57 +28,24 @@ function archivePage(){
 function importPage(){return `${appHeader('#import')}<main class="shell"><section class="hero"><div class="eyebrow accent-label">IMPORT / BACKUP</div><h1>MASTER LIBRARY 가져오기</h1><p class="lede">CSV를 선택하면 먼저 구조를 확인하고 예상 추가·매칭 건수를 보여줍니다. 리뷰와 스포일러 본문은 저장하지 않습니다.</p></section><section class="section"><div class="grid two"><div class="filebox"><div class="eyebrow accent-label">WATCHAPEDIA CSV</div><h3>감상 기록 가져오기</h3><input type="file" id="watcha-file" accept=".csv,text/csv"><div id="watcha-preview" class="import-preview">파일을 선택하면 미리보기가 표시됩니다.</div><div class="actions"><button class="btn" onclick="importWatcha()">확인 후 가져오기</button></div></div><div class="filebox"><div class="eyebrow accent-label">BACKUP</div><h3>JSON 내보내기 / 복원</h3><div class="actions"><button class="btn secondary" onclick="exportBackup()">JSON 내보내기</button><label class="btn secondary">JSON 복원<input type="file" id="restore-file" accept="application/json,.json" style="display:none" onchange="restoreBackup(this.files[0])"></label></div></div></div></section><section class="section"><div class="grid two"><div class="filebox"><div class="eyebrow accent-label">ADD A BOOK</div><h3>책 단일 추가</h3><input class="search" id="book-title" placeholder="제목"><input class="search" id="book-author" placeholder="저자"><input class="search" id="book-year" placeholder="연도" inputmode="numeric"><div class="actions"><button class="btn" onclick="addBook()">READ로 추가</button></div></div><div><div class="eyebrow accent-label">IMPORT RESULT</div><div id="import-result" class="notice">아직 가져온 파일이 없습니다.</div><div class="actions"><button class="btn secondary" onclick="resetAll()">모든 로컬 기록 초기화</button></div></div></div></section></main>`}
 function adminPage(){
   if(!isAdminUnlocked()){
-    return `${appHeader('#admin')}<main class="shell">
-      <section class="hero"><div class="eyebrow accent-label">ADMIN MODE</div><h1>관리자 확인</h1><p class="lede">텍스트와 스틸 수정 기능은 간단한 코드 확인 후 열립니다.</p></section>
-      <section class="section"><div class="admin-lock"><div class="eyebrow accent-label">ACCESS CODE</div><h2>4자리 코드를 입력하세요</h2><input id="admin-code" class="search admin-code" type="password" inputmode="numeric" maxlength="4" autocomplete="off" aria-label="관리자 코드"><div class="actions"><button class="btn" onclick="adminLogin()">관리자 모드 열기</button></div></div></section>
-    </main>`;
+    return `${appHeader('#admin')}<main class="shell"><section class="hero"><div class="eyebrow accent-label">ADMIN MODE</div><h1>관리자 확인</h1><p class="lede">텍스트·큐레이션·스틸·이번 주 작품을 수정하려면 코드를 입력하세요.</p></section><section class="section"><div class="admin-lock"><div class="eyebrow accent-label">ACCESS CODE</div><h2>4자리 코드를 입력하세요</h2><input id="admin-code" class="search admin-code" type="password" inputmode="numeric" maxlength="4" autocomplete="off"><div class="actions"><button class="btn" onclick="adminLogin()">관리자 모드 열기</button></div></div></section></main>`;
   }
-  const mid=window._adminMonth||state.selectedMonth;
-  const m=months[mid]||month();
-  const wid=window._adminWork||m.core[0];
-  const w=byId[wid]||works[0];
-  const st=stills[wid]||{};
+  const mid=window._adminMonth||state.selectedMonth,m=months[mid]||month(),wid=window._adminWork||m.core[0],w=byId[wid]||works[0],st=stills[wid]||{},ed=editorialFor(wid)||{};
+  const q=ed.quote||{};
   return `${appHeader('#admin')}<main class="shell">
-    <section class="hero"><div class="eyebrow accent-label">ADMIN MODE</div><h1>텍스트와 스틸 직접 수정</h1>
-      <p class="lede">여기서 바꾼 내용은 이 브라우저에만 저장됩니다. GitHub 원본 파일은 건드리지 않으며 JSON 백업에 함께 포함됩니다.</p>
-      <div class="actions"><button class="btn secondary" onclick="adminLogout()">관리자 모드 잠그기</button></div>
-      <div class="notice">월 제목·소제목·프로그램 노트, 작품 제목·원제·감독/저자·연도·역할·스틸 URL과 출처를 직접 수정할 수 있어요.</div>
-    </section>
-    <section class="section"><div class="grid two">
-      <div class="admin-panel"><div class="eyebrow accent-label">MONTH TEXT</div><h2>월별 텍스트</h2>
-        <select id="admin-month-select" class="select" onchange="adminSelectMonth(this.value)">
-          ${Object.entries(months).map(([id,x])=>`<option value="${id}" ${id===mid?'selected':''}>${x.label}</option>`).join('')}
-        </select>
-        <label class="admin-label">영문 제목<input id="admin-month-title" class="search" value="${escapeAttr(m.title)}"></label>
-        <label class="admin-label">한국어 소제목<input id="admin-month-ko" class="search" value="${escapeAttr(m.ko)}"></label>
-        <label class="admin-label">프로그램 노트<textarea id="admin-month-note">${escapeHtml(m.note)}</textarea></label>
-        <label class="admin-label">개념 키워드 · 쉼표로 구분<input id="admin-month-concepts" class="search" value="${escapeAttr(m.concepts.join(', '))}"></label>
-        <div class="actions"><button class="btn" onclick="saveAdminMonth()">월 텍스트 저장</button></div>
-      </div>
-      <div class="admin-panel"><div class="eyebrow accent-label">WORK TEXT / STILL</div><h2>작품 정보</h2>
-        <select id="admin-work-select" class="select" onchange="adminSelectWork(this.value)">
-          ${works.map(x=>`<option value="${x.id}" ${x.id===wid?'selected':''}>${escapeHtml(formatTitle(x))} · ${x.year}</option>`).join('')}
-        </select>
-        <label class="admin-label">표시 제목<input id="admin-work-title" class="search" value="${escapeAttr(w.title)}"></label>
-        <label class="admin-label">원제<input id="admin-work-original" class="search" value="${escapeAttr(w.originalTitle||'')}"></label>
-        <label class="admin-label">감독 / 저자<input id="admin-work-creator" class="search" value="${escapeAttr(w.creator||'')}"></label>
-        <label class="admin-label">연도<input id="admin-work-year" class="search" inputmode="numeric" value="${w.year||''}"></label>
-        <label class="admin-label">역할
-          <select id="admin-work-role" class="select">
-            ${['CORE','LONG FORM','READING','EXPLORE','CONNECTED'].map(x=>`<option ${x===w.role?'selected':''}>${x}</option>`).join('')}
-          </select>
-        </label>
-        <label class="admin-label">스틸 이미지 URL<input id="admin-still-url" class="search" value="${escapeAttr(st.url||'')}"></label>
-        <label class="admin-label">스틸 출처<input id="admin-still-source" class="search" value="${escapeAttr(st.source||'')}"></label>
-        <div class="admin-preview">${visualHtml(w)}</div>
-        <div class="actions"><button class="btn" onclick="saveAdminWork()">작품 정보 저장</button></div>
-      </div>
+    <section class="hero"><div class="eyebrow accent-label">ADMIN MODE</div><h1>개인 시네마테크 편집실</h1><p class="lede">월별 프로그램과 작품 큐레이션을 코드 없이 수정합니다. 변경 내용은 현재 브라우저와 JSON 백업에 저장됩니다.</p><div class="actions"><button class="btn secondary" onclick="adminLogout()">관리자 모드 잠그기</button></div></section>
+    <section class="section"><div class="admin-panel"><div class="eyebrow accent-label">MONTH PROGRAM</div><h2>월별 편집</h2><select id="admin-month-select" class="select">${Object.entries(months).map(([id,x])=>`<option value="${id}" ${id===mid?'selected':''}>${x.label}</option>`).join('')}</select><div class="admin-grid"><label class="admin-label">영문 제목<input id="admin-month-title" class="search" value="${escapeAttr(m.title)}"></label><label class="admin-label">제목 줄바꿈 · | 구분<input id="admin-month-lines" class="search" value="${escapeAttr((m.titleLines||[m.title]).join(' | '))}"></label><label class="admin-label">한국어 소제목<input id="admin-month-ko" class="search" value="${escapeAttr(m.ko)}"></label><label class="admin-label">THIS WEEK'S TEXT<select id="admin-month-feature" class="select">${m.core.map(id=>`<option value="${id}" ${id===m.featureId?'selected':''}>${escapeHtml(byId[id].title)}</option>`).join('')}</select></label></div><label class="admin-label">프로그램 노트<textarea id="admin-month-note">${escapeHtml(m.note)}</textarea></label><label class="admin-label">월 개념 · 쉼표로 구분<input id="admin-month-concepts" class="search" value="${escapeAttr(m.concepts.join(', '))}"></label><div class="actions"><button class="btn" onclick="saveAdminMonth()">월 프로그램 저장</button></div></div></section>
+    <section class="section"><div class="admin-panel"><div class="eyebrow accent-label">WORK EDITOR</div><h2>작품 큐레이션</h2><select id="admin-work-select" class="select">${works.map(x=>`<option value="${x.id}" ${x.id===wid?'selected':''}>${escapeHtml(formatTitle(x))} · ${x.year}</option>`).join('')}</select>
+      <div class="admin-grid"><label class="admin-label">표시 제목<input id="admin-work-title" class="search" value="${escapeAttr(w.title)}"></label><label class="admin-label">원제<input id="admin-work-original" class="search" value="${escapeAttr(w.originalTitle||'')}"></label><label class="admin-label">감독 / 저자<input id="admin-work-creator" class="search" value="${escapeAttr(w.creator||'')}"></label><label class="admin-label">연도<input id="admin-work-year" class="search" value="${w.year||''}"></label><label class="admin-label">역할<select id="admin-work-role" class="select">${['CORE','LONG FORM','READING','EXPLORE','CONNECTED'].map(x=>`<option ${x===w.role?'selected':''}>${x}</option>`).join('')}</select></label><label class="admin-label">WHERE TO WATCH<input id="admin-work-service" class="search" value="${escapeAttr(serviceFor(wid))}"></label><label class="admin-label">확인 시점<input id="admin-work-checked" class="search" value="${escapeAttr(ed.checked||'')}"></label><label class="admin-label">스틸 focal point<input id="admin-still-position" class="search" value="${escapeAttr(focalFor(wid))}" placeholder="50% 50%"></label></div>
+      <label class="admin-label">LOGLINE<textarea id="admin-work-logline">${escapeHtml(ed.logline||'')}</textarea></label>
+      <div class="admin-grid"><label class="admin-label">VIEWING POINTS · 한 줄에 하나<textarea id="admin-work-points">${escapeHtml((ed.viewingPoints||[]).join('\n'))}</textarea></label><label class="admin-label">REFERENCES · 한 줄에 하나<textarea id="admin-work-references">${escapeHtml((ed.references||[]).join('\n'))}</textarea></label></div>
+      <div class="admin-grid"><label class="admin-label">KEYWORDS · 쉼표<input id="admin-work-keywords" class="search" value="${escapeAttr((ed.keywords||[]).join(', '))}"></label><label class="admin-label">CONNECTIONS · 작품 ID 쉼표<input id="admin-work-connections" class="search" value="${escapeAttr((connectionIds(wid)||[]).join(', '))}"></label><label class="admin-label">UNLOCK CONCEPTS · 쉼표<input id="admin-work-concepts" class="search" value="${escapeAttr((conceptIds(wid)||[]).join(', '))}"></label></div>
+      <div class="admin-subsection"><div class="eyebrow accent-label">QUOTE / CURATOR'S NOTE</div><div class="admin-grid"><label class="admin-label">종류<select id="admin-quote-kind" class="select"><option value="direct" ${q.kind!=='curator'?'selected':''}>DIRECT QUOTE</option><option value="curator" ${q.kind==='curator'?'selected':''}>CURATOR'S NOTE</option></select></label><label class="admin-label">출처<input id="admin-quote-source" class="search" value="${escapeAttr(q.source||'')}"></label></div><label class="admin-label">한국어<input id="admin-quote-text" class="search" value="${escapeAttr(q.text||'')}"></label><label class="admin-label">원어<input id="admin-quote-original" class="search" value="${escapeAttr(q.original||'')}"></label><label class="admin-label">영어<input id="admin-quote-en" class="search" value="${escapeAttr(q.en||'')}"></label></div>
+      <div class="admin-subsection"><div class="eyebrow accent-label">STILL</div><div class="admin-grid"><label class="admin-label">스틸 URL<input id="admin-still-url" class="search" value="${escapeAttr(st.url||'')}"></label><label class="admin-label">출처<input id="admin-still-source" class="search" value="${escapeAttr(st.source||'')}"></label></div><div class="admin-preview">${w.type==='film'?visualHtml(w):'<div class="notice">보조 텍스트는 이미지 없이 표시됩니다.</div>'}</div></div>
+      <div class="actions"><button class="btn" onclick="saveAdminWork()">작품 큐레이션 저장</button></div>
     </div></section>
-    <section class="section"><div class="eyebrow accent-label">RESET OVERRIDES</div><h2>사용자 수정만 초기화</h2>
-      <p class="program-note">진행률·메모·MASTER LIBRARY는 유지하고 관리자 모드에서 수정한 텍스트/스틸만 기본값으로 되돌립니다.</p>
-      <button class="btn secondary" onclick="resetAdminOverrides()">관리자 수정 초기화</button>
-    </section>
-  </main>`;
+    <section class="section"><div class="eyebrow accent-label">RESET OVERRIDES</div><h2>관리자 수정만 초기화</h2><p class="program-note">감상 완료·메모·MASTER LIBRARY는 유지합니다.</p><button class="btn secondary" onclick="resetAdminOverrides()">관리자 수정 초기화</button></section>
+  </main>`
 }
 function notFound(){return `${appHeader('')}<main class="shell"><section class="hero"><div class="eyebrow">404</div><h1>상영 예정이 없습니다</h1><button class="btn" onclick="navTo('#home')">홈으로</button></section></main>`}
 function render(){const r=route();let html;if(r==='#home')html=home();else if(r==='#curriculum')html=curriculum();else if(r==='#library')html=libraryPage();else if(r==='#notes')html=notesPage();else if(r==='#map')html=mapPage();else if(r==='#archive')html=archivePage();else if(r==='#import')html=importPage();else if(r==='#admin')html=adminPage();else if(r.startsWith('#work/'))html=workPage(r.split('/')[1]);else html=notFound();document.getElementById('app').innerHTML=html}

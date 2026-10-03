@@ -33,6 +33,7 @@ const stills = {
   'titane': {url:'https://live-production.wcms.abc-cdn.net.au/3fee3d886577f563bf04088192aed7cd?cropH=2000&cropW=3000&height=575&impolicy=wcms_crop_resize&width=862&xPos=607&yPos=0', source:'ABC'}
 
 };
+Object.entries(admin?.importedStills||{}).forEach(([id,o])=>{stills[id]={...(stills[id]||{}),...o}});
 Object.entries(admin?.stills||{}).forEach(([id,o])=>{stills[id]={...(stills[id]||{}),...o}});
 function proxyStillUrl(raw){
   return raw||'';
@@ -84,4 +85,20 @@ function thumbHtml(w){
     return `<div class="work-thumb"><div class="work-thumb-fallback"><span>${escapeHtml(w?.title||'')}</span></div><img src="${primary}" data-fallback="${escapeAttr(direct)}" alt="" style="object-position:${escapeAttr(focalFor(w.id))}" referrerpolicy="no-referrer" loading="lazy" onerror="thumbImageError(this)"></div>`;
   }
   return `<div class="work-thumb"><div class="work-thumb-fallback"><span>${escapeHtml(w?.title||'')}</span></div></div>`;
+}
+
+function supplementaryVisualHtml(w){
+  const v=visualFor(w?.id)||{};
+  const type=v.type||((w?.type==='book')?'cover':'still');
+  const url=v.url||'';
+  const source=v.source||'';
+  const pos=v.position||focalFor(w?.id);
+  const fallback=`<div class="fallback-layer supp-fallback" style="display:${url?'none':'flex'}"><div class="visual-top"><span class="eyebrow">${String(w?.type||'text').toUpperCase()} · ${w?.year||''}</span><span class="glyph">${w?.type==='book'?'READ':'EXPLORE'}</span></div><div class="big">${escapeHtml(w?.title||'')}</div></div>`;
+  if(type==='cover'){
+    return `<div class="detail-cover-visual">${fallback}${url?`<img src="${escapeAttr(url)}" alt="${escapeAttr(w.title)} cover" referrerpolicy="no-referrer" loading="eager" onerror="visualImageError(this)">`:''}${source?`<div class="still-credit">COVER · ${escapeHtml(source)}</div>`:''}</div>`;
+  }
+  if(type==='typographic'||!url){
+    return `<div class="detail-text-marker"><div class="eyebrow accent-label">${w.role||'SUPPLEMENTARY'} · ${String(w.type||'TEXT').toUpperCase()}</div><span>${w.type==='book'?'READ':'EXPLORE'}</span></div>`;
+  }
+  return `<div class="visual visual-still supplementary-still">${fallback}<img src="${escapeAttr(url)}" alt="${escapeAttr(w.title)} still" style="object-position:${escapeAttr(pos)}" referrerpolicy="no-referrer" loading="eager" onerror="visualImageError(this)">${source?`<div class="still-credit">STILL · ${escapeHtml(source)}</div>`:''}</div>`;
 }

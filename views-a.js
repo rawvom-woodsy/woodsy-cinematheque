@@ -77,46 +77,28 @@ function libraryPage(){
 function workPage(id){
   const w=byId[id]||library.find(x=>x.id===id||x.canonicalId===id);if(!w)return notFound();
   const mids=Object.entries(months).filter(([mid,m])=>m.core.includes(id)||m.supp.includes(id)).map(([mid,m])=>({mid,label:m.label,role:m.core.includes(id)?'CORE':(byId[id]?.role||'EXPLORE')}));
-  const rec=byId[id]?recordFor(byId[id]):w;const note=state.notes[id]||'',ed=editorialFor(id);
-  const connected=byId[id]?Object.values(byId).filter(x=>x.id!==id&&Object.values(months).some(m=>(m.core.includes(id)||m.supp.includes(id))&&(m.core.includes(x.id)||m.supp.includes(x.id)))).slice(0,3):[];
+  const rec=byId[id]?recordFor(byId[id]):w,note=state.notes[id]||'',ed=editorialFor(id),connections=connectionIds(id);
+  const currentMid=mids.find(x=>x.mid===state.selectedMonth)?.mid||mids[0]?.mid;
+  const doneDate=currentMid?completionDate(currentMid,id):null;
+  const visual=w.type==='film'?visualHtml(w):`<div class="detail-text-marker"><div class="eyebrow accent-label">${w.role||'SUPPLEMENTARY'} · ${String(w.type||'TEXT').toUpperCase()}</div><span>${w.type==='book'?'READ':'EXPLORE'}</span></div>`;
   return `${appHeader('')}<main class="shell">
     <div class="detail-intro"><button class="backlink" onclick="history.back()">← BACK</button></div>
     <section class="detail-layout">
-      ${visualHtml(w)}
+      ${visual}
       <div class="detail-copy">
         <div class="eyebrow accent-label">${(w.role||'LIBRARY')} · ${(w.type||'work').toUpperCase()}</div>
-        <h1>${w.title||''}</h1>
+        <h1>${formatTitle(w)}</h1>
         <p class="detail-original">${w.originalTitle||''}</p>
         ${ed?.logline?`<p class="detail-logline">${escapeHtml(ed.logline)}</p>`:''}
-        <div class="detail-meta">
-          <div><dt>CREATOR</dt><dd>${w.creator||'—'}</dd></div>
-          <div><dt>YEAR</dt><dd>${w.year||'—'}</dd></div>
-          <div><dt>YOUR RECORD</dt><dd>${rec?.historicalStatus||'none'}${rec?.rating?` · ★ ${rec.rating}`:''}</dd></div>
-        </div>
-        ${mids.length?`<div style="margin-top:26px">${mids.map(x=>`<div class="feature-kv"><span>${x.label}</span><strong>${x.role} · ${statusFor(byId[id]||w,x.mid)}</strong></div>`).join('')}</div>`:''}
-        <div class="actions">${mids.map(x=>`<button class="btn ${isDone(x.mid,id)?'secondary':''}" onclick="toggleDone('${x.mid}','${id}')">${x.label}: ${isDone(x.mid,id)?'완료 해제':'완료 표시'}</button>`).join('')}</div>
+        <dl class="detail-meta"><div><dt>CREATOR</dt><dd>${w.creator||'—'}</dd></div><div><dt>YEAR</dt><dd>${w.year||'—'}</dd></div><div><dt>WHERE</dt><dd>${escapeHtml(serviceFor(id))}</dd></div></dl>
+        ${ed?.checked?`<p class="availability-note">시청처 확인 · ${escapeHtml(ed.checked)}</p>`:''}
+        ${rec?`<div class="notice">MASTER LIBRARY · ${rec.historicalStatus||'recorded'}${rec.rating?` · ★ ${rec.rating}`:''}</div>`:''}
+        ${doneDate?`<p class="completed-date">✓ ${formatDateKo(doneDate)} 완료</p>`:''}
+        <div class="actions">${mids.map(x=>`<button class="btn ${isDone(x.mid,id)?'secondary':''}" onclick="toggleDone('${x.mid}','${id}')">${x.label}: ${isDone(x.mid,id)?'완료 해제':'완료 표시'}</button>`).join('')}${currentMid&&!months[currentMid].core.includes(id)?`<button class="btn secondary" onclick="toggleAdded('${currentMid}','${id}')">${isAdded(currentMid,id)?'MY BRANCH에서 제외':'MY BRANCH에 추가'}</button>`:''}</div>
       </div>
     </section>
-
-    ${ed?`<section class="section"><div class="detail-section-grid">
-      <div>
-        <div class="eyebrow accent-label">VIEWING POINTS</div>
-        <ol class="viewing-points">${(ed.viewingPoints||[]).map((x,i)=>`<li><span>${String(i+1).padStart(2,'0')}</span><p>${escapeHtml(x)}</p></li>`).join('')}</ol>
-        ${ed.keywords?.length?`<div class="editorial-block"><div class="eyebrow accent-label">KEYWORDS</div><div class="chips">${ed.keywords.map(x=>`<span class="chip">${escapeHtml(x)}</span>`).join('')}</div></div>`:''}
-      </div>
-      <div>
-        ${ed.quote?`<blockquote class="direct-quote detail-quote"><strong>“${escapeHtml(ed.quote.text)}”</strong>${ed.quote.en?`<p class="quote-en">${escapeHtml(ed.quote.en)}</p>`:'' }<footer>${escapeHtml(ed.quote.source)}</footer></blockquote>`:''}
-        ${ed.references?.length?`<div class="editorial-block"><div class="eyebrow accent-label">REFERENCES</div><ul class="reference-list">${ed.references.map(x=>`<li>${escapeHtml(x)}</li>`).join('')}</ul></div>`:''}
-      </div>
-    </div></section>`:''}
-
-    <section class="section">
-      <div class="detail-section-grid">
-        <div><div class="eyebrow accent-label">NOTE</div><h2>작품 메모</h2><textarea id="work-note" placeholder="장면, 감각, 질문, 연결을 자유롭게 기록하세요.">${escapeHtml(note)}</textarea><div class="actions"><button class="btn" onclick="saveWorkNote('${id}')">저장</button></div></div>
-        <div><div class="eyebrow accent-label">CURRICULUM CONNECTION</div><h2>이 작품이 놓인 자리</h2>${mids.length?mids.map(x=>`<div class="card"><div class="eyebrow accent-label">${x.role}</div><strong>${x.label}</strong><p class="program-note" style="margin-top:8px">${months[x.mid]?.title||''}</p></div>`).join(''):'<p class="program-note">현재 월별 커리큘럼에는 직접 배정되어 있지 않습니다.</p>'}</div>
-      </div>
-    </section>
-
-    ${connected.length?`<section class="section"><div class="section-head"><div><div class="eyebrow accent-label">CONNECTIONS</div><h2>같은 프로그램의 작품</h2></div></div><div class="connections-grid">${connected.map(x=>`<a class="connection-card ${x.type!=='film'?'text-connection':''}" href="#work/${x.id}">${x.type==='film'?thumbHtml(x):''}<strong>${formatTitle(x)}</strong><div class="work-meta">${x.creator} · ${x.year}</div></a>`).join('')}</div></section>`:''}
-  </main>`;
+    ${ed?`<section class="section editorial-detail"><div class="detail-section-grid"><div><div class="eyebrow accent-label">VIEWING POINTS</div><ol class="viewing-points">${(ed.viewingPoints||[]).map((x,i)=>`<li><span>${String(i+1).padStart(2,'0')}</span><p>${escapeHtml(x)}</p></li>`).join('')}</ol><div class="editorial-block"><div class="eyebrow accent-label">KEYWORDS</div><div class="keyword-line">${(ed.keywords||[]).map(x=>`<span>#${escapeHtml(x)}</span>`).join('')}</div></div></div><div>${ed.quote?quoteHtml(ed.quote):''}${ed.references?.length?`<div class="editorial-block"><div class="eyebrow accent-label">REFERENCES</div><ul class="reference-list">${ed.references.map(x=>`<li>${escapeHtml(x)}</li>`).join('')}</ul></div>`:''}${conceptIds(id).length?`<div class="editorial-block"><div class="eyebrow accent-label">UNLOCKS</div><div class="unlock-list">${conceptIds(id).map(c=>`<span>${currentMid&&isDone(currentMid,id)?'◆':'◇'} ${escapeHtml(c)}</span>`).join('')}</div></div>`:''}</div></div></section>`:''}
+    ${connections.length?`<section class="section"><div class="section-head"><div><div class="eyebrow accent-label">CONNECTIONS</div><h2>이 작품에서 이어지는 경로</h2></div></div><div class="connections-grid">${connections.map(cid=>{const x=byId[cid];return `<a class="connection-card ${x.type!=='film'?'text-connection':''}" href="#work/${x.id}">${x.type==='film'?thumbHtml(x):''}<strong>${formatTitle(x)}</strong><div class="work-meta">${x.creator} · ${x.year}</div><p class="connection-reason">${escapeHtml(editorialFor(x.id)?.logline||'')}</p></a>`}).join('')}</div></section>`:''}
+    <section class="section"><div class="note-single"><div class="eyebrow accent-label">NOTE</div><h2>작품 메모</h2><textarea id="work-note" placeholder="장면, 감각, 질문, 연결을 자유롭게 기록하세요.">${escapeHtml(note)}</textarea>${state.noteUpdated?.[id]?`<div class="small muted note-date">최근 수정 · ${formatDateKo(state.noteUpdated[id])}</div>`:''}<div class="actions"><button class="btn" onclick="saveWorkNote('${id}')">저장</button></div></div></section>
+  </main>`
 }

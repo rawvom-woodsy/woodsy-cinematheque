@@ -1,5 +1,5 @@
 const BOOKS_KEY=`${STORAGE_NS}-books-v1`;
-let books=(()=>{try{const v=JSON.parse(localStorage.getItem(BOOKS_KEY)||'[]');return Array.isArray(v)?v:[]}catch{return []}})();
+let books=(()=>{try{const saved=JSON.parse(localStorage.getItem(BOOKS_KEY)||'[]');const local=Array.isArray(saved)?saved:[];const seed=Array.isArray(window.BOOK_SEED)?window.BOOK_SEED:[];const map=new Map(seed.map(x=>[x.id,x]));local.forEach(x=>{if(x&&x.id)map.set(x.id,{...(map.get(x.id)||{}),...x})});return [...map.values()]}catch{return Array.isArray(window.BOOK_SEED)?structuredClone(window.BOOK_SEED):[]}})();
 function saveBooks(){try{localStorage.setItem(BOOKS_KEY,JSON.stringify(books))}catch(e){toast('책 기록을 저장하지 못했어요.')}}
 function bookById(id){return books.find(x=>x.id===id)}
 function importBooksData(items){

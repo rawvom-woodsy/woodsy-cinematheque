@@ -110,5 +110,5 @@ function supplementaryVisualHtml(w){
   if(type==='typographic'||!url){
     return `<div class="detail-text-marker"><div class="eyebrow accent-label">${w.role||'SUPPLEMENTARY'} · ${String(w.type||'TEXT').toUpperCase()}</div><span>${w.type==='book'?'READ':'EXPLORE'}</span></div>`;
   }
-  return `<div class="visual visual-still supplementary-still">${fallback}<img src="${escapeAttr(url)}" alt="${escapeAttr(w.title)} still" style="object-position:${escapeAttr(pos)}" referrerpolicy="no-referrer" loading="eager" onerror="visualImageError(this)">${source?`<div class="still-credit">STILL · ${escapeHtml(source)}</div>`:''}</div>`;
+  return `<div class="visual visual-still supplementary-still">${fallback}<img src="${escapeAttr(url)}" data-fallback="${escapeAttr(v.fallback||'')}" alt="${escapeAttr(w.title)} still" style="object-position:${escapeAttr(pos)}" referrerpolicy="no-referrer" loading="eager" onerror="visualImageError(this)">${source?`<div class="still-credit">STILL · ${escapeHtml(source)}</div>`:''}</div>`;
 }

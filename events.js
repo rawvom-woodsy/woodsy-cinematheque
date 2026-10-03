@@ -29,6 +29,8 @@
     if(code==='saveAdminMonth()') return saveAdminMonth();
     if(code==='saveAdminWork()') return saveAdminWork();
     if(code==='resetAdminOverrides()') return resetAdminOverrides();
+    if(code==='adminLogin()') return adminLogin();
+    if(code==='adminLogout()') return adminLogout();
     if(code==='history.back()') return history.back();
   }
 
@@ -43,6 +45,13 @@
     const el=e.target.closest('[data-input]');
     if(!el) return;
     if(el.id==='lib-q'){window._libQ=el.value;render();}
+  });
+
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Enter' && e.target && e.target.id==='admin-code'){
+      e.preventDefault();
+      adminLogin();
+    }
   });
 
   document.addEventListener('change',e=>{

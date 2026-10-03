@@ -87,6 +87,11 @@ function thumbHtml(w){
   return `<div class="work-thumb"><div class="work-thumb-fallback"><span>${escapeHtml(w?.title||'')}</span></div></div>`;
 }
 
+function coverProxyUrl(raw){
+  if(!raw)return '';
+  if(raw.startsWith('./')||raw.startsWith('/'))return raw;
+  return 'https://images.weserv.nl/?url='+encodeURIComponent(raw)+'&w=900&fit=contain&output=jpg&q=90';
+}
 function supplementaryVisualHtml(w){
   const v=visualFor(w?.id)||{};
   const type=v.type||((w?.type==='book')?'cover':'still');
@@ -95,7 +100,8 @@ function supplementaryVisualHtml(w){
   const pos=v.position||focalFor(w?.id);
   const fallback=`<div class="fallback-layer supp-fallback" style="display:${url?'none':'flex'}"><div class="visual-top"><span class="eyebrow">${String(w?.type||'text').toUpperCase()} · ${w?.year||''}</span><span class="glyph">${w?.type==='book'?'READ':'EXPLORE'}</span></div><div class="big">${escapeHtml(w?.title||'')}</div></div>`;
   if(type==='cover'){
-    return `<div class="detail-cover-visual">${fallback}${url?`<img src="${escapeAttr(url)}" alt="${escapeAttr(w.title)} cover" referrerpolicy="no-referrer" loading="eager" onerror="visualImageError(this)">`:''}${source?`<div class="still-credit">COVER · ${escapeHtml(source)}</div>`:''}</div>`;
+    const primary=coverProxyUrl(url),direct=url;
+    return `<div class="detail-cover-visual">${fallback}${url?`<img src="${escapeAttr(primary)}" data-fallback="${escapeAttr(direct)}" alt="${escapeAttr(w.title)} cover" loading="eager" onerror="visualImageError(this)">`:''}${source?`<div class="still-credit">COVER · ${escapeHtml(source)}</div>`:''}</div>`;
   }
   if(type==='typographic'||!url){
     return `<div class="detail-text-marker"><div class="eyebrow accent-label">${w.role||'SUPPLEMENTARY'} · ${String(w.type||'TEXT').toUpperCase()}</div><span>${w.type==='book'?'READ':'EXPLORE'}</span></div>`;

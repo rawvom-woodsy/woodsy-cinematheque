@@ -1361,6 +1361,7 @@ const CURATION={
   for(const [mid,meta] of Object.entries(CURATION.monthMeta)){
     if(months[mid]) Object.assign(months[mid],meta);
   }
+  for(const [mid,o] of Object.entries(admin.months||{})){ if(months[mid]) Object.assign(months[mid],o); }
   for(const [id,meta] of Object.entries(CURATION.works)){
     if(byId[id]){
       for(const k of ['service','checked','connections','concepts','focal']) if(meta[k]!==undefined) byId[id][k]=meta[k];
@@ -1399,4 +1400,4 @@ function unlockedConcepts(mid){
   return [...out];
 }
 function displayTitleHtml(m){const lines=m.titleLines?.length?m.titleLines:[m.title];return lines.map(x=>'<span>'+escapeHtml(x)+'</span>').join('')}
-function quoteLabel(q){return q?.kind==='curator'?"CURATOR'S NOTE":"DIRECT QUOTE"}
+function quoteLabel(q){return q?.kind==='curator'||/프로그램 노트|CURATOR/i.test(q?.source||'')?"CURATOR'S NOTE":"DIRECT QUOTE"}

@@ -36,6 +36,18 @@ const stills = {
 Object.entries(admin?.stills||{}).forEach(([id,o])=>{stills[id]={...(stills[id]||{}),...o}});
 function visualHtml(w){
   const s=stills[w?.id];
-  if(!s) return `<div class="visual"><div><div class="eyebrow" style="color:#ddd">${String(w?.type||'work').toUpperCase()} · ${w?.year||''}</div><div class="big">${escapeHtml(w?.title||'')}</div><div class="small still-credit">TYPOGRAPHIC FALLBACK</div></div></div>`;
-  return `<div class="visual visual-still"><img src="${s.url}" alt="${escapeAttr(w.title)} film still" referrerpolicy="no-referrer" loading="eager" onerror="this.style.display='none';this.parentElement.classList.add('still-failed')"><div class="visual-overlay"><div class="eyebrow" style="color:#eee">${String(w.type||'work').toUpperCase()} · ${w.year||''}</div><div class="big">${escapeHtml(w.title)}</div><div class="small still-credit">STILL · ${escapeHtml(s.source)}</div></div></div>`;
+  if(!s){
+    return `<div class="visual visual-fallback">
+      <div class="visual-top"><span class="eyebrow" style="color:rgba(255,255,255,.7)">${String(w?.type||'work').toUpperCase()} · ${w?.year||''}</span><span class="glyph">${escapeHtml(String((w?.year||'').toString().slice(-2)||'•'))}</span></div>
+      <div><div class="big">${escapeHtml(w?.title||'')}</div><div class="small" style="margin-top:10px;color:rgba(255,255,255,.65)">TYPOGRAPHIC VISUAL</div></div>
+    </div>`;
+  }
+  return `<div class="visual visual-still"><img src="${s.url}" alt="${escapeAttr(w.title)} film still" referrerpolicy="no-referrer" loading="eager" onerror="this.style.display='none';this.parentElement.classList.remove('visual-still');this.parentElement.classList.add('visual-fallback')"><div class="still-credit">STILL · ${escapeHtml(s.source)}</div></div>`;
+}
+function thumbHtml(w){
+  const s=stills[w?.id];
+  if(s){
+    return `<div class="work-thumb"><img src="${s.url}" alt="" referrerpolicy="no-referrer" loading="lazy" onerror="this.parentElement.innerHTML='<div class=&quot;work-thumb-fallback&quot;><span>${escapeAttr(w?.title||'')}</span></div>'"></div>`;
+  }
+  return `<div class="work-thumb"><div class="work-thumb-fallback"><span>${escapeHtml(w?.title||'')}</span></div></div>`;
 }

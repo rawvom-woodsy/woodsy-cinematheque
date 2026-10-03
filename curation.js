@@ -1360,6 +1360,9 @@ const CURATION={
 /* Persistent curriculum imports created from CINEMATHEQUE IMPORT PACKAGE v2. */
 admin.importedMonths=admin.importedMonths||{};
 admin.importedWorks=admin.importedWorks||{};
+admin.importedCuration=admin.importedCuration||{};
+admin.importedEditorial=admin.importedEditorial||{};
+admin.importedStills=admin.importedStills||{};
 for(const [id,saved] of Object.entries(admin.importedWorks)){
   if(!byId[id]){
     const nw=W(id,saved.title||id,saved.originalTitle||'',saved.type||'film',saved.creator||'',saved.year||'',saved.role||'CORE',saved.tags||[]);
@@ -1374,6 +1377,7 @@ for(const [mid,saved] of Object.entries(admin.importedMonths)){
   for(const [mid,meta] of Object.entries(CURATION.monthMeta)){
     if(months[mid]) Object.assign(months[mid],meta);
   }
+  for(const [mid,o] of Object.entries(admin.importedMonths||{})){ if(months[mid]) Object.assign(months[mid],o); }
   for(const [mid,o] of Object.entries(admin.months||{})){ if(months[mid]) Object.assign(months[mid],o); }
   for(const [id,meta] of Object.entries(CURATION.works)){
     if(byId[id]){
@@ -1382,14 +1386,16 @@ for(const [mid,saved] of Object.entries(admin.importedMonths)){
   }
   if(!admin.editorial) admin.editorial={};
   if(!admin.curation) admin.curation={};
+  for(const [id,o] of Object.entries(admin.importedCuration||{})){ if(byId[id]) Object.assign(byId[id],o); }
   for(const [id,o] of Object.entries(admin.curation||{})){ if(byId[id]) Object.assign(byId[id],o); }
   const originalEditorialFor=editorialFor;
   editorialFor=function(id){
     const base=originalEditorialFor(id)||{};
     const extra=CURATION.works[id]||{};
+    const imported=(admin.importedEditorial||{})[id]||{};
     const edited=(admin.editorial||{})[id]||{};
-    const merged={...base,...extra,...edited};
-    if(base.quote||extra.quote||edited.quote) merged.quote={...(base.quote||{}),...(extra.quote||{}),...(edited.quote||{})};
+    const merged={...base,...extra,...imported,...edited};
+    if(base.quote||extra.quote||imported.quote||edited.quote) merged.quote={...(base.quote||{}),...(extra.quote||{}),...(imported.quote||{}),...(edited.quote||{})};
     return Object.keys(merged).length?merged:null;
   };
   if(!state.added || Array.isArray(state.added)) state.added={};
@@ -1400,8 +1406,8 @@ for(const [mid,saved] of Object.entries(admin.importedMonths)){
 function connectionIds(id){return (editorialFor(id)?.connections||byId[id]?.connections||[]).filter(x=>byId[x])}
 function conceptIds(id){return editorialFor(id)?.concepts||byId[id]?.concepts||[]}
 function serviceFor(id){const e=editorialFor(id)||{};return e.service||byId[id]?.service||'—'}
-function focalFor(id){return (admin.stills?.[id]?.position||editorialFor(id)?.focal||byId[id]?.focal||'50% 50%')}
-function visualFor(id){const e=editorialFor(id)||{},a=admin.stills?.[id]||{};const base=e.visual||{};return {...base,...(a.visualType?{type:a.visualType}:{}),...(a.url?{url:a.url}:{}),...(a.source?{source:a.source}:{}),...(a.position?{position:a.position}:{})}}
+function focalFor(id){return (admin.stills?.[id]?.position||admin.importedStills?.[id]?.position||editorialFor(id)?.focal||byId[id]?.focal||'50% 50%')}
+function visualFor(id){const e=editorialFor(id)||{},i=admin.importedStills?.[id]||{},a=admin.stills?.[id]||{};const base=e.visual||{};return {...base,...(i.visualType?{type:i.visualType}:{}),...(i.url?{url:i.url}:{}),...(i.source?{source:i.source}:{}),...(i.position?{position:i.position}:{}),...(a.visualType?{type:a.visualType}:{}),...(a.url?{url:a.url}:{}),...(a.source?{source:a.source}:{}),...(a.position?{position:a.position}:{})}}
 function addedKey(mid,id){return mid+':'+id}
 function isAdded(mid,id){return !!state.added?.[addedKey(mid,id)]}
 function toggleAdded(mid,id){const k=addedKey(mid,id);if(state.added[k])delete state.added[k];else state.added[k]=new Date().toISOString();save();render()}

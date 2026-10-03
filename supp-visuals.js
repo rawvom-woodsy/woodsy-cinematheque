@@ -176,7 +176,57 @@ const SUPPLEMENTARY_VISUALS={
     "fallback": "https://books.google.com/books/content?vid=ISBN9788931010732&printsec=frontcover&img=1&zoom=1&source=gbs_api",
     "source": "문예출판사 / 교보문고",
     "isbn": "9788931010732"
-  }
+  },
+
+  "easy-series": {
+    "type": "still",
+    "url": "https://pics.filmaffinity.com/Easy_TV_Series-349236552-large.jpg",
+    "source": "FilmAffinity / Netflix",
+    "position": "50% 45%"
+  },
+  "feel-good-series": {
+    "type": "still",
+    "url": "https://akns-images.eonline.com/eol_images/Entire_Site/2020320/rs_600x600-200420102650-600-feel-good-ch-042020.jpg?crop=1200%3A1200%3Bcenter%2Ctop&fit=around%7C1200%3A1200&output-quality=90",
+    "fallback": "https://bilder.fernsehserien.de/gfx/pics/1200/Szenefoto-Aus-Feel-Good-Mit-M.jpg.jpg",
+    "source": "E! / Netflix",
+    "position": "50% 45%"
+  },
+  "fragments-lover-discourse": {
+    "type": "cover",
+    "url": "https://contents.kyobobook.co.kr/sih/fit-in/458x0/pdt/9788980389483.jpg",
+    "fallback": "https://books.google.com/books/content?vid=ISBN9788980389483&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "source": "동문선 / 교보문고",
+    "isbn": "9788980389483"
+  },
+  "simple-passion": {
+    "type": "cover",
+    "url": "https://contents.kyobobook.co.kr/sih/fit-in/458x0/pdt/9788954619585.jpg",
+    "fallback": "https://books.google.com/books/content?vid=ISBN9788954619585&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "source": "문학동네 / 교보문고",
+    "isbn": "9788954619585"
+  },
+  "dept-speculation": {
+    "type": "cover",
+    "url": "https://contents.kyobobook.co.kr/sih/fit-in/458x0/pdt/9788994015989.jpg",
+    "fallback": "https://books.google.com/books/content?vid=ISBN9788994015989&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "source": "뮤진트리 / 교보문고",
+    "isbn": "9788994015989"
+  },
+  "why-love-hurts": {
+    "type": "cover",
+    "url": "https://contents.kyobobook.co.kr/sih/fit-in/458x0/pdt/9788971995495.jpg",
+    "fallback": "https://books.google.com/books/content?vid=ISBN9788971995495&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "source": "돌베개 / 교보문고",
+    "isbn": "9788971995495"
+  },
+  "all-about-love": {
+    "type": "cover",
+    "url": "https://contents.kyobobook.co.kr/sih/fit-in/458x0/pdt/9788962604221.jpg",
+    "fallback": "https://books.google.com/books/content?vid=ISBN9788962604221&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+    "source": "책읽는수요일 / 교보문고",
+    "isbn": "9788962604221"
+  },
+
 };
 for(const [id,visual] of Object.entries(SUPPLEMENTARY_VISUALS)){
   CURATION.works[id]={...(CURATION.works[id]||{}),visual};

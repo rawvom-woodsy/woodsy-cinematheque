@@ -4,7 +4,9 @@ function notesPage(){
   return `${appHeader('#notes')}<main class="shell"><section class="hero"><div class="eyebrow accent-label">NOTES</div><h1>관찰과 연결의 기록</h1><p class="lede">작품을 본 뒤 남긴 문장과 한 달 전체를 돌아보며 남긴 메모를 최근 수정 순으로 모읍니다.</p></section><section class="section notes-list"><div class="section-head"><div><div class="eyebrow accent-label">WORK NOTES</div><h2>작품 메모</h2></div><span class="small muted">${entries.length}</span></div>${entries.length?entries.map(([id,t])=>`<div class="note-item"><div><a href="#work/${id}"><strong>${formatTitle(byId[id]||library.find(r=>r.id===id)||{title:id,type:'film'})}</strong></a>${state.noteUpdated?.[id]?`<div class="small muted">${formatDateKo(state.noteUpdated[id])}</div>`:''}</div><div class="note-preview">${escapeHtml(t).slice(0,240)}</div></div>`).join(''):'<div class="empty">아직 작품 메모가 없습니다.</div>'}</section><section class="section notes-list"><div class="section-head"><div><div class="eyebrow accent-label">MONTH NOTES</div><h2>월별 메모</h2></div><span class="small muted">${monthEntries.length}</span></div>${monthEntries.length?monthEntries.map(([mid,t])=>`<div class="note-item"><div><strong>${months[mid]?.label||mid}</strong>${state.monthNoteUpdated?.[mid]?`<div class="small muted">${formatDateKo(state.monthNoteUpdated[mid])}</div>`:''}</div><div class="note-preview">${escapeHtml(t).slice(0,300)}</div></div>`).join(''):'<div class="empty">아직 월별 메모가 없습니다.</div>'}</section></main>`
 }
 function mapPage(){
-  const m=month(),ids=[...m.core,...m.supp],p=progress(state.selectedMonth),doneIds=ids.filter(id=>isDone(state.selectedMonth,id));
+  const m=month(),cfg=siteConfig();
+  if(!m.core?.length&&!m.supp?.length)return `${appHeader('#map')}<main class="shell"><section class="empty-instance"><div class="eyebrow accent-label">MAP</div><h1>아직 연결할 프로그램이 없습니다</h1><p class="lede">${escapeHtml(cfg.emptyText||'IMPORT에서 프로그램을 먼저 불러오세요.')}</p><div class="actions"><button class="btn" onclick="navTo('#import')">IMPORT PROGRAM</button></div></section></main>`;
+  const ids=[...m.core,...m.supp],p=progress(state.selectedMonth),doneIds=ids.filter(id=>isDone(state.selectedMonth,id));
   const center={x:430,y:270},pos={};
   m.core.forEach((id,i)=>{const a=(Math.PI*2*i/m.core.length)-Math.PI/2;pos[id]={x:center.x+190*Math.cos(a),y:center.y+150*Math.sin(a)}});
   m.supp.forEach((id,i)=>{const a=(Math.PI*2*i/m.supp.length)-Math.PI/2;pos[id]={x:center.x+330*Math.cos(a),y:center.y+225*Math.sin(a)}});
@@ -27,7 +29,7 @@ function archivePage(){
 }
 function importPage(){
   return `${appHeader('#import')}<main class="shell">
-    <section class="hero"><div class="eyebrow accent-label">IMPORT / BACKUP</div><h1>새 커리큘럼과 기존 기록 가져오기</h1><p class="lede">ChatGPT와 다음 달 프로그램을 완성한 뒤 <strong>CINEMATHEQUE IMPORT PACKAGE v2</strong>를 받아 아래에 붙여넣으면 새 달을 계속 추가할 수 있습니다. 가져오기 전에는 기존 작품 재사용·신규 작품·업데이트 범위를 먼저 확인합니다.</p></section>
+    <section class="hero"><div class="eyebrow accent-label">IMPORT / BACKUP</div><h1>새 커리큘럼과 기존 기록 가져오기</h1><p class="lede">ChatGPT와 새 프로그램을 완성한 뒤 <strong>CINEMATHEQUE IMPORT PACKAGE v2</strong>를 받아 아래에 붙여넣으면 새 달을 계속 추가할 수 있습니다. 가져오기 전에는 기존 작품 재사용·신규 작품·업데이트 범위를 먼저 확인합니다.</p></section>
 
     <section class="section curriculum-import-section">
       <div class="section-head"><div><div class="eyebrow accent-label">CINEMATHEQUE IMPORT PACKAGE · V2</div><h2>월별 커리큘럼 추가</h2></div></div>
@@ -58,6 +60,7 @@ function adminPage(){
   if(!isAdminUnlocked()){
     return `${appHeader('#admin')}<main class="shell"><section class="hero"><div class="eyebrow accent-label">ADMIN MODE</div><h1>관리자 확인</h1><p class="lede">텍스트·큐레이션·스틸·이번 주 작품을 수정하려면 코드를 입력하세요.</p></section><section class="section"><div class="admin-lock"><div class="eyebrow accent-label">ACCESS CODE</div><h2>4자리 코드를 입력하세요</h2><input id="admin-code" class="search admin-code" type="password" inputmode="numeric" maxlength="4" autocomplete="off"><div class="actions"><button class="btn" onclick="adminLogin()">관리자 모드 열기</button></div></div></section></main>`;
   }
+  if(!Object.keys(months).length)return `${appHeader('#admin')}<main class="shell"><section class="empty-instance"><div class="eyebrow accent-label">ADMIN MODE</div><h1>먼저 프로그램을 불러오세요</h1><p class="lede">빈 영화모임 페이지에서는 IMPORT로 첫 커리큘럼을 추가한 뒤 편집 기능을 사용할 수 있습니다.</p><div class="actions"><button class="btn" onclick="navTo('#import')">IMPORT PROGRAM</button></div></section></main>`;
   const mid=window._adminMonth||state.selectedMonth,m=months[mid]||month(),wid=window._adminWork||m.core[0],w=byId[wid]||works[0],st=stills[wid]||{},ed=editorialFor(wid)||{};
   const q=ed.quote||{};
   return `${appHeader('#admin')}<main class="shell">

@@ -1,3 +1,17 @@
+const ADMIN_ACCESS_KEY='woodsy-admin-access-v1';
+function isAdminUnlocked(){try{return sessionStorage.getItem(ADMIN_ACCESS_KEY)==='1'}catch{return false}}
+function adminLogin(){
+  const input=document.getElementById('admin-code');
+  if((input?.value||'').trim()==='1234'){
+    try{sessionStorage.setItem(ADMIN_ACCESS_KEY,'1')}catch{}
+    render();
+  }else{
+    toast('관리자 코드가 맞지 않습니다.');
+    if(input){input.value='';input.focus();}
+  }
+}
+function adminLogout(){try{sessionStorage.removeItem(ADMIN_ACCESS_KEY)}catch{};render()}
+
 
 function adminSelectMonth(v){window._adminMonth=v;window._adminWork=(months[v]?.core||[])[0]||works[0]?.id;render()}
 function adminSelectWork(v){window._adminWork=v;render()}

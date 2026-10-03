@@ -45,9 +45,12 @@ function visualImageError(img){
     img.src=fallback;
     return;
   }
+  const parent=img.parentElement;
+  if(parent){
+    const layer=parent.querySelector('.fallback-layer');
+    if(layer) layer.style.display='flex';
+  }
   img.remove();
-  const layer=img.parentElement?.querySelector?.('.fallback-layer');
-  if(layer) layer.style.display='flex';
 }
 function thumbImageError(img){
   const fallback=img.dataset.fallback||'';

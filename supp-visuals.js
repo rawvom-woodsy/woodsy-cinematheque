@@ -87,8 +87,9 @@ const SUPPLEMENTARY_VISUALS={
   },
   "housekeeping": {
     "type": "cover",
-    "url": "https://covers.openlibrary.org/isbn/9780312424091-L.jpg",
-    "source": "Open Library"
+    "url": "https://mpd-biblio-covers.imgix.net/9780374172084.jpg",
+    "source": "Macmillan",
+    "fallback": "https://covers.openlibrary.org/isbn/9780312424091-L.jpg"
   },
   "austerlitz": {
     "type": "cover",

@@ -1,7 +1,7 @@
 const stills = {
   'hiroshima': {url:'https://assets.eyefilm.nl/images/production/still_Hiroshima-mon-amour-Alain-Resnais-FR-1959.jpg', source:'Eye Filmmuseum'},
   'asako': {url:'https://images-prod.anothermag.com/1000/azure/another-prod/410/7/417568.jpeg', source:'AnOther'},
-  'personal-shopper': {url:'https://www.viennale.at/assets/styles/is_archive_landscape_big/public/2016/movie/V16personal03.jpg?itok=rrdXWGHp', source:'Viennale'},
+  'personal-shopper': {url:'https://image.tmdb.org/t/p/w1280/gtYG3ae617HxmUKklnd9itcxa5G.jpg', fallback:'https://www.viennale.at/assets/styles/is_archive_landscape_big/public/2016/movie/V16personal03.jpg?itok=rrdXWGHp', source:'TMDB / Viennale'},
   'atlantics': {url:'https://idsb.tmgrup.com.tr/ly/uploads/images/2020/04/28/32829.jpg', source:'Daily Sabah'},
   'holy-motors': {url:'https://cdn.infooggi.it/images/uploads/public/5b9/f9e/72e/5b9f9e72e9acd311508284.jpg/webp', source:'InfoOggi'},
   'perfect-days': {url:'https://cineuropa.org/imgCache/2023/05/26/1685106393232_0620x0413_0x18x1000x666_1685106555083.jpg', source:'Cineuropa'},
@@ -26,7 +26,7 @@ const stills = {
   'wrestler': {url:'https://images.ladepeche.fr/api/v1/images/view/5c2f54a73e454652524251bf/large-fit/image.jpg', source:'La Dépêche'},
   'neon-demon': {url:'https://s.yimg.com/ny/api/res/1.2/vEPpSWvwwWmUwqVMa4pojw--/YXBwaWQ9aGlnaGxhbmRlcjt3PTI0MDA7aD0xNjAyO2NmPXdlYnA-/https%3A/66.media.tumblr.com/946ac1daa83ac729406c8a74385a12e7/tumblr_inline_o9jbw4qa961uozwcw_1280.jpg', source:'Yahoo'},
   'black-swan': {url:'https://imgix.bustle.com/uploads/image/2025/12/1/391e8a4e/black-swan_a895305a.jpg?crop=faces&fit=crop&fm=jpg&h=630&w=1200', source:'Inverse'},
-  'piano-teacher': {url:'https://kinorotterdam.nl/content/uploads/2026/01/The-Piano-Teacher-03-1120x630.jpg', source:'KINO Rotterdam'},
+  'piano-teacher': {url:'https://image.tmdb.org/t/p/w780/f3QlognjrlLlJVHDJb1f0yLQxTL.jpg', fallback:'https://ilarge.lisimg.com/image/7604811/1118full-the-piano-teacher-screenshot.jpg', source:'TMDB / Listal'},
   'shame': {url:'https://images.squarespace-cdn.com/content/v1/6657277c35d79556a7079211/1730362801565-RWKA6PUL0MRZRPI9FBSE/09%2B%28895%29.jpg', source:'FilmSpice'},
   'different-man': {url:'https://austin.culturemap.com/media-library/renate-reinsve-and-sebastian-stan-in-a-different-man.jpg?coordinates=350%2C0%2C0%2C0&height=1200&id=53750363&width=1200', source:'CultureMap'},
   'saint-maud': {url:'https://bostonglobe-prod.cdn.arcpublishing.com/resizer/v2/IQIQ33BI2TS5AFNGUCVWQ6Z4VI.jpg?auth=4d2940e8a3030eafcc4a61094baaf79de3bf87b6b05aeef99cf0ad3e478efaa8&width=1440', source:'The Boston Globe'},
@@ -34,6 +34,22 @@ const stills = {
 
 };
 Object.entries(admin?.stills||{}).forEach(([id,o])=>{stills[id]={...(stills[id]||{}),...o}});
+function stillError(img){
+  const fallback=img.dataset.fallback||'';
+  if(fallback && img.src!==fallback){
+    img.dataset.fallback='';
+    img.src=fallback;
+    return;
+  }
+  img.style.display='none';
+  const parent=img.parentElement;
+  if(parent){
+    parent.classList.remove('visual-still');
+    parent.classList.add('visual-fallback');
+    const layer=parent.querySelector('.fallback-layer');
+    if(layer) layer.style.display='flex';
+  }
+}
 function visualHtml(w){
   const s=stills[w?.id];
   if(!s){
@@ -42,12 +58,16 @@ function visualHtml(w){
       <div><div class="big">${escapeHtml(w?.title||'')}</div><div class="small" style="margin-top:10px;color:rgba(255,255,255,.65)">TYPOGRAPHIC VISUAL</div></div>
     </div>`;
   }
-  return `<div class="visual visual-still"><img src="${s.url}" alt="${escapeAttr(w.title)} film still" referrerpolicy="no-referrer" loading="eager" onerror="this.style.display='none';this.parentElement.classList.remove('visual-still');this.parentElement.classList.add('visual-fallback')"><div class="still-credit">STILL · ${escapeHtml(s.source)}</div></div>`;
+  return `<div class="visual visual-still">
+    <div class="fallback-layer" style="display:none"><div class="visual-top"><span class="eyebrow">${String(w?.type||'work').toUpperCase()} · ${w?.year||''}</span><span class="glyph">${escapeHtml(String((w?.year||'').toString().slice(-2)||'•'))}</span></div><div class="big">${escapeHtml(w?.title||'')}</div></div>
+    <img src="${s.url}" data-fallback="${escapeAttr(s.fallback||'')}" alt="${escapeAttr(w.title)} film still" referrerpolicy="no-referrer" loading="eager" onerror="stillError(this)">
+    <div class="still-credit">STILL · ${escapeHtml(s.source)}</div>
+  </div>`;
 }
 function thumbHtml(w){
   const s=stills[w?.id];
   if(s){
-    return `<div class="work-thumb"><img src="${s.url}" alt="" referrerpolicy="no-referrer" loading="lazy" onerror="this.parentElement.innerHTML='<div class=&quot;work-thumb-fallback&quot;><span>${escapeAttr(w?.title||'')}</span></div>'"></div>`;
+    return `<div class="work-thumb"><div class="work-thumb-fallback"><span>${escapeHtml(w?.title||'')}</span></div><img src="${s.url}" data-fallback="${escapeAttr(s.fallback||'')}" alt="" referrerpolicy="no-referrer" loading="lazy" onerror="stillError(this)"></div>`;
   }
   return `<div class="work-thumb"><div class="work-thumb-fallback"><span>${escapeHtml(w?.title||'')}</span></div></div>`;
 }

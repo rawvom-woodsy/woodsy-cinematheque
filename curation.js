@@ -1395,7 +1395,11 @@ for(const [mid,saved] of Object.entries(admin.importedMonths)){
     const imported=(admin.importedEditorial||{})[id]||{};
     const edited=(admin.editorial||{})[id]||{};
     const merged={...base,...extra,...imported,...edited};
-    if(base.quote||extra.quote||imported.quote||edited.quote) merged.quote={...(base.quote||{}),...(extra.quote||{}),...(imported.quote||{}),...(edited.quote||{})};
+    const importedHasQuote=Object.prototype.hasOwnProperty.call(imported,'quote');
+    const editedHasQuote=Object.prototype.hasOwnProperty.call(edited,'quote');
+    if(editedHasQuote&&edited.quote===null) merged.quote=null;
+    else if(importedHasQuote&&imported.quote===null&&!editedHasQuote) merged.quote=null;
+    else if(base.quote||extra.quote||imported.quote||edited.quote) merged.quote={...(base.quote||{}),...(extra.quote||{}),...(imported.quote||{}),...(edited.quote||{})};
     return Object.keys(merged).length?merged:null;
   };
   if(!state.added || Array.isArray(state.added)) state.added={};

@@ -186,9 +186,9 @@ const SUPPLEMENTARY_VISUALS={
   },
   "feel-good-series": {
     "type": "still",
-    "url": "https://akns-images.eonline.com/eol_images/Entire_Site/2020320/rs_600x600-200420102650-600-feel-good-ch-042020.jpg?crop=1200%3A1200%3Bcenter%2Ctop&fit=around%7C1200%3A1200&output-quality=90",
-    "fallback": "https://bilder.fernsehserien.de/gfx/pics/1200/Szenefoto-Aus-Feel-Good-Mit-M.jpg.jpg",
-    "source": "E! / Netflix",
+    "url": "https://bilder.fernsehserien.de/gfx/pics/1200/Szenefoto-Aus-Feel-Good-Mit-M.jpg.jpg",
+    "fallback": "https://static.independent.co.uk/s3fs-public/thumbnails/image/2020/03/17/12/feel-good.jpg?width=1200",
+    "source": "fernsehserien.de / The Independent / Netflix",
     "position": "50% 45%"
   },
   "fragments-lover-discourse": {

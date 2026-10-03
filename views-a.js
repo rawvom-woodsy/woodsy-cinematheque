@@ -16,63 +16,51 @@ function workRow(id,i,mid){
   return `<div class="work-row ${done?'is-complete':''}"><button class="row-check ${done?'done':''}" onclick="toggleDone('${mid}','${w.id}')" aria-label="${escapeAttr(w.title)} 완료 토글">${done?'✓':''}</button><div class="index">${String(i+1).padStart(2,'0')}</div><a class="row-thumb-link" href="#work/${w.id}">${thumbHtml(w)}</a><div class="row-copy"><a href="#work/${w.id}"><div class="work-title">${formatTitle(w)}</div></a><div class="work-meta">${w.creator} · ${w.year}${serviceFor(w.id)!=='—'?` · ${escapeHtml(serviceFor(w.id))}`:''}</div><div class="row-submeta"><span class="status-badge ${s==='REVISIT'?'revisit':''}">${s}</span>${date?`<span>${formatDateKo(date)} 완료</span>`:''}</div></div></div>`
 }
 function home(){
-  const m=month(),p=progress(state.selectedMonth),next=m.core.find(id=>!isDone(state.selectedMonth,id))||m.core[0],w=byId[next],rec=recordFor(w),ed=editorialFor(w.id);
+  const m=month(),p=progress(state.selectedMonth);
+  const fallback=m.core.find(id=>!isDone(state.selectedMonth,id))||m.core[0];
+  const featureId=(m.featureId&&byId[m.featureId])?m.featureId:fallback;
+  const w=byId[featureId],rec=recordFor(w),ed=editorialFor(w.id),unlocked=unlockedConcepts(state.selectedMonth);
   return `${appHeader('#home')}<main class="shell">
-    <section class="hero">
+    <section class="hero program-hero">
       <div class="eyebrow accent-label">${m.label} · MONTHLY PROGRAM</div>
-      <h1>${m.title}</h1>
+      <h1 class="program-title">${displayTitleHtml(m)}</h1>
       <p class="lede">${m.ko}</p>
-      ${monthSwitcher()}
-      ${progressHtml(state.selectedMonth)}
-      <p class="program-note" style="margin-top:28px">${m.note}</p>
+      ${monthSwitcher()}${progressHtml(state.selectedMonth)}
+      <p class="program-note hero-note">${m.note}</p>
+      <div class="hero-links"><button class="btn" onclick="navTo('#curriculum')">커리큘럼 보기</button><button class="btn secondary" onclick="navTo('#map')">연결 지도</button></div>
     </section>
-
-    <section class="section">
-      <div class="section-head"><div><div class="eyebrow accent-label">THIS WEEK'S TEXT</div><h2>${w.title}</h2></div><button class="link-button" onclick="navTo('#work/${w.id}')">상세 보기</button></div>
+    <section class="section feature-section">
+      <div class="section-head"><div class="eyebrow accent-label">THIS WEEK'S TEXT</div><button class="link-button" onclick="navTo('#work/${w.id}')">상세 보기</button></div>
       <div class="feature-grid">
-        <a href="#work/${w.id}">${visualHtml(w)}</a>
+        <a class="feature-visual-link" href="#work/${w.id}">${visualHtml(w)}</a>
         <div class="feature-copy">
-          <div class="eyebrow accent-label">${w.type.toUpperCase()} · ${w.role}</div>
-          <h2>${w.title}</h2>
+          <div class="eyebrow accent-label">${w.type.toUpperCase()} · ${escapeHtml(serviceFor(w.id))}</div>
+          <h2>${formatTitle(w)}</h2>
           <p class="feature-meta">${w.originalTitle||''}${w.originalTitle?' · ':''}${w.creator}, ${w.year}</p>
           ${ed?.logline?`<p class="feature-note">${escapeHtml(ed.logline)}</p>`:''}
-          ${rec?`<div class="notice" style="margin-top:22px">YOUR LIBRARY CONNECTION · 기존 라이브러리에 이미 있는 작품입니다${rec.rating?` · ★ ${rec.rating}`:''}. 이번 달 완료 여부는 별도로 기록됩니다.</div>`:''}
+          ${rec?`<div class="notice">YOUR LIBRARY CONNECTION · 기존 기록에 이미 있는 작품입니다${rec.rating?` · ★ ${rec.rating}`:''}. 이번 달 완료 여부는 별도로 기록됩니다.</div>`:''}
           ${ed?.viewingPoints?.length?`<div class="editorial-block"><div class="eyebrow accent-label">VIEWING POINTS</div><ol class="viewing-points">${ed.viewingPoints.map((x,i)=>`<li><span>${String(i+1).padStart(2,'0')}</span><p>${escapeHtml(x)}</p></li>`).join('')}</ol></div>`:''}
-          ${ed?.keywords?.length?`<div class="editorial-block"><div class="eyebrow accent-label">KEY CONCEPTS</div><div class="chips">${ed.keywords.map(x=>`<span class="chip">${escapeHtml(x)}</span>`).join('')}</div></div>`:''}
-          ${ed?.quote?`<blockquote class="direct-quote"><strong>“${escapeHtml(ed.quote.text)}”</strong>${ed.quote.en?`<p class="quote-en">${escapeHtml(ed.quote.en)}</p>`:'' }<footer>${escapeHtml(ed.quote.source)}</footer></blockquote>`:''}
+          ${ed?.keywords?.length?`<div class="editorial-block"><div class="eyebrow accent-label">KEY CONCEPTS</div><div class="keyword-line">${ed.keywords.map(x=>`<span>#${escapeHtml(x)}</span>`).join('')}</div></div>`:''}
+          ${ed?.quote?quoteHtml(ed.quote):''}
           ${ed?.references?.length?`<div class="editorial-block"><div class="eyebrow accent-label">SOURCES / READING</div><ul class="reference-list">${ed.references.map(x=>`<li>— ${escapeHtml(x)}</li>`).join('')}</ul></div>`:''}
           <div class="actions"><button class="btn ${isDone(state.selectedMonth,w.id)?'secondary':''}" onclick="toggleDone('${state.selectedMonth}','${w.id}')">${isDone(state.selectedMonth,w.id)?'완료 해제':'감상 완료 표시'}</button><button class="btn secondary" onclick="navTo('#work/${w.id}')">노트 작성</button></div>
         </div>
       </div>
     </section>
-
     <section class="section">
       <div class="section-head"><div><div class="eyebrow accent-label">CORE 8 · CHECKLIST</div><h2>이번 달의 경로</h2></div><button class="link-button" onclick="navTo('#curriculum')">전체 커리큘럼</button></div>
-      ${m.core.map((id,i)=>workRow(id,i,state.selectedMonth)).join('')}
+      <div class="core-list">${m.core.map((id,i)=>workRow(id,i,state.selectedMonth)).join('')}</div>
     </section>
-
     <section class="section">
-      <div class="section-head"><div><div class="eyebrow accent-label">BRANCHING TEXTS</div><h2>연결된 읽기의 경로</h2></div></div>
-      <div class="grid two supplementary-grid">${m.supp.map(id=>{const x=byId[id],xed=editorialFor(x.id);return `<div class="card supp-card text-only"><div class="eyebrow accent-label">${x.role} · ${x.type.toUpperCase()}</div><h3><a href="#work/${x.id}">${formatTitle(x)}</a></h3><div class="work-meta">${x.creator} · ${x.year}</div>${xed?.logline?`<p class="supp-copy">${escapeHtml(xed.logline)}</p>`:''}<div class="chips"><span class="status-badge">${statusFor(x,state.selectedMonth)}</span></div></div>`}).join('')}</div>
+      <div class="section-head"><div><div class="eyebrow accent-label">BRANCHING TEXTS</div><h2>연결된 읽기의 경로</h2></div><div class="small muted">선택한 가지 ${m.supp.filter(id=>isAdded(state.selectedMonth,id)).length}</div></div>
+      <div class="supplementary-list">${m.supp.map(id=>{const x=byId[id],xed=editorialFor(x.id),added=isAdded(state.selectedMonth,id),done=isDone(state.selectedMonth,id);return `<article class="supp-entry ${added?'selected':''}"><div class="supp-role"><span class="eyebrow accent-label">${x.role}</span><span class="small muted">${x.type.toUpperCase()}</span></div><div class="supp-main"><h3><a href="#work/${x.id}">${formatTitle(x)}</a></h3><div class="work-meta">${x.creator} · ${x.year}${serviceFor(x.id)!=='—'?` · ${escapeHtml(serviceFor(x.id))}`:''}</div>${xed?.logline?`<p class="supp-copy">${escapeHtml(xed.logline)}</p>`:''}</div><div class="supp-actions"><button class="text-action ${added?'active':''}" onclick="toggleAdded('${state.selectedMonth}','${x.id}')">${added?'MY BRANCH ✓':'MY BRANCH +'}</button><button class="text-action ${done?'active':''}" onclick="toggleDone('${state.selectedMonth}','${x.id}')">${done?'완료 ✓':'완료'}</button></div></article>`}).join('')}</div>
     </section>
-
-    <section class="section">
-      <div class="grid two">
-        <div>
-          <div class="eyebrow accent-label">MONTH NOTE</div><h2>이번 달 메모</h2>
-          <textarea id="month-note" placeholder="이번 달에 반복해서 돌아오는 장면, 질문, 감각을 적어두세요.">${escapeHtml(state.monthNotes[state.selectedMonth]||'')}</textarea>
-          <div class="actions"><button class="btn" onclick="saveMonthNote()">저장</button></div>
-        </div>
-        <div>
-          <div class="eyebrow accent-label">UNLOCKED</div><h2>현재 열린 개념</h2>
-          <p class="program-note">핵심 작품을 완료할수록 이달의 개념이 차례로 열립니다.</p>
-          <div class="chips">${m.concepts.map((c,i)=>`<span class="chip ${p.done>i/Math.max(1,m.concepts.length)*p.total?'unlocked-chip':''}">${p.done>i/Math.max(1,m.concepts.length)*p.total?c:'LOCKED'}</span>`).join('')}</div>
-          <div class="actions"><button class="btn secondary" onclick="navTo('#archive')">아카이브</button></div>
-        </div>
-      </div>
+    <section class="section memo-reward">
+      <div><div class="eyebrow accent-label">MONTH NOTE</div><h2>이번 달 메모</h2><textarea id="month-note" placeholder="이번 달에 반복해서 돌아오는 장면, 질문, 감각을 적어두세요.">${escapeHtml(state.monthNotes[state.selectedMonth]||'')}</textarea><div class="actions"><button class="btn" onclick="saveMonthNote()">저장</button></div></div>
+      <div><div class="eyebrow accent-label">UNLOCKED</div><h2>열린 개념 ${unlocked.length}</h2><p class="program-note">어떤 작품을 완료했는지에 따라 서로 다른 개념이 열립니다. 지도에서도 같은 관계가 드러납니다.</p><div class="concept-list">${unlocked.length?unlocked.map(c=>`<span>◆ ${escapeHtml(c)}</span>`).join(''):'<span class="muted">아직 열린 개념이 없습니다.</span>'}</div><div class="actions"><button class="btn secondary" onclick="navTo('#archive')">아카이브 보기</button></div></div>
     </section>
-    <footer class="footer">Personal Cinematheque · browser-local archive · JSON backup available</footer>
-  </main>`;
+    <footer class="footer">Personal Cinematheque · A monthly cultural curriculum</footer>
+  </main>`
 }
 function curriculum(){
   const m=month();

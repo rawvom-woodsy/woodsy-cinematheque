@@ -1357,6 +1357,19 @@ const CURATION={
   }
 };
 
+/* Persistent curriculum imports created from CINEMATHEQUE IMPORT PACKAGE v2. */
+admin.importedMonths=admin.importedMonths||{};
+admin.importedWorks=admin.importedWorks||{};
+for(const [id,saved] of Object.entries(admin.importedWorks)){
+  if(!byId[id]){
+    const nw=W(id,saved.title||id,saved.originalTitle||'',saved.type||'film',saved.creator||'',saved.year||'',saved.role||'CORE',saved.tags||[]);
+    Object.assign(nw,saved);works.push(nw);byId[id]=nw;
+  }else Object.assign(byId[id],saved);
+}
+for(const [mid,saved] of Object.entries(admin.importedMonths)){
+  months[mid]={...(months[mid]||{}),...saved};
+}
+
 (function applyCuration(){
   for(const [mid,meta] of Object.entries(CURATION.monthMeta)){
     if(months[mid]) Object.assign(months[mid],meta);
@@ -1388,6 +1401,7 @@ function connectionIds(id){return (editorialFor(id)?.connections||byId[id]?.conn
 function conceptIds(id){return editorialFor(id)?.concepts||byId[id]?.concepts||[]}
 function serviceFor(id){const e=editorialFor(id)||{};return e.service||byId[id]?.service||'—'}
 function focalFor(id){return (admin.stills?.[id]?.position||editorialFor(id)?.focal||byId[id]?.focal||'50% 50%')}
+function visualFor(id){const e=editorialFor(id)||{},a=admin.stills?.[id]||{};const base=e.visual||{};return {...base,...(a.visualType?{type:a.visualType}:{}),...(a.url?{url:a.url}:{}),...(a.source?{source:a.source}:{}),...(a.position?{position:a.position}:{})}}
 function addedKey(mid,id){return mid+':'+id}
 function isAdded(mid,id){return !!state.added?.[addedKey(mid,id)]}
 function toggleAdded(mid,id){const k=addedKey(mid,id);if(state.added[k])delete state.added[k];else state.added[k]=new Date().toISOString();save();render()}

@@ -26,7 +26,7 @@ saveAdminWork=function(){
   admin.curation[id]=curation;Object.assign(w,curation);
   const qt=document.getElementById('admin-quote-text').value.trim();
   admin.editorial[id]={logline:document.getElementById('admin-work-logline').value.trim(),viewingPoints:linesFrom('admin-work-points'),keywords:commaFrom('admin-work-keywords'),references:linesFrom('admin-work-references'),connections:curation.connections,concepts:curation.concepts,service:curation.service,checked:curation.checked,focal:curation.focal,quote:qt?{kind:document.getElementById('admin-quote-kind').value,text:qt,original:document.getElementById('admin-quote-original').value.trim(),en:document.getElementById('admin-quote-en').value.trim(),source:document.getElementById('admin-quote-source').value.trim()}:null};
-  const so={url:document.getElementById('admin-still-url').value.trim(),source:document.getElementById('admin-still-source').value.trim(),position:curation.focal};
+  const so={visualType:document.getElementById('admin-visual-type')?.value||((w.type==='book')?'cover':'still'),url:document.getElementById('admin-still-url').value.trim(),source:document.getElementById('admin-still-source').value.trim(),position:curation.focal};
   admin.stills[id]=so;stills[id]={...(stills[id]||{}),...so};
   saveAdmin();toast('작품 큐레이션을 저장했어요.');render()
 };
@@ -70,4 +70,18 @@ importWatcha=async function(){
   const {rows,ix}=plan;let added=0,matched=0,skipped=0,errors=0;
   for(const r of rows.slice(1)){try{const title=(r[ix.title]||'').trim();if(!title){skipped++;continue}const rawType=(r[ix.type]||'').trim().toUpperCase(),type=rawType==='MOVIE'?'film':rawType==='TV'?'series':null;if(!type){skipped++;continue}const year=ix.year>=0?(parseInt(r[ix.year])||null):null,ext=ix.id>=0?(r[ix.id]||'').trim():'';const key='watcha:'+(ext||normalize(title)+'-'+(year||''));const canonical=works.find(w=>normalize(w.title)===normalize(title)&&w.type===type&&(!year||w.year===year));const existing=library.find(x=>x.id===key)||(canonical&&library.find(x=>x.canonicalId===canonical.id));const obj={id:key,canonicalId:canonical?.id||existing?.canonicalId,title,originalTitle:'',type,year,creator:ix.directors>=0?(r[ix.directors]||'').trim():'',rating:ix.rating>=0?(parseFloat(r[ix.rating])||null):null,historicalStatus:'watched',source:'Watchapedia',sourceUrl:ix.url>=0?(r[ix.url]||'').trim():'',tags:[]};if(existing){Object.assign(existing,obj);matched++}else{library.push(obj);added++}}catch{errors++}}
   save();const out=document.getElementById('import-result');if(out)out.textContent='추가 '+added.toLocaleString()+' · 매칭 '+matched.toLocaleString()+' · 건너뜀 '+skipped.toLocaleString()+' · 오류 '+errors.toLocaleString()
+};
+
+/* Reset manual editor overrides without deleting imported curriculum packages. */
+resetAdminOverrides=function(){
+  if(!confirm('관리자에서 직접 수정한 내용만 기본값으로 되돌릴까요? 가져온 커리큘럼은 유지됩니다.'))return;
+  admin={
+    months:{},works:{},stills:{},editorial:{},curation:{},
+    importedMonths:admin.importedMonths||{},
+    importedWorks:admin.importedWorks||{},
+    importedCuration:admin.importedCuration||{},
+    importedEditorial:admin.importedEditorial||{},
+    importedStills:admin.importedStills||{}
+  };
+  saveAdmin();location.reload();
 };

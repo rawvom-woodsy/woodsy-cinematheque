@@ -41,6 +41,7 @@ const editorial={
     ],
     "quote": {
       "text": "너는 히로시마에서 아무것도 보지 못했다. 아무것도.",
+      "en": "You saw nothing in Hiroshima. Nothing.",
       "source": "Marguerite Duras, 시나리오 서두"
     },
     "references": [
@@ -63,6 +64,7 @@ const editorial={
     ],
     "quote": {
       "text": "최악이야. 그런데 아름답네.",
+      "en": "You're the worst. But it's beautiful.",
       "source": "영화 후반, 강가 장면"
     },
     "references": [
@@ -85,6 +87,7 @@ const editorial={
     ],
     "quote": {
       "text": "거기 있는 게 너야? 아니면 그냥 나야?",
+      "en": "Is that you? Or is it just me?",
       "source": "영화 마지막 장면"
     },
     "references": [
@@ -107,6 +110,7 @@ const editorial={
     ],
     "quote": {
       "text": "그들은 돌아왔다. 다만 우리가 아는 몸으로는 아니었다.",
+      "en": "They came back. Just not in bodies we knew.",
       "source": "프로그램 노트"
     },
     "references": [
@@ -129,6 +133,7 @@ const editorial={
     ],
     "quote": {
       "text": "행위의 아름다움이요. 보는 사람이 없어도 남아 있는 것.",
+      "en": "The beauty of the act. Even when no one's watching.",
       "source": "리무진 안의 대화"
     },
     "references": [
@@ -151,6 +156,7 @@ const editorial={
     ],
     "quote": {
       "text": "다음은 다음이고, 지금은 지금이야.",
+      "en": "Next time is next time. Now is now.",
       "source": "강가의 대화"
     },
     "references": [
@@ -173,6 +179,7 @@ const editorial={
     ],
     "quote": {
       "text": "주인이 없는 삶을 찾았다면, 꼭 알려주게.",
+      "en": "If you find a way to live without a master, let me know.",
       "source": "마지막 만남"
     },
     "references": [
@@ -195,6 +202,7 @@ const editorial={
     ],
     "quote": {
       "text": "모든 것은 다른 사람의 머릿속에서 더 오래 산다.",
+      "en": "Everything lives longer in somebody else's mind.",
       "source": "프로그램 노트"
     },
     "references": [
@@ -215,6 +223,7 @@ const editorial={
     ],
     "quote": {
       "text": "그 노래를 다시 들으면, 그때의 내가 먼저 대답한다.",
+      "en": "When I hear that song again, the person I was then answers first.",
       "source": "프로그램 노트"
     },
     "references": [
@@ -234,6 +243,7 @@ const editorial={
     ],
     "quote": {
       "text": "나는 모든 것을 보았다. 모든 것을.",
+      "en": "I saw everything. Everything.",
       "source": "Duras, 시나리오"
     },
     "references": [
@@ -254,6 +264,7 @@ const editorial={
     ],
     "quote": {
       "text": "이름을 바꾸는 데 필요한 것은 용기가 아니라 서류다.",
+      "en": "Changing your name takes paperwork, not courage.",
       "source": "프로그램 노트"
     },
     "references": [
@@ -274,6 +285,7 @@ const editorial={
     ],
     "quote": {
       "text": "같은 국을 백 번 끓이면 백 번째의 손이 달라진다.",
+      "en": "If you make the same soup a hundred times, your hands are different the hundredth time.",
       "source": "프로그램 노트"
     },
     "references": [

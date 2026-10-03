@@ -3,8 +3,11 @@ function cinemaPackageRaw(){return (document.getElementById('cinema-package')?.v
 
 function parseCinemaPackage(raw=cinemaPackageRaw()){
   if(!raw)return {error:'패키지를 먼저 붙여넣어 주세요.'};
+  raw=String(raw).trim();
+  const first=raw.indexOf('{'),last=raw.lastIndexOf('}');
+  if(first>=0&&last>first)raw=raw.slice(first,last+1);
   let pkg;
-  try{pkg=JSON.parse(raw)}catch{return {error:'JSON 형식을 읽을 수 없습니다. 코드 블록 안의 { ... } 부분만 붙여넣어 주세요.'}}
+  try{pkg=JSON.parse(raw)}catch{return {error:'JSON 형식을 읽을 수 없습니다. ChatGPT가 준 CINEMATHEQUE IMPORT PACKAGE v2를 그대로 붙여넣어 주세요.'}}
   const m=pkg.month;
   if(!m||typeof m!=='object')return {error:'month 객체가 없습니다.'};
   const mid=String(m.id||m.monthId||'').trim();

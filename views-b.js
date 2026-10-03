@@ -25,7 +25,35 @@ function mapPage(){
 function archivePage(){
   return `${appHeader('#archive')}<main class="shell"><section class="hero"><div class="eyebrow accent-label">ARCHIVE</div><h1>완성된 챕터</h1><p class="lede">한 달이 끝나면 감상한 영화, 선택한 가지, 열린 개념과 메모가 하나의 챕터로 남습니다.</p></section><section class="archive-chapters">${Object.entries(months).map(([mid,m],idx)=>{const p=progress(mid),doneCore=m.core.filter(id=>isDone(mid,id)),branches=m.supp.filter(id=>isAdded(mid,id)),concepts=unlockedConcepts(mid),complete=p.done===p.total;return `<article class="archive-chapter ${complete?'complete':''}"><header><div class="chapter-number">CHAPTER ${String(idx+1).padStart(2,'0')}</div><div class="eyebrow ${complete?'accent-label':''}">${m.label}</div><h2>${m.title}</h2><p>${m.ko}</p><div class="chapter-progress"><strong>${p.done}/${p.total}</strong><span>${complete?'CHAPTER COMPLETE':'IN PROGRESS'}</span></div></header><div class="chapter-body"><section><div class="eyebrow accent-label">WATCHED</div><ol class="archive-work-list">${doneCore.length?doneCore.map(id=>`<li><a href="#work/${id}">${formatTitle(byId[id])}</a><span>${formatDateKo(completionDate(mid,id))}</span></li>`).join(''):'<li class="muted">아직 완료한 핵심 작품이 없습니다.</li>'}</ol></section><section><div class="eyebrow accent-label">MY BRANCHES</div><div class="chapter-branches">${branches.length?branches.map(id=>`<a href="#work/${id}">${formatTitle(byId[id])}</a>`).join(''):'<span class="muted">선택한 보조 텍스트가 없습니다.</span>'}</div></section><section><div class="eyebrow accent-label">UNLOCKED CONCEPTS</div><div class="concept-list">${concepts.length?concepts.map(c=>`<span>◆ ${escapeHtml(c)}</span>`).join(''):'<span class="muted">아직 열린 개념이 없습니다.</span>'}</div></section><section class="chapter-note"><div class="eyebrow accent-label">MONTH NOTE</div><p>${escapeHtml(state.monthNotes[mid]||'아직 월별 메모가 없습니다.')}</p></section></div></article>`}).join('')}</section></main>`
 }
-function importPage(){return `${appHeader('#import')}<main class="shell"><section class="hero"><div class="eyebrow accent-label">IMPORT / BACKUP</div><h1>MASTER LIBRARY 가져오기</h1><p class="lede">CSV를 선택하면 먼저 구조를 확인하고 예상 추가·매칭 건수를 보여줍니다. 리뷰와 스포일러 본문은 저장하지 않습니다.</p></section><section class="section"><div class="grid two"><div class="filebox"><div class="eyebrow accent-label">WATCHAPEDIA CSV</div><h3>감상 기록 가져오기</h3><input type="file" id="watcha-file" accept=".csv,text/csv"><div id="watcha-preview" class="import-preview">파일을 선택하면 미리보기가 표시됩니다.</div><div class="actions"><button class="btn" onclick="importWatcha()">확인 후 가져오기</button></div></div><div class="filebox"><div class="eyebrow accent-label">BACKUP</div><h3>JSON 내보내기 / 복원</h3><div class="actions"><button class="btn secondary" onclick="exportBackup()">JSON 내보내기</button><label class="btn secondary">JSON 복원<input type="file" id="restore-file" accept="application/json,.json" style="display:none" onchange="restoreBackup(this.files[0])"></label></div></div></div></section><section class="section"><div class="grid two"><div class="filebox"><div class="eyebrow accent-label">ADD A BOOK</div><h3>책 단일 추가</h3><input class="search" id="book-title" placeholder="제목"><input class="search" id="book-author" placeholder="저자"><input class="search" id="book-year" placeholder="연도" inputmode="numeric"><div class="actions"><button class="btn" onclick="addBook()">READ로 추가</button></div></div><div><div class="eyebrow accent-label">IMPORT RESULT</div><div id="import-result" class="notice">아직 가져온 파일이 없습니다.</div><div class="actions"><button class="btn secondary" onclick="resetAll()">모든 로컬 기록 초기화</button></div></div></div></section></main>`}
+function importPage(){
+  return `${appHeader('#import')}<main class="shell">
+    <section class="hero"><div class="eyebrow accent-label">IMPORT / BACKUP</div><h1>새 커리큘럼과 기존 기록 가져오기</h1><p class="lede">ChatGPT와 다음 달 프로그램을 완성한 뒤 <strong>CINEMATHEQUE IMPORT PACKAGE v2</strong>를 받아 아래에 붙여넣으면 새 달을 계속 추가할 수 있습니다. 가져오기 전에는 기존 작품 재사용·신규 작품·업데이트 범위를 먼저 확인합니다.</p></section>
+
+    <section class="section curriculum-import-section">
+      <div class="section-head"><div><div class="eyebrow accent-label">CINEMATHEQUE IMPORT PACKAGE · V2</div><h2>월별 커리큘럼 추가</h2></div></div>
+      <div class="import-package-grid">
+        <div>
+          <textarea id="cinema-package" class="package-textarea" spellcheck="false" placeholder='ChatGPT에서 받은 JSON 패키지를 여기에 붙여넣으세요.&#10;&#10;예: {"schema":"woodsy-cinematheque-import-v2","month":{...},"works":[...]}'></textarea>
+          <div class="actions"><button id="cinema-package-preview" class="btn secondary">미리보기</button><button id="cinema-package-import" class="btn">커리큘럼 반영</button></div>
+        </div>
+        <aside>
+          <div id="cinema-package-result" class="import-preview package-preview">아직 패키지를 입력하지 않았습니다.</div>
+          <details class="package-help"><summary>패키지에 포함되는 정보</summary><p>월 제목·소제목·프로그램 노트·CORE·보조 텍스트·THIS WEEK'S TEXT·개념·작품 기본정보·VIEWING POINTS·KEYWORDS·인용/큐레이터 노트·REFERENCES·CONNECTIONS·WHERE TO WATCH·스틸/책 표지와 focal point까지 한 번에 가져올 수 있습니다.</p><p>기존 작품 ID가 포함되면 중복 생성하지 않고 해당 작품을 재사용합니다.</p></details>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section"><div class="grid two">
+      <div class="filebox"><div class="eyebrow accent-label">WATCHAPEDIA CSV</div><h3>감상 기록 가져오기</h3><input type="file" id="watcha-file" accept=".csv,text/csv"><div id="watcha-preview" class="import-preview">파일을 선택하면 미리보기가 표시됩니다.</div><div class="actions"><button class="btn" onclick="importWatcha()">확인 후 가져오기</button></div></div>
+      <div class="filebox"><div class="eyebrow accent-label">BACKUP</div><h3>JSON 내보내기 / 복원</h3><div class="actions"><button class="btn secondary" onclick="exportBackup()">JSON 내보내기</button><label class="btn secondary">JSON 복원<input type="file" id="restore-file" accept="application/json,.json" style="display:none" onchange="restoreBackup(this.files[0])"></label></div><p class="small muted" style="margin-top:16px">커리큘럼 Import로 추가한 달도 백업 파일에 함께 저장됩니다.</p></div>
+    </div></section>
+
+    <section class="section"><div class="grid two">
+      <div class="filebox"><div class="eyebrow accent-label">ADD A BOOK</div><h3>책 단일 추가</h3><input class="search" id="book-title" placeholder="제목"><input class="search" id="book-author" placeholder="저자"><input class="search" id="book-year" placeholder="연도" inputmode="numeric"><div class="actions"><button class="btn" onclick="addBook()">READ로 추가</button></div></div>
+      <div><div class="eyebrow accent-label">IMPORT RESULT</div><div id="import-result" class="notice">아직 가져온 파일이 없습니다.</div><div class="actions"><button class="btn secondary" onclick="resetAll()">모든 로컬 기록 초기화</button></div></div>
+    </div></section>
+  </main>`
+}
 function adminPage(){
   if(!isAdminUnlocked()){
     return `${appHeader('#admin')}<main class="shell"><section class="hero"><div class="eyebrow accent-label">ADMIN MODE</div><h1>관리자 확인</h1><p class="lede">텍스트·큐레이션·스틸·이번 주 작품을 수정하려면 코드를 입력하세요.</p></section><section class="section"><div class="admin-lock"><div class="eyebrow accent-label">ACCESS CODE</div><h2>4자리 코드를 입력하세요</h2><input id="admin-code" class="search admin-code" type="password" inputmode="numeric" maxlength="4" autocomplete="off"><div class="actions"><button class="btn" onclick="adminLogin()">관리자 모드 열기</button></div></div></section></main>`;

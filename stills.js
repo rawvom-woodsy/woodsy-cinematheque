@@ -68,11 +68,11 @@ function visualHtml(w){
       <div><div class="big">${escapeHtml(w?.title||'')}</div><div class="small" style="margin-top:10px;color:rgba(255,255,255,.65)">TYPOGRAPHIC VISUAL</div></div>
     </div>`;
   }
-  const primary=proxyStillUrl(s.url);
-  const direct=s.url||'';
+  const primary=s.local||proxyStillUrl(s.url);
+  const direct=s.local?(s.url||''):(s.fallback||'');
   return `<div class="visual visual-still">
     <div class="fallback-layer" style="display:none"><div class="visual-top"><span class="eyebrow">${String(w?.type||'work').toUpperCase()} · ${w?.year||''}</span><span class="glyph">${escapeHtml(String((w?.year||'').toString().slice(-2)||'•'))}</span></div><div class="big">${escapeHtml(w?.title||'')}</div></div>
-    <img src="${primary}" data-fallback="${escapeAttr(direct)}" alt="${escapeAttr(w.title)} film still" referrerpolicy="no-referrer" loading="eager" onerror="visualImageError(this)">
+    <img src="${primary}" data-fallback="${escapeAttr(direct)}" alt="${escapeAttr(w.title)} film still" style="object-position:${escapeAttr(focalFor(w.id))}" referrerpolicy="no-referrer" loading="eager" onerror="visualImageError(this)">
     <div class="still-credit">STILL · ${escapeHtml(s.source)}</div>
   </div>`;
 }
@@ -81,7 +81,7 @@ function thumbHtml(w){
   if(s){
     const primary=proxyStillUrl(s.url);
     const direct=s.url||'';
-    return `<div class="work-thumb"><div class="work-thumb-fallback"><span>${escapeHtml(w?.title||'')}</span></div><img src="${primary}" data-fallback="${escapeAttr(direct)}" alt="" referrerpolicy="no-referrer" loading="lazy" onerror="thumbImageError(this)"></div>`;
+    return `<div class="work-thumb"><div class="work-thumb-fallback"><span>${escapeHtml(w?.title||'')}</span></div><img src="${primary}" data-fallback="${escapeAttr(direct)}" alt="" style="object-position:${escapeAttr(focalFor(w.id))}" referrerpolicy="no-referrer" loading="lazy" onerror="thumbImageError(this)"></div>`;
   }
   return `<div class="work-thumb"><div class="work-thumb-fallback"><span>${escapeHtml(w?.title||'')}</span></div></div>`;
 }

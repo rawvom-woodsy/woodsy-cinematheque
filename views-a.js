@@ -80,7 +80,7 @@ function workPage(id){
   const rec=byId[id]?recordFor(byId[id]):w,note=state.notes[id]||'',ed=editorialFor(id),connections=connectionIds(id);
   const currentMid=mids.find(x=>x.mid===state.selectedMonth)?.mid||mids[0]?.mid;
   const doneDate=currentMid?completionDate(currentMid,id):null;
-  const visual=w.type==='film'?visualHtml(w):`<div class="detail-text-marker"><div class="eyebrow accent-label">${w.role||'SUPPLEMENTARY'} · ${String(w.type||'TEXT').toUpperCase()}</div><span>${w.type==='book'?'READ':'EXPLORE'}</span></div>`;
+  const visual=w.type==='film'?visualHtml(w):supplementaryVisualHtml(w);
   return `${appHeader('')}<main class="shell">
     <div class="detail-intro"><button class="backlink" onclick="history.back()">← BACK</button></div>
     <section class="detail-layout">

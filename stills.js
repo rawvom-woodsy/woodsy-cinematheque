@@ -30,7 +30,7 @@ const stills = {
   'shame': {url:'https://images.squarespace-cdn.com/content/v1/6657277c35d79556a7079211/1730362801565-RWKA6PUL0MRZRPI9FBSE/09%2B%28895%29.jpg', source:'FilmSpice'},
   'different-man': {url:'https://austin.culturemap.com/media-library/renate-reinsve-and-sebastian-stan-in-a-different-man.jpg?coordinates=350%2C0%2C0%2C0&height=1200&id=53750363&width=1200', source:'CultureMap'},
   'saint-maud': {url:'https://bostonglobe-prod.cdn.arcpublishing.com/resizer/v2/IQIQ33BI2TS5AFNGUCVWQ6Z4VI.jpg?auth=4d2940e8a3030eafcc4a61094baaf79de3bf87b6b05aeef99cf0ad3e478efaa8&width=1440', source:'The Boston Globe'},
-  'titane': {url:'https://live-production.wcms.abc-cdn.net.au/3fee3d886577f563bf04088192aed7cd?cropH=2000&cropW=3000&height=575&impolicy=wcms_crop_resize&width=862&xPos=607&yPos=0', source:'ABC'}
+  'titane': {url:'https://live-production.wcms.abc-cdn.net.au/3fee3d886577f563bf04088192aed7cd?cropH=2000&cropW=3000&height=575&impolicy=wcms_crop_resize&width=862&xPos=607&yPos=0', source:'ABC'},
 
   'green-ray': {url:'https://deeperintomovies.net/journal/image25/greenray2.jpg', source:'Brandon’s Movie Memory', position:'50% 45%'},
   'autumn-tale': {url:'https://www.cinecube.co.kr/uploads/MOVIEPHOTO/20220419174826367.jpg', fallback:'https://m.media-amazon.com/images/M/MV5BYjcwNjA3YzQtZjUwZi00MGI3LWI4YTktOWZiYjViMjY4MGMzXkEyXkFqcGc%40._V1_.jpg', source:'씨네큐브 / IMDb', position:'50% 45%'},

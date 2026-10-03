@@ -1,0 +1,105 @@
+{
+  "schema": "woodsy-cinematheque-import-v2",
+  "month": {
+    "id": "2027-02",
+    "label": "FEBRUARY 2027",
+    "title": "MONTH TITLE",
+    "titleLines": [
+      "MONTH",
+      "TITLE"
+    ],
+    "ko": "한국어 소제목",
+    "note": "월별 프로그램 노트",
+    "concepts": [
+      "CONCEPT A",
+      "CONCEPT B"
+    ],
+    "core": [
+      "film-id-1",
+      "film-id-2"
+    ],
+    "supp": [
+      "series-id-1",
+      "book-id-1"
+    ],
+    "featureId": "film-id-1"
+  },
+  "works": [
+    {
+      "id": "film-id-1",
+      "title": "영화 제목",
+      "originalTitle": "Original Title",
+      "type": "film",
+      "creator": "Director",
+      "year": 2026,
+      "role": "CORE",
+      "service": "Streaming / availability may vary",
+      "checked": "2027-02",
+      "connections": [
+        "book-id-1"
+      ],
+      "concepts": [
+        "CONCEPT A"
+      ],
+      "editorial": {
+        "logline": "큐레이션 로그라인",
+        "viewingPoints": [
+          "관찰 포인트 1",
+          "관찰 포인트 2"
+        ],
+        "keywords": [
+          "키워드 1",
+          "키워드 2"
+        ],
+        "quote": {
+          "kind": "curator",
+          "text": "한국어 문장",
+          "original": "",
+          "en": "English line",
+          "source": "CURATOR'S NOTE"
+        },
+        "references": [
+          "Reference 1"
+        ]
+      },
+      "visual": {
+        "type": "still",
+        "url": "https://example.com/still.jpg",
+        "source": "Source",
+        "position": "50% 50%"
+      }
+    },
+    {
+      "id": "book-id-1",
+      "title": "책 제목",
+      "originalTitle": "Book Title",
+      "type": "book",
+      "creator": "Author",
+      "year": 2025,
+      "role": "READING",
+      "connections": [
+        "film-id-1"
+      ],
+      "concepts": [
+        "CONCEPT A"
+      ],
+      "editorial": {
+        "logline": "연결 독서 설명",
+        "viewingPoints": [
+          "읽기 포인트"
+        ],
+        "keywords": [
+          "키워드"
+        ],
+        "references": [
+          "Reference"
+        ]
+      },
+      "visual": {
+        "type": "cover",
+        "url": "https://example.com/cover.jpg",
+        "source": "Publisher / Open Library"
+      }
+    }
+  ]
+}

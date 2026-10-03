@@ -100,15 +100,17 @@ function supplementaryVisualHtml(w){
   const v=visualFor(w?.id)||{};
   const type=v.type||((w?.type==='book')?'cover':'still');
   const url=v.url||'';
+  const local=v.local||'';
   const source=v.source||'';
   const pos=v.position||focalFor(w?.id);
   const fallback=`<div class="fallback-layer supp-fallback" style="display:${url?'none':'flex'}"><div class="visual-top"><span class="eyebrow">${String(w?.type||'text').toUpperCase()} · ${w?.year||''}</span><span class="glyph">${w?.type==='book'?'READ':'EXPLORE'}</span></div><div class="big">${escapeHtml(w?.title||'')}</div></div>`;
   if(type==='cover'){
-    const primary=url,direct=v.fallback||'';
+    const primary=local||url,direct=local?(url||v.fallback||''):(v.fallback||'');
     return `<div class="detail-cover-visual">${fallback}${url?`<img src="${escapeAttr(primary)}" data-fallback="${escapeAttr(direct)}" alt="${escapeAttr(w.title)} cover" referrerpolicy="no-referrer" loading="eager" onerror="visualImageError(this)">`:''}${source?`<div class="still-credit">COVER · ${escapeHtml(source)}</div>`:''}</div>`;
   }
   if(type==='typographic'||!url){
     return `<div class="detail-text-marker"><div class="eyebrow accent-label">${w.role||'SUPPLEMENTARY'} · ${String(w.type||'TEXT').toUpperCase()}</div><span>${w.type==='book'?'READ':'EXPLORE'}</span></div>`;
   }
-  return `<div class="visual visual-still supplementary-still">${fallback}<img src="${escapeAttr(url)}" data-fallback="${escapeAttr(v.fallback||'')}" alt="${escapeAttr(w.title)} still" style="object-position:${escapeAttr(pos)}" referrerpolicy="no-referrer" loading="eager" onerror="visualImageError(this)">${source?`<div class="still-credit">STILL · ${escapeHtml(source)}</div>`:''}</div>`;
+  const primary=local||url,direct=local?(url||v.fallback||''):(v.fallback||'');
+  return `<div class="visual visual-still supplementary-still">${fallback}<img src="${escapeAttr(primary)}" data-fallback="${escapeAttr(direct)}" alt="${escapeAttr(w.title)} still" style="object-position:${escapeAttr(pos)}" referrerpolicy="no-referrer" loading="eager" onerror="visualImageError(this)">${source?`<div class="still-credit">STILL · ${escapeHtml(source)}</div>`:''}</div>`;
 }

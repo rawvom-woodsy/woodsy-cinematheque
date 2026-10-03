@@ -1,14 +1,24 @@
-# Personal Cinematheque for WOODSY
+# WOODSY Personal Cinematheque
 
-A free, static personal cinematheque and cultural curriculum designed for GitHub Pages.
+A browser-based personal cinematheque and reusable film-programming template.
 
-## Included
-- Oct 2026 – Jan 2027 monthly curricula
-- Month-specific CORE progress
-- Master Library with Watchapedia CSV import (reviews/spoilers ignored)
-- Film / series / book work details
-- Notes, relationship map, archive, JSON backup/restore
-- Browser-local persistence only; no paid backend or API
+## Pages
 
-## GitHub Pages
-This repository is intended to be served directly as a static site from the `main` branch root.
+- `index.html` — Personal Cinematheque for WOODSY
+- `club.html` — blank Film Club workspace using the same interface
+
+The two pages use separate browser-storage namespaces, so progress, notes, imports, and archives do not mix.
+
+## Curriculum import
+
+Use `CINEMATHEQUE IMPORT PACKAGE v2`.
+
+- `import-template-v2.json` — general template
+- `film-club-import-template.json` — film-club example
+- `FILM_CLUB_GUIDE.md` — reuse / branding guide
+
+## Visuals
+
+Prefer repository-hosted images for long-term stability.
+
+See `assets/README.md` for the `local + url + fallback` visual convention.

@@ -3,7 +3,7 @@ function appHeader(active){
   return `<div class="topbar"><div class="topbar-inner"><a class="brand" href="#home">Personal Cinematheque <span class="muted">for</span> WOODSY<small>${month().label} · ${progress(state.selectedMonth).done}/${progress(state.selectedMonth).total}</small></a><div class="nav">${tabs.map(([r,l])=>`<a class="${active===r?'active':''}" href="${r}">${l}</a>`).join('')}</div></div><div class="mobile-nav">${tabs.map(([r,l])=>`<a class="${active===r?'active':''}" href="${r}">${l}</a>`).join('')}</div></div>`;
 }
 function monthSwitcher(){
-  return `<div class="month-switch">${Object.entries(months).map(([id,m])=>`<button class="${state.selectedMonth===id?'active':''}" onclick="setMonth('${id}')">${m.label.replace(' 202',' ’')}</button>`).join('')}</div>`;
+  return `<div class="month-switch">${Object.entries(months).map(([id,m])=>`<button class="${state.selectedMonth===id?'active':''}" onclick="setMonth('${id}')">${m.label.replace(' 20',' ’')}</button>`).join('')}</div>`;
 }
 function progressHtml(mid){
   const p=progress(mid);

@@ -46,7 +46,10 @@ function importPage(){
     </section>
 
     <section class="section"><div class="grid two">
-      <div class="filebox"><div class="eyebrow accent-label">WATCHAPEDIA CSV</div><h3>감상 기록 가져오기</h3><input type="file" id="watcha-file" accept=".csv,text/csv"><div id="watcha-preview" class="import-preview">파일을 선택하면 미리보기가 표시됩니다.</div><div class="actions"><button class="btn" onclick="importWatcha()">확인 후 가져오기</button></div></div>
+      <div class="filebox"><div class="eyebrow accent-label">BOOKS · NOTION</div><h3>독서 기록 가져오기</h3><input type="file" id="books-file" accept="application/json,.json"><div class="actions"><button class="btn" onclick="importBooksJson(document.getElementById('books-file').files[0])">Books JSON 가져오기</button></div><p class="small muted" style="margin-top:16px">기존 영화 기록은 변경하지 않고 Books 전용 저장소에 병합합니다.</p></div>
+      <div class="filebox"><div class="eyebrow accent-label">WATCHAPEDIA CSV</div><h3>감상 기록 가져오기</h3><input type="file" id="watcha-file" accept=".csv,text/csv"><div id="watcha-preview" class="import-preview">파일을 선택하면 미리보기가 표시됩니다.</div><div class="actions"><button class="btn" onclick="importWatcha()">확인 후 가져오기</button></div></div></section>
+
+    <section class="section"><div class="grid two">
       <div class="filebox"><div class="eyebrow accent-label">BACKUP</div><h3>JSON 내보내기 / 복원</h3><div class="actions"><button class="btn secondary" onclick="exportBackup()">JSON 내보내기</button><label class="btn secondary">JSON 복원<input type="file" id="restore-file" accept="application/json,.json" style="display:none" onchange="restoreBackup(this.files[0])"></label></div><p class="small muted" style="margin-top:16px">커리큘럼 Import로 추가한 달도 백업 파일에 함께 저장됩니다.</p></div>
     </div></section>
 
@@ -79,4 +82,4 @@ function adminPage(){
   </main>`
 }
 function notFound(){return `${appHeader('')}<main class="shell"><section class="hero"><div class="eyebrow">404</div><h1>상영 예정이 없습니다</h1><button class="btn" onclick="navTo('#home')">홈으로</button></section></main>`}
-function render(){const r=route();let html;if(r==='#home')html=home();else if(r==='#curriculum')html=curriculum();else if(r==='#library')html=libraryPage();else if(r==='#notes')html=notesPage();else if(r==='#map')html=mapPage();else if(r==='#archive')html=archivePage();else if(r==='#import')html=importPage();else if(r==='#admin')html=adminPage();else if(r.startsWith('#work/'))html=workPage(r.split('/')[1]);else html=notFound();document.getElementById('app').innerHTML=html}
+function render(){const r=route();let html;if(r==='#home')html=home();else if(r==='#curriculum')html=curriculum();else if(r==='#library')html=libraryPage();else if(r==='#books')html=booksPage();else if(r==='#notes')html=notesPage();else if(r==='#map')html=mapPage();else if(r==='#archive')html=archivePage();else if(r==='#import')html=importPage();else if(r==='#admin')html=adminPage();else if(r.startsWith('#work/'))html=workPage(r.split('/')[1]);else if(r.startsWith('#book/'))html=bookPage(r.split('/')[1]);else html=notFound();document.getElementById('app').innerHTML=html}

@@ -1,7 +1,7 @@
 function siteConfig(){return {...(window.SITE_CONFIG||{}),...(admin.site||{})}}
 function appHeader(active){
   const cfg=siteConfig();
-  const primary=[['#home','HOME'],['#curriculum','CURRICULUM'],['#library','LIBRARY'],['#archive','ARCHIVE']];
+  const primary=[['#home','HOME'],['#curriculum','CURRICULUM'],['#library','LIBRARY'],['#books','BOOKS'],['#archive','ARCHIVE']];
   const utilities=[['#notes','NOTES'],['#map','MAP'],['#import','IMPORT'],['#admin','ADMIN']];
   const p=progress(state.selectedMonth);
   const m=month();

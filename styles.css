@@ -818,3 +818,10 @@ textarea,.search,.select{background:rgba(255,255,255,.22);border-color:var(--lin
 @media(max-width:620px){
   .empty-instance{min-height:calc(100vh - 100px);padding:62px 0 82px}
 }
+
+
+/* Books archive */
+.library-row span:first-child small{display:block;margin-top:4px}
+.book-notes{margin-top:18px;max-width:760px;font-size:14px;line-height:2;color:#302e2a;white-space:normal}
+.book-notes h3{margin-top:28px}
+@media(max-width:720px){.library-row{grid-template-columns:1.5fr .8fr}.library-row span:nth-child(3),.library-row span:nth-child(4){font-size:11px}.detail-layout{grid-template-columns:1fr}}

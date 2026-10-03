@@ -1,16 +1,22 @@
+function siteConfig(){return {...(window.SITE_CONFIG||{}),...(admin.site||{})}}
 function appHeader(active){
+  const cfg=siteConfig();
   const primary=[['#home','HOME'],['#curriculum','CURRICULUM'],['#library','LIBRARY'],['#archive','ARCHIVE']];
   const utilities=[['#notes','NOTES'],['#map','MAP'],['#import','IMPORT'],['#admin','ADMIN']];
   const p=progress(state.selectedMonth);
+  const m=month();
   const primaryHtml=primary.map(([r,l])=>`<a class="${active===r?'active':''}" href="${r}">${l}</a>`).join('');
   const utilityHtml=utilities.map(([r,l])=>`<a class="${active===r?'active':''}" href="${r}">${l}</a>`).join('');
-  return `<div class="topbar"><div class="topbar-inner"><a class="brand" href="#home">Personal Cinematheque <span class="muted">for</span> WOODSY<small>${month().label} · ${p.done}/${p.total}</small></a><div class="nav primary-nav">${primaryHtml}<details class="utility-menu"><summary aria-label="More">•••</summary><div class="utility-popover">${utilityHtml}</div></details></div><button class="mobile-menu-button" onclick="toggleMobileMenu()" aria-label="메뉴 열기" aria-expanded="false"><span></span><span></span><span></span></button></div><div id="mobile-menu" class="mobile-menu">${primaryHtml}<div class="mobile-menu-divider"></div>${utilityHtml}</div></div>`
+  const owner=cfg.brandOwner?` <span class="muted">${escapeHtml(cfg.brandJoiner||'for')}</span> ${escapeHtml(cfg.brandOwner)}`:'';
+  const sub=p.total?`${escapeHtml(m.label)} · ${p.done}/${p.total}`:(cfg.mode==='club'?'SEPARATE CLUB WORKSPACE':'NO PROGRAM');
+  return `<div class="topbar"><div class="topbar-inner"><a class="brand" href="#home">${escapeHtml(cfg.brandName||'Cinematheque')}${owner}<small>${sub}</small></a><div class="nav primary-nav">${primaryHtml}<details class="utility-menu"><summary aria-label="More">•••</summary><div class="utility-popover">${utilityHtml}</div></details></div><button class="mobile-menu-button" onclick="toggleMobileMenu()" aria-label="메뉴 열기" aria-expanded="false"><span></span><span></span><span></span></button></div><div id="mobile-menu" class="mobile-menu">${primaryHtml}<div class="mobile-menu-divider"></div>${utilityHtml}</div></div>`
 }
 function monthSwitcher(){
-  return `<div class="month-switch">${Object.entries(months).map(([id,m])=>`<button class="${state.selectedMonth===id?'active':''}" onclick="setMonth('${id}')">${m.label.replace(' 20',' ’')}</button>`).join('')}</div>`;
+  const entries=Object.entries(months);if(!entries.length)return '';
+  return `<div class="month-switch">${entries.map(([id,m])=>`<button class="${state.selectedMonth===id?'active':''}" onclick="setMonth('${id}')">${m.label.replace(' 20',' ’')}</button>`).join('')}</div>`;
 }
 function progressHtml(mid){
-  const p=progress(mid);
+  const p=progress(mid);if(!p.total)return '';
   return `<div class="progress-wrap"><div class="progress-meta"><span>CORE PROGRESS</span><span>${p.done} / ${p.total}</span></div><div class="progress"><span style="width:${p.pct}%"></span></div></div>`;
 }
 function quoteHtml(q){if(!q)return'';const label=quoteLabel(q);return `<blockquote class="direct-quote ${label==="CURATOR'S NOTE"?'curator-quote':''}"><div class="eyebrow quote-kind">${label}</div><strong>“${escapeHtml(q.text||'')}”</strong>${q.original?`<p class="quote-original">${escapeHtml(q.original)}</p>`:''}${q.en?`<p class="quote-en">${escapeHtml(q.en)}</p>`:''}<footer>${escapeHtml(q.source||'')}</footer></blockquote>`}
@@ -36,7 +42,7 @@ function suppVisualCard(id,mid){
   </article>`;
 }
 function supplementaryEditorial(mid){
-  const m=months[mid],series=m.supp.filter(id=>byId[id]?.type==='series'),books=m.supp.filter(id=>byId[id]?.type==='book'),others=m.supp.filter(id=>!['series','book'].includes(byId[id]?.type));
+  const m=months[mid]||{supp:[]},series=m.supp.filter(id=>byId[id]?.type==='series'),books=m.supp.filter(id=>byId[id]?.type==='book'),others=m.supp.filter(id=>!['series','book'].includes(byId[id]?.type));
   return `
     ${series.length?`<div class="supp-group"><div class="supp-group-head"><span>SERIES</span><span>${series.length}</span></div><div class="series-shelf">${series.map(id=>suppVisualCard(id,mid)).join('')}</div></div>`:''}
     ${books.length?`<div class="supp-group reading-group"><div class="supp-group-head"><span>READING</span><span>${books.length}</span></div><div class="book-shelf">${books.map(id=>suppVisualCard(id,mid)).join('')}</div></div>`:''}
@@ -45,7 +51,10 @@ function supplementaryEditorial(mid){
 }
 
 function home(){
-  const m=month(),p=progress(state.selectedMonth);
+  const m=month(),p=progress(state.selectedMonth),cfg=siteConfig();
+  if(!m.core?.length){
+    return `${appHeader('#home')}<main class="shell"><section class="empty-instance"><div class="eyebrow accent-label">${escapeHtml(cfg.emptyEyebrow||'CINEMATHEQUE')}</div><h1>${escapeHtml(cfg.emptyTitle||'새 프로그램을 불러오세요')}</h1><p class="lede">${escapeHtml(cfg.emptyText||'IMPORT에서 커리큘럼 패키지를 불러오면 시작할 수 있습니다.')}</p><div class="actions"><button class="btn" onclick="navTo('#import')">IMPORT PROGRAM</button></div></section><footer class="footer">${escapeHtml(cfg.footer||'Cinematheque')}</footer></main>`
+  }
   const fallback=m.core.find(id=>!isDone(state.selectedMonth,id))||m.core[0];
   const featureId=(m.featureId&&byId[m.featureId])?m.featureId:fallback;
   const w=byId[featureId],rec=recordFor(w),ed=editorialFor(w.id),unlocked=unlockedConcepts(state.selectedMonth);
@@ -96,11 +105,12 @@ function home(){
       <div><div class="eyebrow accent-label">MONTH NOTE</div><h2>이번 달 메모</h2><textarea id="month-note" placeholder="이번 달에 반복해서 돌아오는 장면, 질문, 감각을 적어두세요.">${escapeHtml(state.monthNotes[state.selectedMonth]||'')}</textarea><div class="actions"><button class="btn" onclick="saveMonthNote()">저장</button></div></div>
       <div><div class="eyebrow accent-label">UNLOCKED</div><h2>열린 개념 ${unlocked.length}</h2><p class="program-note">작품을 완료할수록 이번 달의 개념과 연결이 드러납니다.</p><div class="concept-list">${unlocked.length?unlocked.map(c=>`<span>◆ ${escapeHtml(c)}</span>`).join(''):'<span class="muted">아직 열린 개념이 없습니다.</span>'}</div><div class="actions"><button class="btn secondary" onclick="navTo('#archive')">아카이브 보기</button></div></div>
     </section>
-    <footer class="footer">Personal Cinematheque · A monthly cultural curriculum</footer>
+    <footer class="footer">${escapeHtml(siteConfig().footer||'Cinematheque')}</footer>
   </main>`
 }
 function curriculum(){
-  const m=month();
+  const m=month(),cfg=siteConfig();
+  if(!m.core?.length)return `${appHeader('#curriculum')}<main class="shell"><section class="empty-instance"><div class="eyebrow accent-label">${escapeHtml(cfg.emptyEyebrow||'CINEMATHEQUE')}</div><h1>${escapeHtml(cfg.emptyTitle||'새 프로그램을 불러오세요')}</h1><p class="lede">${escapeHtml(cfg.emptyText||'IMPORT에서 커리큘럼 패키지를 불러오면 시작할 수 있습니다.')}</p><div class="actions"><button class="btn" onclick="navTo('#import')">IMPORT PROGRAM</button></div></section></main>`;
   return `${appHeader('#curriculum')}<main class="shell">
     <section class="hero program-hero"><div class="eyebrow accent-label">${m.label} · CURRICULUM</div><h1 class="program-title">${displayTitleHtml(m)}</h1><p class="lede">${m.ko}</p>${monthSwitcher()}${progressHtml(state.selectedMonth)}</section>
     <section class="section"><div class="section-head"><div><div class="eyebrow accent-label">CORE 8 · FILMS</div><h2>이번 달의 영화</h2></div></div><div class="core-list">${m.core.map((id,i)=>workRow(id,i,state.selectedMonth)).join('')}</div></section>

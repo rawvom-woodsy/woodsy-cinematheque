@@ -34,12 +34,12 @@ const stills = {
 
   'green-ray': {url:'https://deeperintomovies.net/journal/image25/greenray2.jpg', source:'Brandon’s Movie Memory', position:'50% 45%'},
   'autumn-tale': {url:'https://www.cinecube.co.kr/uploads/MOVIEPHOTO/20220419174826367.jpg', fallback:'https://m.media-amazon.com/images/M/MV5BYjcwNjA3YzQtZjUwZi00MGI3LWI4YTktOWZiYjViMjY4MGMzXkEyXkFqcGc%40._V1_.jpg', source:'씨네큐브 / IMDb', position:'50% 45%'},
-  'brief-encounter': {url:'https://cdn.craft.cloud/26ed9c78-feb7-4ee6-8ddf-262fd7bafb2d/assets/tco/images/2015_11_brief-encounter-review.jpg?fit=crop&height=630&quality=82&s=DWKBoQ5E4hY2xVLZPCFkF_91sWNzhTTjl5-SvLroOiA&width=1200', source:'Little White Lies', position:'50% 45%'},
+  'brief-encounter': {url:'https://images.mubicdn.net/images/artworks/550082/cache-550082-1686641834/images-original.png', fallback:'https://3.bp.blogspot.com/-bGk14CBBFJE/UpXnsrEeXFI/AAAAAAAAodM/slz-wC5gOvU/s1600/brief-encounter-il_2650046k.jpg', source:'MUBI / El Antepenúltimo Mohicano', position:'50% 45%'},
   'certified-copy': {url:'https://bamlive.s3.amazonaws.com/styles/program_slide/s3/Kiarostami_Certified-Copy_004_1200.jpg?itok=ZMQCkRvO', fallback:'https://bpb-us-w2.wpmucdn.com/blogs.iu.edu/dist/3/817/files/2018/04/certified-copy-08-2lqcoo1-1024x576.jpg', source:'BAMPFA / Indiana University', position:'50% 45%'},
-  'one-fine-morning': {url:'https://ca-times.brightspotcdn.com/dims4/default/1fa6ed9/2147483647/strip/true/crop/1921x1009%2B0%2B15/resize/1200x630%21/quality/75/?url=https%3A%2F%2Fcalifornia-times-brightspot.s3.amazonaws.com%2F7e%2F6c%2Fc95a7e324b8785fe09e541bc0ede%2Fofm.jpeg', source:'Los Angeles Times', position:'50% 45%'},
+  'one-fine-morning': {url:'https://s3.eu-west-2.amazonaws.com/data.list.co.uk/ck_files/images/data-feed/Copy-of-UBM_PHOTOGRAMME_004B.jpeg', source:'The List / Les Films Pelléas', position:'50% 45%'},
   'enough-said': {url:'https://es.web.img3.acsta.net/r_1280_720/pictures/210/365/21036547_20130906124304228.jpg', source:'SensaCine / Searchlight', position:'50% 42%'},
-  'blue-valentine': {url:'https://pics.filmaffinity.com/blue_valentine-498168769-large.jpg', source:'FilmAffinity', position:'50% 42%'},
-  'beginners': {url:'https://static.wixstatic.com/media/1a84ce_dbd21b47c4f5460e9058be3fc35c0ca3~mv2_d_3000_1688_s_2.jpg/v1/fill/w_980%2Ch_551%2Cal_c%2Cq_85%2Cusm_0.66_1.00_0.01%2Cenc_avif%2Cquality_auto/1a84ce_dbd21b47c4f5460e9058be3fc35c0ca3~mv2_d_3000_1688_s_2.jpg', source:'Story Screen', position:'50% 45%'},
+  'blue-valentine': {url:'https://nofilmschool.com/media-library/blue-valentine.jpg?id=34087587&width=980', fallback:'https://pics.filmaffinity.com/blue_valentine-498168769-large.jpg', source:'No Film School / FilmAffinity', position:'50% 42%'},
+  'beginners': {url:'https://s.hdnux.com/photos/07/16/35/1894244/13/1920x0.jpg', fallback:'https://m.media-amazon.com/images/M/MV5BMTA5NjE4MjIzMjdeQTJeQWpwZ15BbWU3MDk4MDAzNTU%40._V1_.jpg', source:'SFGate / IMDb', position:'50% 45%'},
 
 };
 Object.entries(admin?.importedStills||{}).forEach(([id,o])=>{stills[id]={...(stills[id]||{}),...o}});
@@ -90,7 +90,7 @@ function thumbHtml(w){
   const s=stills[w?.id];
   if(s){
     const primary=proxyStillUrl(s.url);
-    const direct=s.url||'';
+    const direct=s.fallback||'';
     return `<div class="work-thumb"><div class="work-thumb-fallback"><span>${escapeHtml(w?.title||'')}</span></div><img src="${primary}" data-fallback="${escapeAttr(direct)}" alt="" style="object-position:${escapeAttr(focalFor(w.id))}" referrerpolicy="no-referrer" loading="lazy" onerror="thumbImageError(this)"></div>`;
   }
   return `<div class="work-thumb"><div class="work-thumb-fallback"><span>${escapeHtml(w?.title||'')}</span></div></div>`;

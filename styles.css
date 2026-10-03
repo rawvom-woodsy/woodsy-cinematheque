@@ -384,3 +384,20 @@ textarea:focus,.search:focus,.select:focus{border-color:var(--line-strong)}
   .direct-quote{padding-left:16px}
   .direct-quote strong{font-size:19px;line-height:1.6}
 }
+
+.fallback-layer{
+  position:absolute;inset:0;z-index:0;flex-direction:column;justify-content:space-between;
+  padding:24px;color:#fff;background:linear-gradient(135deg,#292724,#4e4942);
+}
+.fallback-layer .visual-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.fallback-layer .eyebrow{color:rgba(255,255,255,.7)!important}
+.fallback-layer .glyph{font-size:clamp(24px,5vw,60px);font-weight:700;line-height:1}
+.fallback-layer .big{max-width:80%;font-size:clamp(26px,4.1vw,48px);font-weight:700;line-height:1.02;letter-spacing:-.05em}
+.visual-still>img{z-index:1}
+.quote-en{
+  margin:12px 0 0;color:var(--soft);font-size:14px;font-weight:500;line-height:1.7;
+  letter-spacing:-.01em;font-style:italic;
+}
+@media(max-width:560px){
+  .quote-en{font-size:13px}
+}

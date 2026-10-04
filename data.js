@@ -300,22 +300,7 @@ const editorial={
 };
 function editorialFor(id){return editorial[id]||null}
 const byId=Object.fromEntries(works.map(w=>[w.id,w]));
-let state=loadJson(APP_KEY,DEFAULT_STATE);
-let library=(()=>{
-  const keys=[LIB_KEY,'woodsy-cinematheque-library-v3',`${STORAGE_NS}-library-v3`];
-  const merged=new Map();
-  for(const key of [...new Set(keys)]){
-    try{
-      const arr=JSON.parse(localStorage.getItem(key)||'[]');
-      if(Array.isArray(arr))for(const x of arr){
-        if(!x)continue;
-        const k=x.id||x.canonicalId||[normalize(x.title||''),x.year||'',x.type||''].join(':');
-        if(k)merged.set(k,{...(merged.get(k)||{}),...x});
-      }
-    }catch(e){}
-  }
-  return mergeSeed([...merged.values()]);
-})();
+let state=loadJson(APP_KEY,DEFAULT_STATE);let library=mergeSeed(loadJson(LIB_KEY,seedLibrary));
 let admin=loadJson(ADMIN_KEY,{months:{},works:{},stills:{}});
 Object.entries(admin.months||{}).forEach(([id,o])=>{if(months[id])Object.assign(months[id],o)});
 Object.entries(admin.works||{}).forEach(([id,o])=>{if(byId[id])Object.assign(byId[id],o)});

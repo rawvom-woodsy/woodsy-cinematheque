@@ -825,3 +825,23 @@ textarea,.search,.select{background:rgba(255,255,255,.22);border-color:var(--lin
 .book-notes{margin-top:18px;max-width:760px;font-size:14px;line-height:2;color:#302e2a;white-space:normal}
 .book-notes h3{margin-top:28px}
 @media(max-width:720px){.library-row{grid-template-columns:1.5fr .8fr}.library-row span:nth-child(3),.library-row span:nth-child(4){font-size:11px}.detail-layout{grid-template-columns:1fr}}
+
+/* Reading archive — rendered Notion Markdown */
+.book-notes{max-width:720px;font-size:15px;line-height:1.9;color:#302e2a}
+.book-notes>p{margin:0 0 1.35em}
+.book-notes h2,.book-notes h3,.book-notes h4,.book-notes h5{
+  margin:2.5em 0 .85em;padding-top:.25em;color:var(--ink);font-weight:650;letter-spacing:-.03em
+}
+.book-notes h2{font-size:28px;border-top:1px solid var(--line);padding-top:28px}
+.book-notes h3{font-size:21px}.book-notes h4,.book-notes h5{font-size:16px}
+.book-notes strong{font-weight:700;color:var(--ink)}
+.book-notes em{font-style:italic}
+.book-notes a{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+.book-notes ul,.book-notes ol{margin:0 0 1.6em;padding-left:1.4em}
+.book-notes li{margin:.35em 0}
+.book-quote{
+  margin:2em 0;padding:18px 0 18px 22px;border-left:2px solid var(--accent);
+  color:#49443e;font-size:16px;line-height:1.9
+}
+.book-quote p{margin:0 0 .75em}.book-quote p:last-child{margin-bottom:0}
+.library-row span:first-child small{display:block;margin-top:4px}

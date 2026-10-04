@@ -22,6 +22,13 @@ const FIXED_BOOK_COVERS={
 const BOOKS_KEY=`${STORAGE_NS}-books-v1`;
 let books=(()=>{try{const saved=JSON.parse(localStorage.getItem(BOOKS_KEY)||'[]');const local=Array.isArray(saved)?saved:[];const seed=Array.isArray(window.BOOK_SEED)?window.BOOK_SEED:[];const map=new Map(seed.map(x=>[x.id,x]));local.forEach(x=>{if(x&&x.id)map.set(x.id,{...(map.get(x.id)||{}),...x})});return [...map.values()]}catch{return Array.isArray(window.BOOK_SEED)?structuredClone(window.BOOK_SEED):[]}})();
 function saveBooks(){try{localStorage.setItem(BOOKS_KEY,JSON.stringify(books))}catch(e){toast('책 기록을 저장하지 못했어요.')}}
+(function migrateLibraryBooks(){
+  if(typeof library==='undefined'||!Array.isArray(library))return;
+  const old=library.filter(x=>x&&x.type==='book');if(!old.length)return;
+  const norm=s=>String(s||'').replace(/[\s『』「」:,·]/g,'').toLowerCase();
+  old.forEach(x=>{const hit=books.find(b=>norm(b.title)===norm(x.title));if(hit){if(!hit.rating&&x.rating)hit.rating=x.rating;if(!hit.author&&x.creator)hit.author=x.creator}else books.push({id:'library:'+x.id,title:x.title||'',author:x.creator||'',status:x.historicalStatus==='read'?'완독':'읽을 것',rating:x.rating||null,category:'',subcategory:'',notes:'',source:x.source||'Library'})});
+  library=library.filter(x=>!x||x.type!=='book');saveBooks();save();
+})();
 function bookById(id){return books.find(x=>x.id===id)}
 function importBooksData(items){
   const map=new Map(books.map(x=>[x.id,x]));
@@ -44,10 +51,10 @@ async function findBookCover(x){if(!x)return '';if(FIXED_BOOK_COVERS[x.title])re
 async function hydrateBookCovers(scope=document){const nodes=[...scope.querySelectorAll('[data-book-cover]')].filter(n=>!n.querySelector('img'));for(const node of nodes.slice(0,24)){const x=bookById(node.dataset.bookCover);if(!x)continue;const url=await findBookCover(x);if(url)node.innerHTML='<img src="'+escapeHtml(url)+'" alt="'+escapeHtml(x.title)+' 표지" loading="lazy">'}}
 function booksPage(){
   const rows=[...books].sort((a,b)=>String(a.title).localeCompare(String(b.title),'ko'));
-  return `${appHeader('#books')}<main class="shell"><section class="hero"><div class="eyebrow accent-label">PERSONAL READING ARCHIVE</div><h1>Books</h1><p class="lede">읽은 책, 읽는 중인 책, 읽을 책과 별점·인용문을 한곳에 보관합니다. 기존 영화 기록과 별도의 저장 키를 사용하므로 기존 데이터는 건드리지 않습니다.</p></section><section class="section"><div class="toolbar"><input id="book-q" class="search" placeholder="책 제목 · 작가 검색" oninput="filterBooks()"><select id="book-status" class="select" onchange="filterBooks()"><option value="">모든 상태</option><option>완독</option><option>읽는 중</option><option>읽을 것</option></select></div><div id="books-list" class="library-list">${bookRows(rows)}</div></section></main>`;
+  return `${appHeader('#books')}<main class="shell"><section class="hero archive-hero"><div class="eyebrow accent-label">PERSONAL ARCHIVE</div><h1>BOOKS</h1><p class="lede">개인 책 기록 아카이브. 별점과 인용, 간단한 감상을 기록합니다. 아직 읽는 중인 책도 흔적을 남깁니다.</p></section><section class="section archive-section"><div class="toolbar archive-toolbar"><input id="book-q" class="search" placeholder="책 제목 · 작가 검색" oninput="filterBooks()"><select id="book-status" class="select" onchange="filterBooks()"><option value="">ALL</option><option>완독</option><option>읽는 중</option><option>읽을 것</option></select></div><div class="archive-count"><span id="books-count">${rows.length}</span> BOOKS</div><div id="books-list">${bookRows(rows)}</div></section></main>`;
 }
 function bookRows(rows){setTimeout(()=>hydrateBookCovers(),0);return '<div class="book-grid">'+rows.map(x=>'<a class="book-card" href="#book/'+encodeURIComponent(x.id)+'">'+bookCoverMarkup(x,'book-cover-list')+'<div class="book-card-copy"><strong>'+escapeHtml(x.title)+'</strong><span>'+escapeHtml(x.author||'—')+'</span><small>'+escapeHtml([x.status,x.rating?'★ '+x.rating:''].filter(Boolean).join(' · '))+'</small></div></a>').join('')+'</div>'}
-function filterBooks(){const q=(document.getElementById('book-q')?.value||'').toLowerCase(),s=document.getElementById('book-status')?.value||'';const rows=books.filter(x=>(!s||x.status===s)&&(!q||((x.title||'')+' '+(x.author||'')).toLowerCase().includes(q)));const el=document.getElementById('books-list');if(el){el.innerHTML=bookRows(rows);hydrateBookCovers(el)}}
+function filterBooks(){const q=(document.getElementById('book-q')?.value||'').trim().toLowerCase(),s=document.getElementById('book-status')?.value||'';const rows=books.filter(x=>(!s||x.status===s)&&(!q||((x.title||'')+' '+(x.author||'')).toLowerCase().includes(q)));const el=document.getElementById('books-list');if(el){el.innerHTML=bookRows(rows);hydrateBookCovers(el)}const count=document.getElementById('books-count');if(count)count.textContent=rows.length}
 function bookInline(s){
   return escapeHtml(s||'')
     .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')

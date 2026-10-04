@@ -51,7 +51,7 @@
   document.addEventListener('input',e=>{
     const el=e.target.closest('[data-input]');
     if(!el) return;
-    if(el.id==='lib-q'){window._libQ=el.value;render();}
+    if(el.id==='lib-q'){window._libQ=el.value;filterFilmLibrary();}
   });
 
   document.addEventListener('keydown',e=>{
@@ -65,7 +65,7 @@
     const el=e.target.closest('[data-change]');
     if(!el) return;
     const code=el.dataset.change||'';
-    if(code.includes('_libType')){window._libType=el.value;render();return;}
+    if(el.id==='lib-type'||code.includes('filterFilmLibrary')){window._libType=el.value;filterFilmLibrary();return;}\n    if(code.includes('_libType')){window._libType=el.value;render();return;}
     if(code.includes('_libStatus')){window._libStatus=el.value;render();return;}
     if(code.startsWith('restoreBackup(')){restoreBackup(el.files?.[0]);return;}
     if(code.startsWith('adminSelectMonth(')){adminSelectMonth(el.value);return;}

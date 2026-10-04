@@ -69,6 +69,39 @@ const POSTER_BATCH_01=[
   {id:'watcha:m5aVG6j',title:'로마',url:'https://www.impawards.com/intl/mexico/2018/posters/roma.jpg'},
   {id:'watcha:mdEwrjm',title:'서스페리아',url:'https://www.impawards.com/2018/posters/suspiria_ver26.jpg'}
 ];
+const POSTER_BATCH_02=[
+ {id:'watcha:mO079w7',title:'에브리씽 에브리웨어 올 앳 원스',url:'https://www.impawards.com/2022/posters/everything_everywhere_all_at_once_ver2.jpg'},
+ {id:'watcha:md6l8JX',title:'사랑할 땐 누구나 최악이 된다',url:'https://www.impawards.com/intl/norway/2021/posters/verdens_verste_menneske_ver3.jpg'},
+ {id:'watcha:mOPVojY',title:'퍼스트 카우',url:'https://www.impawards.com/2020/posters/first_cow.jpg'},
+ {id:'watcha:m5agBNG',title:'두 교황',url:'https://www.impawards.com/2019/posters/two_popes.jpg'},
+ {id:'watcha:mWyJKlY',title:'메리 포핀스 리턴즈',url:'https://www.impawards.com/2018/posters/mary_poppins_returns_ver7.jpg'},
+ {id:'watcha:mOgBjN9',title:'카메라를 멈추면 안 돼!',url:'https://www.impawards.com/intl/japan/2017/posters/kamera_o_tomeru_na.jpg'},
+ {id:'watcha:m5XMArN',title:'바닷마을 다이어리',url:'https://www.impawards.com/intl/japan/2015/posters/umimachi_diary.jpg'}
+];
+async function invokePosterImport(p,timeoutMs=20000){
+ const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),timeoutMs);
+ try{
+   const {data:{session}}=await supabaseClient.auth.getSession();
+   const res=await fetch(SUPABASE_URL+'/functions/v1/import-film-poster',{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+session.access_token},body:JSON.stringify({filmId:p.id,imageUrl:p.url}),signal:controller.signal});
+   const data=await res.json().catch(()=>({}));
+   return {ok:res.ok&&data?.ok,data};
+ }catch(e){return {ok:false,error:e}}finally{clearTimeout(timer)}
+}
+async function runPosterBatch(batch,label){
+ if(!archiveSignedIn()||!supabaseClient)return toast('ADMIN 로그인이 필요해요.');
+ const btn=document.getElementById('poster-batch-'+label),status=document.getElementById('poster-batch-status');
+ if(btn)btn.disabled=true;
+ let ok=0,failed=[];
+ for(let n=0;n<batch.length;n++){
+  const p=batch[n];if(status)status.textContent=(n+1)+' / '+batch.length+' · '+p.title;
+  const r=await invokePosterImport(p);
+  if(r.ok){ok++;const x=library.find(v=>v.id===p.id);if(x){x.posterUrl=r.data.film.poster_url;x.imageSource=r.data.film.image_source}}
+  else failed.push(p.title);
+ }
+ if(status)status.textContent='BATCH '+label+' 완료 '+ok+'편'+(failed.length?' · 실패 '+failed.length+'편: '+failed.join(', '):'');
+ if(btn)btn.disabled=false;toast(ok+'편의 포스터를 아카이브에 저장했어요.');render();
+}
+async function runPosterBatch02(){return runPosterBatch(POSTER_BATCH_02,'02')}
 async function runPosterBatch01(){
   if(!archiveSignedIn()||!supabaseClient)return toast('ADMIN 로그인이 필요해요.');
   const btn=document.getElementById('poster-batch-01'),status=document.getElementById('poster-batch-status');

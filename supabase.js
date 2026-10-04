@@ -79,13 +79,14 @@ const POSTER_BATCH_02=[
  {id:'watcha:m5XMArN',title:'바닷마을 다이어리',url:'https://www.impawards.com/intl/japan/2015/posters/umimachi_diary.jpg'}
 ];
 async function invokePosterImport(p,timeoutMs=20000){
- const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),timeoutMs);
- try{
-   const {data:{session}}=await supabaseClient.auth.getSession();
-   const res=await fetch(SUPABASE_URL+'/functions/v1/import-film-poster',{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+session.access_token},body:JSON.stringify({filmId:p.id,imageUrl:p.url}),signal:controller.signal});
-   const data=await res.json().catch(()=>({}));
-   return {ok:res.ok&&data?.ok,data};
- }catch(e){return {ok:false,error:e}}finally{clearTimeout(timer)}
+  try{
+    const call=supabaseClient.functions.invoke('import-film-poster',{body:{filmId:p.id,imageUrl:p.url}});
+    const timeout=new Promise(resolve=>setTimeout(()=>resolve({__timeout:true}),timeoutMs));
+    const result=await Promise.race([call,timeout]);
+    if(result?.__timeout)return {ok:false,error:'timeout'};
+    const {data,error}=result;
+    return {ok:!error&&!!data?.ok,data,error};
+  }catch(error){return {ok:false,error}}
 }
 async function runPosterBatch(batch,label){
  if(!archiveSignedIn()||!supabaseClient)return toast('ADMIN 로그인이 필요해요.');

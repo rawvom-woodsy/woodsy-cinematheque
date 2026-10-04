@@ -17,7 +17,7 @@ async function loadCloudArchive(){
     supabaseClient.from('books').select('id,title,author,status,rating,category,subcategory,review,cover_url,source,tags').order('title')
   ]);
   if(!fr.error&&fr.data?.length)library=fr.data.map(x=>({id:x.id,title:x.title,originalTitle:x.original_title||'',type:x.type,year:x.year,creator:x.creator||'',rating:x.rating,review:x.review||'',historicalStatus:x.status||'watched',posterUrl:x.poster_url||'',source:x.source||'',sourceUrl:x.source_url||'',tags:x.tags||[]}));
-  if(!br.error&&br.data?.length)books=br.data.map(x=>({id:x.id,title:x.title,author:x.author||'',status:x.status||'',rating:x.rating,category:x.category||'',subcategory:x.subcategory||'',review:x.review||'',cover_url:x.cover_url||'',source:x.source||'',tags:x.tags||[]}));
+  if(!br.error&&br.data?.length)books=br.data.map(x=>({id:x.id,title:x.title,author:x.author||'',status:x.status||'',rating:x.rating,category:x.category||'',subcategory:x.subcategory||'',review:x.review||'',cover_url:x.cover_url||'',coverUrl:x.cover_url||'',source:x.source||'',tags:x.tags||[]}));
   render();
 }
 async function archiveLogin(){

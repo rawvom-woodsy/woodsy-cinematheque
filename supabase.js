@@ -10,13 +10,23 @@ async function initSupabase(){
   supabaseClient.auth.onAuthStateChange((_e,s)=>{archiveUser=s?.user||null;setTimeout(render,0)});
   await loadCloudArchive();
 }
+async function fetchAllRows(table,columns,order='title'){
+  const pageSize=1000,rows=[];
+  for(let from=0;;from+=pageSize){
+    const {data,error}=await supabaseClient.from(table).select(columns).order(order).range(from,from+pageSize-1);
+    if(error)return {data:rows,error};
+    rows.push(...(data||[]));
+    if(!data||data.length<pageSize)break;
+  }
+  return {data:rows,error:null};
+}
 async function loadCloudArchive(){
   if(!supabaseClient)return;
   const [fr,br]=await Promise.all([
-    supabaseClient.from('films').select('id,title,original_title,type,year,creator,rating,review,status,poster_url,source,source_url,tags').order('title'),
-    supabaseClient.from('books').select('id,title,author,status,rating,category,subcategory,review,cover_url,source,tags').order('title')
+    fetchAllRows('films','id,title,original_title,type,year,creator,rating,review,status,poster_url,still_url,image_source,source,source_url,tags'),
+    fetchAllRows('books','id,title,author,status,rating,category,subcategory,review,cover_url,source,tags')
   ]);
-  if(!fr.error&&fr.data?.length)library=fr.data.map(x=>({id:x.id,title:x.title,originalTitle:x.original_title||'',type:x.type,year:x.year,creator:x.creator||'',rating:x.rating,review:x.review||'',historicalStatus:x.status||'watched',posterUrl:x.poster_url||'',source:x.source||'',sourceUrl:x.source_url||'',tags:x.tags||[]}));
+  if(!fr.error&&fr.data?.length)library=fr.data.map(x=>({id:x.id,title:x.title,originalTitle:x.original_title||'',type:x.type,year:x.year,creator:x.creator||'',rating:x.rating,review:x.review||'',historicalStatus:x.status||'watched',posterUrl:x.poster_url||'',stillUrl:x.still_url||'',imageSource:x.image_source||'',source:x.source||'',sourceUrl:x.source_url||'',tags:x.tags||[]}));
   if(!br.error&&br.data?.length)books=br.data.map(x=>({id:x.id,title:x.title,author:x.author||'',status:x.status||'',rating:x.rating,category:x.category||'',subcategory:x.subcategory||'',review:x.review||'',cover_url:x.cover_url||'',coverUrl:x.cover_url||'',source:x.source||'',tags:x.tags||[]}));
   render();
 }

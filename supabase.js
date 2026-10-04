@@ -59,6 +59,35 @@ async function savePrivateMemo(itemType,itemId){
   if(error)return toast('비공개 메모를 저장하지 못했어요.');
   privateMemoCache[itemType+':'+itemId]=memo;toast('비공개 메모를 저장했어요.');
 }
+const POSTER_BATCH_01=[
+  {id:'watcha:mWyaqgk',title:'챌린저스',url:'https://www.impawards.com/2024/posters/challengers.jpg'},
+  {id:'watcha:mdMR0yl',title:'바텀스',url:'https://www.impawards.com/2023/posters/bottoms.jpg'},
+  {id:'watcha:m5x110a',title:'로봇 드림',url:'https://www.impawards.com/intl/misc/2023/posters/robot_dreams.jpg'},
+  {id:'watcha:m5ekm1K',title:'파벨만스',url:'https://www.impawards.com/2022/posters/fabelmans.jpg'},
+  {id:'watcha:mWvqk9E',title:'바빌론',url:'https://www.impawards.com/2022/posters/babylon.jpg'},
+  {id:'watcha:mOVP2rN',title:'파워 오브 도그',url:'https://www.impawards.com/2021/posters/power_of_the_dog_ver5.jpg'},
+  {id:'watcha:m5aVG6j',title:'로마',url:'https://www.impawards.com/intl/mexico/2018/posters/roma.jpg'},
+  {id:'watcha:mdEwrjm',title:'서스페리아',url:'https://www.impawards.com/2018/posters/suspiria_ver26.jpg'}
+];
+async function runPosterBatch01(){
+  if(!archiveSignedIn()||!supabaseClient)return toast('ADMIN 로그인이 필요해요.');
+  const btn=document.getElementById('poster-batch-01'),status=document.getElementById('poster-batch-status');
+  if(btn)btn.disabled=true;
+  let ok=0,failed=[];
+  for(let n=0;n<POSTER_BATCH_01.length;n++){
+    const p=POSTER_BATCH_01[n];
+    if(status)status.textContent=(n+1)+' / '+POSTER_BATCH_01.length+' · '+p.title;
+    const {data,error}=await supabaseClient.functions.invoke('import-film-poster',{body:{filmId:p.id,imageUrl:p.url}});
+    if(!error&&data?.ok){
+      ok++;
+      const x=library.find(v=>v.id===p.id);if(x){x.posterUrl=data.film.poster_url;x.imageSource=data.film.image_source}
+    }else failed.push(p.title);
+  }
+  if(status)status.textContent='완료 '+ok+'편'+(failed.length?' · 실패 '+failed.length+'편: '+failed.join(', '):'');
+  if(btn)btn.disabled=false;
+  toast(ok+'편의 포스터를 아카이브에 저장했어요.');
+  render();
+}
 async function importFilmPosterUrl(id){
   if(!archiveSignedIn()||!supabaseClient)return toast('ADMIN 로그인이 필요해요.');
   const imageUrl=(document.getElementById('archive-poster-url')?.value||'').trim();

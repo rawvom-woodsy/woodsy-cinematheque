@@ -880,3 +880,19 @@ body:has(.book-grid),body:has(.book-detail-hero){background:var(--book-ivory)}
 .book-reading-section{border-top:3px solid var(--book-blue)}
 .book-reading-section>.accent-label{color:var(--book-burgundy)}
 .book-quote{border-left-color:var(--book-mustard)}
+
+/* Film / Series — paired visual language with Books */
+.film-library-hero{border-top:7px solid var(--book-burgundy,#7d2636);padding-top:34px}
+.film-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:30px 18px;border-top:4px solid var(--book-burgundy,#7d2636);padding-top:28px;margin-top:18px}
+.film-card{min-width:0}
+.film-card-link{display:block;color:inherit;text-decoration:none}
+.film-poster{aspect-ratio:2/3;background:#ddd7cc;overflow:hidden;position:relative}
+.film-poster img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .25s ease}
+.film-card:hover .film-poster img{transform:scale(1.015)}
+.film-poster-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:18px;text-align:center;background:#e5dfd3;color:#777064;font-size:12px;line-height:1.45}
+.film-card-meta{padding-top:10px}
+.film-card-meta strong{font-size:14px;line-height:1.35;font-weight:650}
+.film-card-meta .small{margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.film-card-foot{display:flex;justify-content:space-between;gap:8px;margin-top:8px;color:var(--book-burgundy,#7d2636);font-size:9px;font-weight:650;letter-spacing:.09em}
+@media(max-width:1000px){.film-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:620px){.film-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 12px}}

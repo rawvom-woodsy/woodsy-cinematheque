@@ -71,7 +71,7 @@ function thumbImageError(img){
   img.remove();
 }
 function visualHtml(w){
-  const s=stills[w?.id];
+  const s=stills[w?.id]||(w?.stillUrl?{url:w.stillUrl,source:w.imageSource||'ARCHIVE'}:null);
   if(!s){
     return `<div class="visual visual-fallback">
       <div class="visual-top"><span class="eyebrow" style="color:rgba(255,255,255,.7)">${String(w?.type||'work').toUpperCase()} · ${w?.year||''}</span><span class="glyph">${escapeHtml(String((w?.year||'').toString().slice(-2)||'•'))}</span></div>

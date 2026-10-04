@@ -33,6 +33,8 @@
     if(code==='adminLogout()') return adminLogout();
     if(code==='archiveLogin()') return archiveLogin();
     if(code==='archiveLogout()') return archiveLogout();
+    if(code==='closeArchiveEditor()') return closeArchiveEditor();
+    if((m=code.match(/^openArchiveEditor\('([^']+)'\s*,\s*'([^']+)'\)$/))) return openArchiveEditor(m[1],m[2]);
     if((m=code.match(/^saveFilmArchive\('([^']+)'\)$/))) return saveFilmArchive(m[1]);
     if((m=code.match(/^saveBookArchive\('([^']+)'\)$/))) return saveBookArchive(m[1]);
     if((m=code.match(/^savePrivateMemo\('([^']+)'\s*,\s*'([^']+)'\)$/))) return savePrivateMemo(m[1],m[2]);

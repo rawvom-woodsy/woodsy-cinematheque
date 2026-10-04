@@ -40,7 +40,7 @@ async function archiveLogin(){
 }
 async function archiveLogout(){if(supabaseClient)await supabaseClient.auth.signOut();Object.keys(privateMemoCache).forEach(k=>delete privateMemoCache[k]);render()}
 function archiveLoginPanel(){
-  if(archiveSignedIn())return '<div class="archive-auth-status"><span>ADMIN MODE</span><button class="btn secondary" onclick="archiveLogout()">LOG OUT</button></div>';
+  if(archiveSignedIn())return '<div class="archive-auth-status"><span>ADMIN MODE</span><div class="actions"><button id="poster-batch-01" class="btn" onclick="runPosterBatch01()">ARCHIVE POSTERS · BATCH 01</button><button class="btn secondary" onclick="archiveLogout()">LOG OUT</button></div><div id="poster-batch-status" class="small muted"></div></div>';
   return '<div class="admin-lock"><div class="eyebrow accent-label">ADMIN LOGIN</div><h2>개인 아카이브 편집</h2><input id="archive-email" class="search" type="email" autocomplete="username" placeholder="Email"><input id="archive-password" class="search" type="password" autocomplete="current-password" placeholder="Password"><div class="actions"><button class="btn" onclick="archiveLogin()">LOG IN</button></div></div>';
 }
 async function loadPrivateMemo(itemType,itemId){

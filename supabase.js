@@ -59,6 +59,25 @@ async function savePrivateMemo(itemType,itemId){
   if(error)return toast('비공개 메모를 저장하지 못했어요.');
   privateMemoCache[itemType+':'+itemId]=memo;toast('비공개 메모를 저장했어요.');
 }
+async function uploadFilmPoster(id){
+  if(!archiveSignedIn()||!supabaseClient)return toast('ADMIN 로그인이 필요해요.');
+  const input=document.getElementById('archive-poster-file'),file=input?.files?.[0];
+  if(!file)return toast('포스터 이미지 파일을 선택해주세요.');
+  if(!/^image\/(jpeg|png|webp)$/.test(file.type))return toast('JPG, PNG, WEBP 이미지만 업로드할 수 있어요.');
+  if(file.size>10*1024*1024)return toast('포스터 파일은 10MB 이하로 올려주세요.');
+  const ext=(file.name.split('.').pop()||'jpg').toLowerCase().replace('jpeg','jpg');
+  const safeId=String(id).replace(/[^a-zA-Z0-9_-]/g,'_');
+  const path=safeId+'.'+ext;
+  const {error:uploadError}=await supabaseClient.storage.from('film-posters').upload(path,file,{upsert:true,contentType:file.type,cacheControl:'3600'});
+  if(uploadError)return toast('포스터 업로드에 실패했어요.');
+  const {data:urlData}=supabaseClient.storage.from('film-posters').getPublicUrl(path);
+  const url=urlData?.publicUrl;
+  if(!url)return toast('포스터 주소를 만들지 못했어요.');
+  const {data,error}=await supabaseClient.from('films').update({poster_url:url,image_source:'WOODSY ARCHIVE / Supabase Storage'}).eq('id',id).select().single();
+  if(error)return toast('포스터 정보를 저장하지 못했어요.');
+  const x=library.find(v=>v.id===id);if(x){x.posterUrl=data.poster_url||url;x.imageSource=data.image_source||'WOODSY ARCHIVE / Supabase Storage'}
+  toast('포스터를 저장했어요.');render();
+}
 async function saveFilmArchive(id){
   if(!archiveSignedIn()||!supabaseClient)return toast('ADMIN 로그인이 필요해요.');
   const rating=parseFloat(document.getElementById('archive-rating')?.value)||null,review=document.getElementById('archive-review')?.value||'';
@@ -83,6 +102,6 @@ function archiveRecordSection(x,itemType){
   if(!editing)return publicView;
   setTimeout(()=>hydratePrivateMemo(itemType,x.id),0);
   const options=['','0.5','1','1.5','2','2.5','3','3.5','4','4.5','5'].map(v=>'<option value="'+v+'" '+(String(x.rating||'')===v?'selected':'')+'>'+(v?'★ '+v:'—')+'</option>').join('');
-  const saveFn=itemType==='book'?'saveBookArchive':'saveFilmArchive';
+  const saveFn=itemType==='book'?'saveBookArchive':'saveFilmArchive';\n  const posterEditor=itemType==='film'?'<div class="private-memo-box"><div class="eyebrow accent-label">POSTER</div><p class="small muted">JPG · PNG · WEBP, 최대 10MB. 업로드 후 이 아카이브의 Storage에서 직접 제공합니다.</p><input id="archive-poster-file" type="file" accept="image/jpeg,image/png,image/webp"><div class="actions"><button class="btn secondary" onclick="uploadFilmPoster(\\''+escapeAttr(x.id)+'\\')">UPLOAD POSTER</button></div></div>':'';
   return publicView+'<section class="section archive-editor"><div class="archive-editor-head"><div><div class="eyebrow accent-label">EDIT RECORD</div><h2>별점과 리뷰 수정</h2></div><button class="archive-edit-close" onclick="closeArchiveEditor()">CLOSE</button></div><div class="admin-grid"><label class="admin-label">RATING<select id="archive-rating" class="select">'+options+'</select></label></div><label class="admin-label">PUBLIC REVIEW<textarea id="archive-review">'+escapeHtml(x.review||'')+'</textarea></label><div class="actions"><button class="btn" onclick="'+saveFn+"('"+escapeAttr(x.id)+"')"+'">SAVE REVIEW</button></div><div class="private-memo-box"><div class="eyebrow accent-label">PRIVATE MEMO</div><p class="small muted">로그인한 본인에게만 보입니다.</p><textarea id="private-memo"></textarea><div class="actions"><button class="btn secondary" onclick="savePrivateMemo(\''+itemType+'\',\''+escapeAttr(x.id)+'\')">SAVE MEMO</button></div></div></section>';
 }

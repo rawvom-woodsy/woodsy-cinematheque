@@ -923,3 +923,8 @@ body:has(.book-grid),body:has(.book-detail-hero){background:var(--book-ivory)}
 .private-memo-box{margin-top:36px;padding-top:26px;border-top:1px solid var(--line)}
 .archive-auth-status{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:14px 0;font-size:10px;font-weight:700;letter-spacing:.14em}
 .admin-lock #archive-email,.admin-lock #archive-password{display:block;width:min(460px,100%);margin:10px 0}
+
+.archive-record-head,.archive-editor-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px}
+.archive-edit-trigger,.archive-edit-close{border:0;background:transparent;padding:2px 0;color:var(--accent);font:inherit;font-size:9px;font-weight:700;letter-spacing:.16em;cursor:pointer;border-bottom:1px solid currentColor}
+.archive-edit-trigger:hover,.archive-edit-close:hover{opacity:.55}
+.archive-editor-head h2{margin-top:7px}

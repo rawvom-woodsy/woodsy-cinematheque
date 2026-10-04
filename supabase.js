@@ -63,12 +63,16 @@ async function saveBookArchive(id){
   if(error)return toast('책 기록을 저장하지 못했어요.');
   const x=books.find(v=>v.id===id);if(x){x.rating=data.rating;x.review=data.review||''}toast('별점과 공개 리뷰를 저장했어요.');render();
 }
+function openArchiveEditor(itemType,itemId){if(!archiveSignedIn())return;window._archiveEdit=itemType+':'+itemId;render()}
+function closeArchiveEditor(){window._archiveEdit='';render()}
 function archiveRecordSection(x,itemType){
   const review=escapeHtml(x.review||'').replace(/\n/g,'<br>');
-  const publicView='<section class="section archive-record"><div class="eyebrow accent-label">MY RATING</div><div class="archive-rating-display">'+(x.rating?'★ '+escapeHtml(x.rating):'—')+'</div><div class="eyebrow accent-label archive-review-label">REVIEW</div><div class="archive-review-public">'+(review||'<span class="muted">아직 공개 리뷰가 없습니다.</span>')+'</div></section>';
-  if(!archiveSignedIn())return publicView;
+  const editing=archiveSignedIn()&&window._archiveEdit===itemType+':'+x.id;
+  const editButton=archiveSignedIn()?'<button class="archive-edit-trigger" onclick="openArchiveEditor(\''+itemType+'\',\''+escapeAttr(x.id)+'\')">EDIT</button>':'';
+  const publicView='<section class="section archive-record"><div class="archive-record-head"><div class="eyebrow accent-label">MY RATING</div>'+editButton+'</div><div class="archive-rating-display">'+(x.rating?'★ '+escapeHtml(x.rating):'—')+'</div><div class="eyebrow accent-label archive-review-label">REVIEW</div><div class="archive-review-public">'+(review||'<span class="muted">아직 공개 리뷰가 없습니다.</span>')+'</div></section>';
+  if(!editing)return publicView;
   setTimeout(()=>hydratePrivateMemo(itemType,x.id),0);
   const options=['','0.5','1','1.5','2','2.5','3','3.5','4','4.5','5'].map(v=>'<option value="'+v+'" '+(String(x.rating||'')===v?'selected':'')+'>'+(v?'★ '+v:'—')+'</option>').join('');
   const saveFn=itemType==='book'?'saveBookArchive':'saveFilmArchive';
-  return publicView+'<section class="section archive-editor"><div class="eyebrow accent-label">ADMIN · PUBLIC RECORD</div><div class="admin-grid"><label class="admin-label">RATING<select id="archive-rating" class="select">'+options+'</select></label></div><label class="admin-label">PUBLIC REVIEW<textarea id="archive-review">'+escapeHtml(x.review||'')+'</textarea></label><div class="actions"><button class="btn" onclick="'+saveFn+"('"+escapeAttr(x.id)+"')"+'">SAVE REVIEW</button></div><div class="private-memo-box"><div class="eyebrow accent-label">PRIVATE MEMO</div><p class="small muted">로그인한 본인에게만 보입니다.</p><textarea id="private-memo"></textarea><div class="actions"><button class="btn secondary" onclick="savePrivateMemo(\''+itemType+'\',\''+escapeAttr(x.id)+'\')">SAVE MEMO</button></div></div></section>';
+  return publicView+'<section class="section archive-editor"><div class="archive-editor-head"><div><div class="eyebrow accent-label">EDIT RECORD</div><h2>별점과 리뷰 수정</h2></div><button class="archive-edit-close" onclick="closeArchiveEditor()">CLOSE</button></div><div class="admin-grid"><label class="admin-label">RATING<select id="archive-rating" class="select">'+options+'</select></label></div><label class="admin-label">PUBLIC REVIEW<textarea id="archive-review">'+escapeHtml(x.review||'')+'</textarea></label><div class="actions"><button class="btn" onclick="'+saveFn+"('"+escapeAttr(x.id)+"')"+'">SAVE REVIEW</button></div><div class="private-memo-box"><div class="eyebrow accent-label">PRIVATE MEMO</div><p class="small muted">로그인한 본인에게만 보입니다.</p><textarea id="private-memo"></textarea><div class="actions"><button class="btn secondary" onclick="savePrivateMemo(\''+itemType+'\',\''+escapeAttr(x.id)+'\')">SAVE MEMO</button></div></div></section>';
 }

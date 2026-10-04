@@ -51,11 +51,11 @@
   document.addEventListener('input',e=>{
     const el=e.target.closest('[data-input]');
     if(!el) return;
-    if(el.id==='lib-q'){window._libQ=el.value;filterFilmLibrary();}
+    if(el.id==='lib-q'){window._libQ=el.value;filterFilmLibrary();return;}\n    if(el.id==='book-q'){filterBooks();return;}
   });
 
   document.addEventListener('keydown',e=>{
-    if(e.key==='Enter' && e.target && (e.target.id==='admin-code'||e.target.id==='archive-password')){
+    if(e.key==='Enter' && e.target && (e.target.id==='lib-q'||e.target.id==='book-q')){\n      e.preventDefault();\n      if(e.target.id==='lib-q')filterFilmLibrary();else filterBooks();\n      return;\n    }\n    if(e.key==='Enter' && e.target && (e.target.id==='admin-code'||e.target.id==='archive-password')){
       e.preventDefault();
       adminLogin();
     }
@@ -65,7 +65,7 @@
     const el=e.target.closest('[data-change]');
     if(!el) return;
     const code=el.dataset.change||'';
-    if(el.id==='lib-type'||code.includes('filterFilmLibrary')){window._libType=el.value;filterFilmLibrary();return;}\n    if(code.includes('_libType')){window._libType=el.value;render();return;}
+    if(el.id==='lib-type'||code.includes('filterFilmLibrary')){window._libType=el.value;filterFilmLibrary();return;}\n    if(el.id==='book-status'||code.includes('filterBooks')){filterBooks();return;}\n    if(code.includes('_libType')){window._libType=el.value;render();return;}
     if(code.includes('_libStatus')){window._libStatus=el.value;render();return;}
     if(code.startsWith('restoreBackup(')){restoreBackup(el.files?.[0]);return;}
     if(code.startsWith('adminSelectMonth(')){adminSelectMonth(el.value);return;}

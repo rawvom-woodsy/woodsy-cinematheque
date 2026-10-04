@@ -51,10 +51,25 @@ async function findBookCover(x){if(!x)return '';if(FIXED_BOOK_COVERS[x.title])re
 async function hydrateBookCovers(scope=document){const nodes=[...scope.querySelectorAll('[data-book-cover]')].filter(n=>!n.querySelector('img'));for(const node of nodes.slice(0,24)){const x=bookById(node.dataset.bookCover);if(!x)continue;const url=await findBookCover(x);if(url)node.innerHTML='<img src="'+escapeHtml(url)+'" alt="'+escapeHtml(x.title)+' 표지" loading="lazy">'}}
 function booksPage(){
   const rows=[...books].sort((a,b)=>String(a.title).localeCompare(String(b.title),'ko'));
-  return `${appHeader('#books')}<main class="shell"><section class="hero archive-hero"><div class="eyebrow accent-label">PERSONAL ARCHIVE</div><h1>BOOKS</h1><p class="lede">개인 책 기록 아카이브. 별점과 인용, 간단한 감상을 기록합니다. 아직 읽는 중인 책도 흔적을 남깁니다.</p></section><section class="section archive-section"><div class="toolbar archive-toolbar"><input id="book-q" class="search" placeholder="책 제목 · 작가 검색" oninput="filterBooks()"><select id="book-status" class="select" onchange="filterBooks()"><option value="">ALL</option><option>완독</option><option>읽는 중</option><option>읽을 것</option></select></div><div class="archive-count"><span id="books-count">${rows.length}</span> BOOKS</div><div id="books-list">${bookRows(rows)}</div></section></main>`;
+  setTimeout(bindBookFilters,0);return `${appHeader('#books')}<main class="shell"><section class="hero archive-hero"><div class="eyebrow accent-label">PERSONAL ARCHIVE</div><h1>BOOKS</h1><p class="lede">개인 책 기록 아카이브. 별점과 인용, 간단한 감상을 기록합니다. 아직 읽는 중인 책도 흔적을 남깁니다.</p></section><section class="section archive-section"><div class="toolbar archive-toolbar"><input id="book-q" class="search" placeholder="책 제목 · 작가 검색" oninput="filterBooks()"><select id="book-status" class="select" onchange="filterBooks()"><option value="">ALL</option><option>완독</option><option>읽는 중</option><option>읽을 것</option></select></div><div class="archive-count"><span id="books-count">${rows.length}</span> BOOKS</div><div id="books-list">${bookRows(rows)}</div></section></main>`;
 }
 function bookRows(rows){setTimeout(()=>hydrateBookCovers(),0);return '<div class="book-grid">'+rows.map(x=>'<a class="book-card" href="#book/'+encodeURIComponent(x.id)+'">'+bookCoverMarkup(x,'book-cover-list')+'<div class="book-card-copy"><strong>'+escapeHtml(x.title)+'</strong><span>'+escapeHtml(x.author||'—')+'</span><small>'+escapeHtml([x.status,x.rating?'★ '+x.rating:''].filter(Boolean).join(' · '))+'</small></div></a>').join('')+'</div>'}
-function filterBooks(){const q=(document.getElementById('book-q')?.value||'').trim().toLowerCase(),s=document.getElementById('book-status')?.value||'';const rows=books.filter(x=>(!s||x.status===s)&&(!q||((x.title||'')+' '+(x.author||'')).toLowerCase().includes(q)));const el=document.getElementById('books-list');if(el){el.innerHTML=bookRows(rows);hydrateBookCovers(el)}const count=document.getElementById('books-count');if(count)count.textContent=rows.length}
+function filterBooks(){
+  const q=(document.getElementById('book-q')?.value||'').trim().toLocaleLowerCase('ko-KR');
+  const s=document.getElementById('book-status')?.value||'';
+  const rows=books.filter(x=>{
+    const hay=[x.title,x.author,x.category,x.subcategory].filter(Boolean).join(' ').toLocaleLowerCase('ko-KR');
+    return (!s||x.status===s)&&(!q||hay.includes(q));
+  });
+  const el=document.getElementById('books-list');
+  if(el){el.innerHTML=rows.length?bookRows(rows):'<div class="empty">검색 결과가 없습니다.</div>';if(rows.length)hydrateBookCovers(el)}
+  const count=document.getElementById('books-count');if(count)count.textContent=rows.length;
+}
+function bindBookFilters(){
+  const q=document.getElementById('book-q'),s=document.getElementById('book-status');
+  if(q&&!q.dataset.bound){q.addEventListener('input',filterBooks);q.addEventListener('search',filterBooks);q.dataset.bound='1'}
+  if(s&&!s.dataset.bound){s.addEventListener('change',filterBooks);s.dataset.bound='1'}
+}
 function bookInline(s){
   return escapeHtml(s||'')
     .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')

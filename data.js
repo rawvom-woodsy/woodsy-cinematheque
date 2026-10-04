@@ -300,7 +300,15 @@ const editorial={
 };
 function editorialFor(id){return editorial[id]||null}
 const byId=Object.fromEntries(works.map(w=>[w.id,w]));
-let state=loadJson(APP_KEY,DEFAULT_STATE);let library=mergeSeed(loadJson(LIB_KEY,seedLibrary));
+let state=loadJson(APP_KEY,DEFAULT_STATE);
+let library=(()=>{
+  const filmSeed=Array.isArray(window.FILM_SEED)?window.FILM_SEED:[];
+  const base=mergeSeed([...seedLibrary,...filmSeed]);
+  const local=loadJson(LIB_KEY,[]);
+  const map=new Map(base.map(x=>[x.id||x.canonicalId,x]));
+  if(Array.isArray(local))local.forEach(x=>{if(!x)return;const k=x.id||x.canonicalId;if(k)map.set(k,{...(map.get(k)||{}),...x})});
+  return [...map.values()];
+})();
 let admin=loadJson(ADMIN_KEY,{months:{},works:{},stills:{}});
 Object.entries(admin.months||{}).forEach(([id,o])=>{if(months[id])Object.assign(months[id],o)});
 Object.entries(admin.works||{}).forEach(([id,o])=>{if(byId[id])Object.assign(byId[id],o)});

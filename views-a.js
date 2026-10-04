@@ -118,7 +118,7 @@ function curriculum(){
   </main>`
 }
 function libraryPage(){
-  const rows=[...library].filter(r=>r.type!=='book').sort((a,b)=>String(a.title).localeCompare(String(b.title),'ko')).slice(0,1200);
+  const rows=[...library].filter(r=>r.type!=='book').sort((a,b)=>String(a.title).localeCompare(String(b.title),'ko'));
   const poster=(r)=>r.poster||r.image||r.posterUrl||'';
   return `${appHeader('#library')}<main class="shell"><section class="hero film-library-hero archive-hero"><div class="eyebrow accent-label">PERSONAL ARCHIVE</div><h1>FILM / SERIES</h1><p class="lede">개인 영화 기록 아카이브. 별점과 간단한 감상을 기록합니다.</p></section><section class="section archive-section"><div class="toolbar archive-toolbar"><input id="lib-q" class="search" placeholder="제목 · 원제 · 감독 검색" oninput="filterFilmLibrary()"><select id="lib-type" class="select" onchange="filterFilmLibrary()"><option value="all">ALL</option><option value="film">FILM</option><option value="series">SERIES</option></select><button class="btn secondary" onclick="navTo('#import')">IMPORT</button></div><div class="archive-count"><span id="library-count">${rows.length}</span> TITLES</div><div id="film-library-list" class="film-grid">${filmRows(rows,poster)}</div></section></main>`
 }

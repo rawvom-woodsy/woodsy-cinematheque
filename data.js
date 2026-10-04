@@ -326,5 +326,5 @@ function normalize(s){return String(s||'').toLowerCase().replace(/[《》『』�
 function statusFor(w,mid){const r=recordFor(w);const inMonth=months[mid]&&(months[mid].core.includes(w.id)||months[mid].supp.includes(w.id));if(r&&inMonth)return 'REVISIT';if(r)return r.historicalStatus==='read'?'ALREADY READ':'ALREADY WATCHED';if(w.role==='CONNECTED')return 'CONNECTED';return 'NEW'}
 function progress(mid){const ids=months[mid]?.core||[];const d=ids.filter(id=>isDone(mid,id)).length;return {done:d,total:ids.length,pct:ids.length?Math.round(d/ids.length*100):0}}
 function setMonth(mid){state.selectedMonth=mid;save();render()}
-function navTo(route){location.hash=route}
+function navTo(route){location.hash=route;requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'}))}
 function route(){return location.hash||'#home'}

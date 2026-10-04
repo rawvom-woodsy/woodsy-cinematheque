@@ -17,4 +17,31 @@ function booksPage(){
 }
 function bookRows(rows){return `<div class="library-row header"><span>책</span><span>작가</span><span>상태</span><span>별점</span></div>`+rows.map(x=>`<a class="library-row" href="#book/${encodeURIComponent(x.id)}"><span><strong>${escapeHtml(x.title)}</strong><small class="muted">${escapeHtml([x.category,x.subcategory].filter(Boolean).join(' · '))}</small></span><span>${escapeHtml(x.author||'—')}</span><span>${escapeHtml(x.status||'—')}</span><span>${x.rating?'★ '+x.rating:'—'}</span></a>`).join('')}
 function filterBooks(){const q=(document.getElementById('book-q')?.value||'').toLowerCase(),s=document.getElementById('book-status')?.value||'';const rows=books.filter(x=>(!s||x.status===s)&&(!q||((x.title||'')+' '+(x.author||'')).toLowerCase().includes(q)));const el=document.getElementById('books-list');if(el)el.innerHTML=bookRows(rows)}
+function bookInline(s){
+  return escapeHtml(s||'')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/__(.+?)__/g,'<strong>$1</strong>')
+    .replace(/\*([^*\n]+?)\*/g,'<em>$1</em>')
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,'<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+}
+function renderBookMarkdown(md){
+  const lines=String(md||'').replace(/\r\n?/g,'\n').split('\n');
+  let out=[],para=[],list=null,quote=[];
+  const flushPara=()=>{if(para.length){out.push('<p>'+bookInline(para.join(' '))+'</p>');para=[]}};
+  const flushList=()=>{if(list){out.push('<'+list.type+'>'+list.items.map(x=>'<li>'+bookInline(x)+'</li>').join('')+'</'+list.type+'>');list=null}};
+  const flushQuote=()=>{if(quote.length){out.push('<blockquote class="book-quote">'+quote.map(x=>'<p>'+bookInline(x)+'</p>').join('')+'</blockquote>');quote=[]}};
+  const flush=()=>{flushPara();flushList();flushQuote()};
+  for(const raw of lines){
+    const s=raw.trim();
+    if(!s){flush();continue}
+    let m;
+    if((m=s.match(/^(#{1,4})\s+(.+)$/))){flush();const n=Math.min(4,m[1].length+1);out.push('<h'+n+'>'+bookInline(m[2])+'</h'+n+'>');continue}
+    if((m=s.match(/^>\s?(.*)$/))){flushPara();flushList();quote.push(m[1]);continue}
+    if((m=s.match(/^[-*+]\s+(.+)$/))){flushPara();flushQuote();if(!list||list.type!=='ul'){flushList();list={type:'ul',items:[]}}list.items.push(m[1]);continue}
+    if((m=s.match(/^\d+[.)]\s+(.+)$/))){flushPara();flushQuote();if(!list||list.type!=='ol'){flushList();list={type:'ol',items:[]}}list.items.push(m[1]);continue}
+    flushList();flushQuote();para.push(s);
+  }
+  flush();
+  return out.join('');
+}
 function bookPage(id){const x=bookById(decodeURIComponent(id));if(!x)return notFound();const note=escapeHtml(x.notes||'').replace(/\n/g,'<br>');return `${appHeader('#books')}<main class="shell"><section class="detail-intro"><a class="backlink" href="#books">← BOOKS</a></section><section class="detail-layout"><div class="detail-copy"><div class="eyebrow accent-label">${escapeHtml([x.category,x.subcategory].filter(Boolean).join(' · ')||'BOOK')}</div><h1>${escapeHtml(x.title)}</h1><p class="detail-original">${escapeHtml(x.author||'')}</p><dl class="detail-meta"><div><dt>Status</dt><dd>${escapeHtml(x.status||'—')}</dd></div><div><dt>Rating</dt><dd>${x.rating?'★ '+x.rating:'—'}</dd></div><div><dt>Source</dt><dd>${escapeHtml(x.source||'')}</dd></div></dl></div><div><div class="eyebrow accent-label">QUOTES & NOTES</div><div class="book-notes">${note||'<span class="muted">저장된 인용문이 없습니다.</span>'}</div></div></section></main>`}

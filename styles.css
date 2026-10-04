@@ -909,3 +909,6 @@ body:has(.book-grid),body:has(.book-detail-hero){background:var(--book-ivory)}
 .film-card:hover .film-card-meta strong,.book-card:hover .book-card-copy strong{opacity:.62}
 .film-poster,.book-cover{box-shadow:0 1px 0 rgba(30,25,20,.08)}
 @media(min-width:1100px){.film-grid,.book-grid{gap:36px 20px}}
+
+#books-list.is-empty:after{content:'검색 결과가 없습니다.';display:block;padding:36px 0;color:var(--soft);font-size:13px}
+.book-filter-item[hidden]{display:none!important}

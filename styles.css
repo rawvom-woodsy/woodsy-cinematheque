@@ -896,3 +896,16 @@ body:has(.book-grid),body:has(.book-detail-hero){background:var(--book-ivory)}
 .film-card-foot{display:flex;justify-content:space-between;gap:8px;margin-top:8px;color:var(--book-burgundy,#7d2636);font-size:9px;font-weight:650;letter-spacing:.09em}
 @media(max-width:1000px){.film-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:620px){.film-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 12px}}
+
+/* Personal Archive refinement — image-led, editorial, restrained */
+.archive-hero{max-width:820px;padding-bottom:30px}
+.archive-hero h1{letter-spacing:-.035em}
+.archive-hero .lede{max-width:650px}
+.archive-section{padding-top:12px}
+.archive-toolbar{align-items:center;margin-bottom:10px}
+.archive-toolbar .search{min-width:280px;flex:1}
+.archive-count{margin:8px 0 0;color:var(--soft);font-size:9px;font-weight:650;letter-spacing:.12em}
+.film-card-meta strong,.book-card-copy strong{display:block;transition:opacity .18s ease}
+.film-card:hover .film-card-meta strong,.book-card:hover .book-card-copy strong{opacity:.62}
+.film-poster,.book-cover{box-shadow:0 1px 0 rgba(30,25,20,.08)}
+@media(min-width:1100px){.film-grid,.book-grid{gap:36px 20px}}

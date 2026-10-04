@@ -61,7 +61,7 @@ function importPage(){
 }
 function adminPage(){
   if(!isAdminUnlocked()){
-    return `${appHeader('#admin')}<main class="shell"><section class="hero"><div class="eyebrow accent-label">ADMIN MODE</div><h1>관리자 확인</h1><p class="lede">텍스트·큐레이션·스틸·이번 주 작품을 수정하려면 코드를 입력하세요.</p></section><section class="section"><div class="admin-lock"><div class="eyebrow accent-label">ACCESS CODE</div><h2>4자리 코드를 입력하세요</h2><input id="admin-code" class="search admin-code" type="password" inputmode="numeric" maxlength="4" autocomplete="off"><div class="actions"><button class="btn" onclick="adminLogin()">관리자 모드 열기</button></div></div></section></main>`;
+    return `${appHeader('#admin')}<main class="shell"><section class="hero"><div class="eyebrow accent-label">ADMIN MODE</div><h1>개인 아카이브 로그인</h1><p class="lede">Supabase 계정으로 로그인하면 리뷰·별점·비공개 메모와 커리큘럼 편집 기능이 열립니다.</p></section><section class="section">${archiveLoginPanel()}</section></main>`;
   }
   if(!Object.keys(months).length)return `${appHeader('#admin')}<main class="shell"><section class="empty-instance"><div class="eyebrow accent-label">ADMIN MODE</div><h1>먼저 프로그램을 불러오세요</h1><p class="lede">빈 영화모임 페이지에서는 IMPORT로 첫 커리큘럼을 추가한 뒤 편집 기능을 사용할 수 있습니다.</p><div class="actions"><button class="btn" onclick="navTo('#import')">IMPORT PROGRAM</button></div></section></main>`;
   const mid=window._adminMonth||state.selectedMonth,m=months[mid]||month(),wid=window._adminWork||m.core[0],w=byId[wid]||works[0],st=stills[wid]||{},ed=editorialFor(wid)||{};

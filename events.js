@@ -38,6 +38,7 @@
     if((m=code.match(/^saveFilmArchive\('([^']+)'\)$/))) return saveFilmArchive(m[1]);\n    if((m=code.match(/^uploadFilmPoster\('([^']+)'\)$/))) return uploadFilmPoster(m[1]);\n    if((m=code.match(/^importFilmPosterUrl\('([^']+)'\)$/))) return importFilmPosterUrl(m[1]);
     if(code==='runPosterBatch01()') return runPosterBatch01();
     if(code==='runPosterBatch02()') return runPosterBatch02();
+    if(code==='runPosterBatch03()') return runPosterBatch03();
     if((m=code.match(/^saveBookArchive\('([^']+)'\)$/))) return saveBookArchive(m[1]);
     if((m=code.match(/^savePrivateMemo\('([^']+)'\s*,\s*'([^']+)'\)$/))) return savePrivateMemo(m[1],m[2]);
     if(code==='history.back()') return history.back();

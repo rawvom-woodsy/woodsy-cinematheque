@@ -57,7 +57,6 @@ async function saveConnection(type,id){
  await loadConnections();toast('새 연결을 저장했어요.');render();
 }
 (function installConnections(){
- const oldHeader=appHeader;appHeader=function(active){let h=oldHeader(active);h=h.replace('<a class="'+(active==='#archive'?'active':'')+'" href="#archive">ARCHIVE</a>','<a class="'+(active==='#archive'?'active':'')+'" href="#archive">ARCHIVE</a><a class="'+(active==='#connections'?'active':'')+'" href="#connections">CONNECTIONS</a>');return h};
  const oldWork=workPage;workPage=function(id){const html=oldWork(id),w=byId[id]||library.find(x=>x.id===id||x.canonicalId===id);if(!w)return html;const type=itemTypeForConnection(w);return html.replace('</main>',itemConnectionsSection(type,w.id)+'</main>')};
  const oldBook=bookPage;bookPage=function(id){const decoded=decodeURIComponent(id),html=oldBook(id);return html.replace('</main>',itemConnectionsSection('book',decoded)+'</main>')};
  const oldRender=render;render=function(){const r=route();if(r==='#connections'){document.getElementById('app').innerHTML=connectionsPage();return}if(r.startsWith('#connections/')){document.getElementById('app').innerHTML=connectionThemePage(r.split('/')[1]);return}return oldRender()};

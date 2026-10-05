@@ -1,7 +1,7 @@
 function siteConfig(){return {...(window.SITE_CONFIG||{}),...(admin.site||{})}}
 function appHeader(active){
   const cfg=siteConfig();
-  const primary=[['#home','HOME'],['#curriculum','CURRICULUM'],['#library','FILM / SERIES'],['#books','BOOKS'],['#archive','ARCHIVE']];
+  const primary=[['#home','HOME'],['#curriculum','CURRICULUM'],['#library','FILM / SERIES'],['#books','BOOKS'],['#archive','ARCHIVE'],['#connections','CONNECTIONS']];
   const utilities=[['#notes','NOTES'],['#map','MAP'],['#import','IMPORT'],['#admin','ADMIN']];
   const p=progress(state.selectedMonth);
   const m=month();
@@ -155,7 +155,7 @@ function workPage(id){
       </div>
     </section>
     ${ed?`<section class="section editorial-detail"><div class="detail-section-grid"><div><div class="eyebrow accent-label">VIEWING POINTS</div><ol class="viewing-points">${(ed.viewingPoints||[]).map((x,i)=>`<li><span>${String(i+1).padStart(2,'0')}</span><p>${escapeHtml(x)}</p></li>`).join('')}</ol><div class="editorial-block"><div class="eyebrow accent-label">KEYWORDS</div><div class="keyword-line">${(ed.keywords||[]).map(x=>`<span>#${escapeHtml(x)}</span>`).join('')}</div></div></div><div>${ed.quote?quoteHtml(ed.quote):''}${ed.references?.length?`<div class="editorial-block"><div class="eyebrow accent-label">REFERENCES</div><ul class="reference-list">${ed.references.map(x=>`<li>${escapeHtml(x)}</li>`).join('')}</ul></div>`:''}${conceptIds(id).length?`<div class="editorial-block"><div class="eyebrow accent-label">UNLOCKS</div><div class="unlock-list">${conceptIds(id).map(c=>`<span>${currentMid&&isDone(currentMid,id)?'◆':'◇'} ${escapeHtml(c)}</span>`).join('')}</div></div>`:''}</div></div></section>`:''}
-    ${connections.length?`<section class="section"><div class="section-head"><div><div class="eyebrow accent-label">CONNECTIONS</div><h2>이 작품에서 이어지는 경로</h2></div></div><div class="connections-grid">${connections.map(cid=>{const x=byId[cid];return `<a class="connection-card ${x.type!=='film'?'text-connection':''}" href="#work/${x.id}">${x.type==='film'?thumbHtml(x):''}<strong>${formatTitle(x)}</strong><div class="work-meta">${x.creator} · ${x.year}</div><p class="connection-reason">${escapeHtml(editorialFor(x.id)?.logline||'')}</p></a>`}).join('')}</div></section>`:''}
+    ${connections.length?`<section class="section"><div class="section-head"><div><div class="eyebrow accent-label">CURATED PATHS</div><h2>커리큘럼에서 이어지는 경로</h2></div></div><div class="connections-grid">${connections.map(cid=>{const x=byId[cid];return `<a class="connection-card ${x.type!=='film'?'text-connection':''}" href="#work/${x.id}">${x.type==='film'?thumbHtml(x):''}<strong>${formatTitle(x)}</strong><div class="work-meta">${x.creator} · ${x.year}</div><p class="connection-reason">${escapeHtml(editorialFor(x.id)?.logline||'')}</p></a>`}).join('')}</div></section>`:''}
     ${archiveRecordSection(rec||w,(w.type==='series'?'series':'film'))}
   </main>`
 }

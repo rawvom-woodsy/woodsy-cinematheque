@@ -9,6 +9,7 @@ async function initSupabase(){
   const {data}=await supabaseClient.auth.getUser();archiveUser=data?.user||null;
   supabaseClient.auth.onAuthStateChange((_e,s)=>{archiveUser=s?.user||null;setTimeout(render,0)});
   await loadCloudArchive();
+  if(typeof loadConnections==='function')await loadConnections();
 }
 async function fetchAllRows(table,columns,order='title'){
   const pageSize=1000,rows=[];

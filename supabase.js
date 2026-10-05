@@ -103,6 +103,13 @@ async function runPosterBatch(batch,label){
  if(btn)btn.disabled=false;toast(ok+'편의 포스터를 아카이브에 저장했어요.');render();
 }
 async function runPosterBatch02(){return runPosterBatch(POSTER_BATCH_02,'02')}
+const POSTER_BATCH_03=[
+ {id:'watcha:m5NngLE',title:'6번 칸',url:'https://www.impawards.com/intl/finland/2021/posters/hytti_nro_6.jpg'},
+ {id:'watcha:mOlwgNe',title:'파비안느에 관한 진실',url:'https://www.impawards.com/intl/france/2019/posters/la_verite.jpg'},
+ {id:'watcha:mO2Mo6N',title:'태풍이 지나가고',url:'https://www.impawards.com/intl/japan/2016/posters/umi_yori_mo_mada_fukaku_ver3.jpg'}
+];
+async function runPosterBatch03(){return runPosterBatch(POSTER_BATCH_03,'03')}
+
 async function runPosterBatch01(){
   if(!archiveSignedIn()||!supabaseClient)return toast('ADMIN 로그인이 필요해요.');
   const btn=document.getElementById('poster-batch-01'),status=document.getElementById('poster-batch-status');

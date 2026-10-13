@@ -39,9 +39,20 @@ async function archiveLogin(){
   if(error)return toast('로그인하지 못했어요. 이메일과 비밀번호를 확인해줘.');
   toast('ADMIN MODE로 로그인했어요.');render();
 }
+async function updateArchivePassword(){
+  if(!archiveSignedIn()||!supabaseClient)return toast('로그인이 필요해요.');
+  const password=document.getElementById('archive-new-password')?.value||'';
+  const confirm=document.getElementById('archive-confirm-password')?.value||'';
+  if(password.length<8)return toast('새 비밀번호는 8자 이상으로 입력해 주세요.');
+  if(password!==confirm)return toast('두 비밀번호가 일치하지 않아요.');
+  const {error}=await supabaseClient.auth.updateUser({password});
+  if(error)return toast('변경하지 못했어요: '+error.message);
+  toast('새 비밀번호를 저장했어요.');
+  render();
+}
 async function archiveLogout(){if(supabaseClient)await supabaseClient.auth.signOut();Object.keys(privateMemoCache).forEach(k=>delete privateMemoCache[k]);render()}
 function archiveLoginPanel(){
-  if(archiveSignedIn())return '<div class="archive-auth-status"><span>ADMIN MODE</span><div class="actions"><button class="btn secondary" onclick="archiveLogout()">LOG OUT</button></div></div>';
+  if(archiveSignedIn())return '<div class="archive-auth-status"><span>ADMIN MODE</span><div class="actions"><button class="btn secondary" onclick="archiveLogout()">LOG OUT</button></div></div><div class="admin-lock"><div class="eyebrow accent-label">ACCOUNT SECURITY</div><h2>비밀번호 변경</h2><p class="small muted">재설정 메일로 로그인했다면 여기에서 새 비밀번호를 지정해 주세요.</p><input id="archive-new-password" class="search" type="password" autocomplete="new-password" placeholder="새 비밀번호 (8자 이상)"><input id="archive-confirm-password" class="search" type="password" autocomplete="new-password" placeholder="새 비밀번호 확인"><div class="actions"><button class="btn" onclick="updateArchivePassword()">SAVE NEW PASSWORD</button></div></div>';
   return '<div class="admin-lock"><div class="eyebrow accent-label">ADMIN LOGIN</div><h2>개인 아카이브 편집</h2><input id="archive-email" class="search" type="email" autocomplete="username" placeholder="Email"><input id="archive-password" class="search" type="password" autocomplete="current-password" placeholder="Password"><div class="actions"><button class="btn" onclick="archiveLogin()">LOG IN</button></div></div>';
 }
 async function loadPrivateMemo(itemType,itemId){

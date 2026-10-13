@@ -44,6 +44,7 @@
     if((m=code.match(/^openConnectionComposer\('([^']+)'\s*,\s*'([^']+)'\)$/))) return openConnectionComposer(m[1],m[2]);
     if((m=code.match(/^saveConnection\('([^']+)'\s*,\s*'([^']+)'\)$/))) return saveConnection(m[1],m[2]);
     if((m=code.match(/^selectLibraryRating\('([^']+)'\)$/))) return selectLibraryRating(m[1]);
+    if((m=code.match(/^selectBookRating\('([^']+)'\)$/))) return selectBookRating(m[1]);
     if(code==='history.back()') return history.back();
   }
 

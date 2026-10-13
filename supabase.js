@@ -7,7 +7,7 @@ async function initSupabase(){
   if(!window.supabase?.createClient)return;
   supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
   const {data}=await supabaseClient.auth.getUser();archiveUser=data?.user||null;
-  supabaseClient.auth.onAuthStateChange((_e,s)=>{archiveUser=s?.user||null;setTimeout(render,0)});
+  supabaseClient.auth.onAuthStateChange((event,s)=>{archiveUser=s?.user||null;if(event==='PASSWORD_RECOVERY'){history.replaceState(null,'',location.pathname+location.search+'#admin');}setTimeout(render,0)});
   await loadCloudArchive();
   if(typeof loadConnections==='function')await loadConnections();
 }

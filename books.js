@@ -108,4 +108,21 @@ function renderBookMarkdown(md){
   flush();
   return out.join('');
 }
-function bookPage(id){const x=bookById(decodeURIComponent(id));if(!x)return notFound();setTimeout(()=>hydrateBookCovers(),0);return `${appHeader('#books')}<main class="shell"><section class="detail-intro"><a class="backlink" href="#books">← BOOKS</a></section><section class="book-detail-hero"><div>${bookCoverMarkup(x,'book-cover-detail')}</div><div class="detail-copy"><div class="eyebrow accent-label">${escapeHtml([x.category,x.subcategory].filter(Boolean).join(' · ')||'BOOK')}</div><h1>${escapeHtml(x.title)}</h1><p class="detail-original">${escapeHtml(x.author||'')}</p><dl class="detail-meta"><div><dt>Status</dt><dd>${escapeHtml(x.status||'—')}</dd></div><div><dt>Rating</dt><dd>${x.rating?'★ '+x.rating:'—'}</dd></div><div><dt>Source</dt><dd>${escapeHtml(x.source||'')}</dd></div></dl></div></section>${archiveRecordSection(x,'book')}</main>`}
+function bookPage(id){const x=bookById(decodeURIComponent(id));if(!x)return notFound();setTimeout(()=>hydrateBookCovers(),0);return `${appHeader('#books')}<main class="shell"><section class="detail-intro"><a class="backlink" href="#books">← BOOKS</a></section><section class="book-detail-hero"><div>${bookCoverMarkup(x,'book-cover-detail')}</div><div class="detail-copy"><div class="eyebrow accent-label">${escapeHtml([x.category,x.subcategory].filter(Boolean).join(' · ')||'BOOK')}</div><h1>${escapeHtml(x.title)}</h1><p class="detail-original">${escapeHtml(x.author||'')}</p><dl class="detail-meta"><div><dt>Status</dt><dd>${escapeHtml(x.status||'—')}</dd></div><div><dt>Rating</dt><dd>${x.rating?'★ '+x.rating:'—'}</dd></div><div><dt>Source</dt><dd>${escapeHtml(x.source||'')}</dd></div></dl></div></section>${bookPrivateMemoSection(x)}${archiveRecordSection(x,'book')}</main>`}
+function bookPrivateMemoSection(x){
+  if(!archiveSignedIn())return '';
+  setTimeout(()=>hydrateBookPrivateMemo(x.id),0);
+  return '<section class="section book-private-memo-display"><div class="private-memo-box"><div class="eyebrow accent-label">PRIVATE MEMO · ONLY YOU</div><h2>나만의 독서 메모</h2><div id="book-private-memo-text" class="book-private-memo-text">메모 불러오는 중…</div><p class="small muted">로그인한 관리자에게만 표시됩니다. 수정하려면 아래 EDIT를 눌러 주세요.</p></div></section>';
+}
+async function hydrateBookPrivateMemo(id){
+  if(!archiveSignedIn())return;
+  const node=document.getElementById('book-private-memo-text');
+  if(!node)return;
+  try{
+    const memo=await loadPrivateMemo('book',id);
+    if(!node.isConnected||!archiveSignedIn())return;
+    node.textContent=memo||'아직 작성된 PRIVATE MEMO가 없습니다.';
+  }catch(e){
+    if(node.isConnected)node.textContent='메모를 불러오지 못했습니다. 새로고침 후 다시 확인해 주세요.';
+  }
+}

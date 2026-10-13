@@ -120,15 +120,58 @@ function curriculum(){
 function libraryPage(){
   const rows=[...library].filter(r=>r.type!=='book').sort((a,b)=>String(a.title).localeCompare(String(b.title),'ko'));
   const poster=(r)=>r.poster||r.image||r.posterUrl||r.stillUrl||'';
-  return `${appHeader('#library')}<main class="shell"><section class="hero film-library-hero archive-hero"><div class="eyebrow accent-label">PERSONAL ARCHIVE</div><h1>FILM / SERIES</h1><p class="lede">개인 영화 기록 아카이브. 별점과 간단한 감상을 기록합니다.</p></section><section class="section archive-section"><div class="toolbar archive-toolbar"><input id="lib-q" class="search" placeholder="제목 · 원제 · 감독 검색" oninput="filterFilmLibrary()"><select id="lib-type" class="select" onchange="filterFilmLibrary()"><option value="all">ALL</option><option value="film">FILM</option><option value="series">SERIES</option></select><button class="btn secondary" onclick="navTo('#import')">IMPORT</button></div><div class="archive-count"><span id="library-count">${rows.length}</span> TITLES</div><div id="film-library-list" class="film-grid">${filmRows(rows,poster)}</div></section></main>`
+  const rated=rows.filter(r=>Number(r.rating)>0);
+  const distribution=Array.from({length:10},(_,i)=>({rating:(10-i)/2,count:rated.filter(r=>Number(r.rating)===(10-i)/2).length}));
+  const maxCount=Math.max(1,...distribution.map(d=>d.count));
+  return `${appHeader('#library')}<main class="shell"><section class="hero film-library-hero archive-hero"><div class="eyebrow accent-label">PERSONAL ARCHIVE</div><h1>FILM / SERIES</h1><p class="lede">개인 영화 기록 아카이브. 별점과 간단한 감상을 기록합니다.</p></section><section class="section archive-section">
+    <div class="toolbar archive-toolbar">
+      <input id="lib-q" class="search" placeholder="제목 · 원제 · 감독 검색" oninput="filterFilmLibrary()">
+      <select id="lib-type" class="select" onchange="filterFilmLibrary()"><option value="all">ALL</option><option value="film">FILM</option><option value="series">SERIES</option></select>
+      <select id="lib-rating" class="select" aria-label="별점 필터" onchange="filterFilmLibrary()"><option value="all">전체 별점</option><option value="4.5+">★ 4.5 이상</option>${distribution.map(d=>`<option value="${d.rating}">★ ${d.rating.toFixed(1)}</option>`).join('')}<option value="unrated">별점 없음</option></select>
+      <select id="lib-sort" class="select" aria-label="정렬 기준" onchange="filterFilmLibrary()"><option value="title">제목순</option><option value="rating-desc">별점 높은 순</option><option value="rating-asc">별점 낮은 순</option><option value="year-desc">제작연도 최신순</option><option value="year-asc">제작연도 오래된 순</option></select>
+      <button class="btn secondary" onclick="navTo('#import')">IMPORT</button>
+    </div>
+    <div class="archive-count"><span id="library-count">${rows.length}</span> TITLES</div>
+    <div class="rating-distribution" aria-label="별점 분포">
+      <div class="eyebrow accent-label">RATING DISTRIBUTION <span class="small muted">· ${rated.length} rated / ${rows.length} titles</span></div>
+      <div class="rating-bars">${distribution.map(d=>`<button type="button" class="rating-bar" data-rating="${d.rating}" onclick="selectLibraryRating('${d.rating}')" aria-label="${d.rating.toFixed(1)}점 ${d.count}편" title="${d.rating.toFixed(1)}점 · ${d.count}편"><span class="rating-bar-count">${d.count}</span><span class="rating-bar-track"><span class="rating-bar-fill" style="height:${Math.round(d.count/maxCount*100)}%"></span></span><span class="rating-bar-label">${d.rating.toFixed(1)}</span></button>`).join('')}</div>
+    </div>
+    <div id="film-library-list" class="film-grid">${filmRows(rows,poster)}</div>
+  </section></main>`;
 }
 function filmRows(rows,poster){
-  return rows.map(r=>{const search=[r.title,r.originalTitle,r.creator].join(' ').toLowerCase();const img=poster(r);return `<article class="film-card library-item" data-search="${escapeAttr(search)}" data-type="${escapeAttr(r.type||'')}"><a href="#work/${r.canonicalId||r.id}" class="film-card-link"><div class="film-poster">${img?`<img src="${escapeAttr(img)}" alt="" loading="lazy" style="object-position:${escapeAttr(r.posterUrl?'center':(r.cropPosition||'center'))}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="film-poster-placeholder" style="display:none"><span>${escapeHtml(r.title)}</span></div>`:`<div class="film-poster-placeholder"><span>${escapeHtml(r.title)}</span></div>`}</div><div class="film-card-meta"><strong>${escapeHtml(r.title)}</strong><div class="small muted">${[r.year,r.creator].filter(Boolean).map(escapeHtml).join(' · ')}</div><div class="film-card-foot"><span>${(r.type||'film').toUpperCase()}</span>${r.rating?`<span>★ ${r.rating}</span>`:''}</div></div></a></article>`}).join('')
+  return rows.map((r,i)=>{const search=[r.title,r.originalTitle,r.creator].join(' ').toLowerCase();const img=poster(r);return `<article class="film-card library-item" data-index="${i}" data-year="${Number(r.year)||0}" data-rating="${Number(r.rating)||0}" data-search="${escapeAttr(search)}" data-type="${escapeAttr(r.type||'')}"><a href="#work/${r.canonicalId||r.id}" class="film-card-link"><div class="film-poster">${img?`<img src="${escapeAttr(img)}" alt="" loading="lazy" style="object-position:${escapeAttr(r.posterUrl?'center':(r.cropPosition||'center'))}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="film-poster-placeholder" style="display:none"><span>${escapeHtml(r.title)}</span></div>`:`<div class="film-poster-placeholder"><span>${escapeHtml(r.title)}</span></div>`</div><div class="film-card-meta"><strong>${escapeHtml(r.title)}</strong><div class="small muted">${[r.year,r.creator].filter(Boolean).map(escapeHtml).join(' · ')}</div><div class="film-card-foot"><span>${(r.type||'film').toUpperCase()}</span>${r.rating?`<span>★ ${r.rating}</span>`:''}</div></div></a></article>` }).join('')
+}
+function selectLibraryRating(rating){
+  const el=document.getElementById('lib-rating');if(!el)return;
+  el.value=el.value===String(rating)?'all':String(rating);filterFilmLibrary();
 }
 function filterFilmLibrary(){
-  const q=(document.getElementById('lib-q')?.value||'').trim().toLowerCase(),t=document.getElementById('lib-type')?.value||'all';
-  let n=0;document.querySelectorAll('#film-library-list .library-item').forEach(el=>{const ok=(!q||(el.dataset.search||'').includes(q))&&(t==='all'||el.dataset.type===t);el.style.display=ok?'':'none';if(ok)n++});
+  const q=(document.getElementById('lib-q')?.value||'').trim().toLowerCase();
+  const t=document.getElementById('lib-type')?.value||'all';
+  const rating=document.getElementById('lib-rating')?.value||'all';
+  const sort=document.getElementById('lib-sort')?.value||'title';
+  const root=document.getElementById('film-library-list');if(!root)return;
+  const items=[...root.querySelectorAll('.library-item')];
+  items.sort((a,b)=>{
+    const ar=Number(a.dataset.rating)||0,br=Number(b.dataset.rating)||0;
+    const ay=Number(a.dataset.year)||0,by=Number(b.dataset.year)||0;
+    const orig=Number(a.dataset.index)-Number(b.dataset.index);
+    if(sort==='rating-desc')return (br-ar)||orig;
+    if(sort==='rating-asc')return (ar-br)||orig;
+    if(sort==='year-desc')return (by-ay)||orig;
+    if(sort==='year-asc')return (ay-by)||orig;
+    return orig;
+  });
+  let n=0;
+  items.forEach(el=>{
+    const r=Number(el.dataset.rating)||0;
+    const matchesRating=rating==='all'||(rating==='unrated'?r===0:(rating==='4.5+'?r>=4.5:r===Number(rating)));
+    const ok=(!q||(el.dataset.search||'').includes(q))&&(t==='all'||el.dataset.type===t)&&matchesRating;
+    el.style.display=ok?'':'none';if(ok)n++;root.appendChild(el);
+  });
   const count=document.getElementById('library-count');if(count)count.textContent=n;
+  document.querySelectorAll('.rating-bar').forEach(el=>el.classList.toggle('active',el.dataset.rating===rating));
 }
 
 function workPage(id){

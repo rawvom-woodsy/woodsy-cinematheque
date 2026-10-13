@@ -327,4 +327,4 @@ function statusFor(w,mid){const r=recordFor(w);const inMonth=months[mid]&&(month
 function progress(mid){const ids=months[mid]?.core||[];const d=ids.filter(id=>isDone(mid,id)).length;return {done:d,total:ids.length,pct:ids.length?Math.round(d/ids.length*100):0}}
 function setMonth(mid){state.selectedMonth=mid;save();render()}
 function navTo(route){if(location.hash===route){window.scrollTo({top:0,left:0,behavior:'auto'});return}location.hash=route}
-function route(){return location.hash||'#home'}
+function route(){const hash=location.hash||'#home';if(['#access_token=','#refresh_token=','#error=','#type=recovery','#/recovery'].some(x=>hash.startsWith(x)))return '#admin';return hash}

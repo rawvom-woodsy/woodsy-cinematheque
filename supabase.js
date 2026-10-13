@@ -193,7 +193,13 @@ function archiveRecordSection(x,itemType){
   const editing=archiveSignedIn()&&window._archiveEdit===itemType+':'+x.id;
   const editButton=archiveSignedIn()?'<button class="archive-edit-trigger" onclick="openArchiveEditor(\''+itemType+'\',\''+escapeAttr(x.id)+'\')">EDIT</button>':'';
   const publicView='<section class="section archive-record"><div class="archive-record-head"><div class="eyebrow accent-label">MY RATING</div>'+editButton+'</div><div class="archive-rating-display">'+(x.rating?'★ '+escapeHtml(x.rating):'—')+'</div><div class="eyebrow accent-label archive-review-label">REVIEW</div><div class="archive-review-public">'+(review||'<span class="muted">아직 공개 리뷰가 없습니다.</span>')+'</div></section>';
-  if(!editing)return publicView;
+  if(!editing){
+    if(itemType==='book'&&archiveSignedIn()){
+      setTimeout(()=>hydratePrivateMemo(itemType,x.id),0);
+      return publicView+'<section class="section"><div class="private-memo-box"><div class="eyebrow accent-label">PRIVATE MEMO</div><p class="small muted">로그인한 본인에게만 보입니다. 편집 모드 없이 여기서 바로 수정할 수 있어요.</p><textarea id="private-memo" aria-label="비공개 독서 메모"></textarea><div class="actions"><button class="btn secondary" onclick="savePrivateMemo(\'book\',\''+escapeAttr(x.id)+'\')">SAVE MEMO</button></div></div></section>';
+    }
+    return publicView;
+  }
   setTimeout(()=>hydratePrivateMemo(itemType,x.id),0);
   const options=['','0.5','1','1.5','2','2.5','3','3.5','4','4.5','5'].map(v=>'<option value="'+v+'" '+(String(x.rating||'')===v?'selected':'')+'>'+(v?'★ '+v:'—')+'</option>').join('');
   const saveFn=itemType==='book'?'saveBookArchive':'saveFilmArchive';

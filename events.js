@@ -33,6 +33,7 @@
     if(code==='adminLogout()') return adminLogout();
     if(code==='archiveLogin()') return archiveLogin();
     if(code==='archiveLogout()') return archiveLogout();
+    if(code==='updateArchivePassword()') return updateArchivePassword();
     if(code==='closeArchiveEditor()') return closeArchiveEditor();
     if((m=code.match(/^openArchiveEditor\('([^']+)'\s*,\s*'([^']+)'\)$/))) return openArchiveEditor(m[1],m[2]);
     if((m=code.match(/^saveFilmArchive\('([^']+)'\)$/))) return saveFilmArchive(m[1]);\n    if((m=code.match(/^uploadFilmPoster\('([^']+)'\)$/))) return uploadFilmPoster(m[1]);\n    if((m=code.match(/^importFilmPosterUrl\('([^']+)'\)$/))) return importFilmPosterUrl(m[1]);

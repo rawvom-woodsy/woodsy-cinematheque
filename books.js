@@ -51,19 +51,34 @@ async function findBookCover(x){if(!x)return '';if(FIXED_BOOK_COVERS[x.title])re
 async function hydrateBookCovers(scope=document){const nodes=[...scope.querySelectorAll('[data-book-cover]')].filter(n=>!n.querySelector('img'));for(const node of nodes.slice(0,24)){const x=bookById(node.dataset.bookCover);if(!x)continue;const url=await findBookCover(x);if(url)node.innerHTML='<img src="'+escapeHtml(url)+'" alt="'+escapeHtml(x.title)+' 표지" loading="lazy">'}}
 function booksPage(){
   const rows=[...books].sort((a,b)=>String(a.title).localeCompare(String(b.title),'ko'));
-  return `${appHeader('#books')}<main class="shell"><section class="hero archive-hero"><div class="eyebrow accent-label">PERSONAL ARCHIVE</div><h1>BOOKS</h1><p class="lede">개인 책 기록 아카이브. 별점과 인용, 간단한 감상을 기록합니다. 아직 읽는 중인 책도 흔적을 남깁니다.</p></section><section class="section archive-section"><div class="toolbar archive-toolbar"><input id="book-q" class="search" placeholder="책 제목 · 작가 검색" oninput="filterBooks()"><select id="book-status" class="select" onchange="filterBooks()"><option value="">ALL</option><option>완독</option><option>읽는 중</option><option>읽을 것</option></select></div><div class="archive-count"><span id="books-count">${rows.length}</span> BOOKS</div><div id="books-list">${bookRows(rows)}</div></section></main>`;
+  const rated=rows.filter(x=>Number(x.rating)>0);
+  const distribution=Array.from({length:10},(_,i)=>({rating:(10-i)/2,count:rated.filter(x=>Number(x.rating)===(10-i)/2).length}));
+  const maxCount=Math.max(1,...distribution.map(x=>x.count));
+  return `${appHeader('#books')}<main class="shell"><section class="hero archive-hero"><div class="eyebrow accent-label">PERSONAL ARCHIVE</div><h1>BOOKS</h1><p class="lede">개인 책 기록 아카이브. 별점과 인용, 간단한 감상을 기록합니다. 아직 읽는 중인 책도 흔적을 남깁니다.</p></section><section class="section archive-section">
+  <div class="toolbar archive-toolbar"><input id="book-q" class="search" placeholder="책 제목 · 작가 검색" oninput="filterBooks()">
+  <select id="book-status" class="select" onchange="filterBooks()"><option value="">ALL</option><option>완독</option><option>읽는 중</option><option>읽을 것</option></select>
+  <select id="book-rating" class="select" aria-label="별점 필터" onchange="filterBooks()"><option value="all">전체 별점</option><option value="4.5+">★ 4.5 이상</option>${distribution.map(d=>`<option value="${d.rating}">★ ${d.rating.toFixed(1)}</option>`).join('')}<option value="unrated">별점 없음</option></select>
+  <select id="book-sort" class="select" aria-label="정렬 기준" onchange="filterBooks()"><option value="title">제목순</option><option value="rating-desc">별점 높은 순</option><option value="rating-asc">별점 낮은 순</option></select>
+  <button class="btn secondary" onclick="navTo('#import')">IMPORT</button></div>
+  <div class="archive-count"><span id="books-count">${rows.length}</span> BOOKS</div>
+  <div class="rating-distribution" aria-label="도서 별점 분포"><div class="eyebrow accent-label">RATING DISTRIBUTION <span class="small muted">· ${rated.length} rated / ${rows.length} books</span></div><div class="rating-bars">${distribution.map(d=>`<button type="button" class="rating-bar" data-book-rating="${d.rating}" onclick="selectBookRating('${d.rating}')" title="${d.rating.toFixed(1)}점 · ${d.count}권" aria-label="${d.rating.toFixed(1)}점 ${d.count}권"><span class="rating-bar-count">${d.count}</span><span class="rating-bar-track"><span class="rating-bar-fill" style="height:${Math.round(d.count/maxCount*100)}%"></span></span><span class="rating-bar-label">${d.rating.toFixed(1)}</span></button>`).join('')}</div></div>
+  <div id="books-list">${bookRows(rows)}</div></section></main>`;
 }
-function bookRows(rows){setTimeout(()=>hydrateBookCovers(),0);return '<div class="book-grid">'+rows.map(x=>{const search=[x.title,x.author,x.category,x.subcategory].filter(Boolean).join(' ').toLocaleLowerCase('ko-KR');return '<a class="book-card book-filter-item" data-search="'+escapeHtml(search)+'" data-status="'+escapeHtml(x.status||'')+'" href="#book/'+encodeURIComponent(x.id)+'">'+bookCoverMarkup(x,'book-cover-list')+'<div class="book-card-copy"><strong>'+escapeHtml(x.title)+'</strong><span>'+escapeHtml(x.author||'—')+'</span><small>'+escapeHtml([x.status,x.rating?'★ '+x.rating:''].filter(Boolean).join(' · '))+'</small></div></a>'}).join('')+'</div>'}
+function bookRows(rows){setTimeout(()=>hydrateBookCovers(),0);return '<div class="book-grid">'+rows.map((x,i)=>{const search=[x.title,x.author,x.category,x.subcategory].filter(Boolean).join(' ').toLocaleLowerCase('ko-KR');return '<a class="book-card book-filter-item" data-index="'+i+'" data-rating="'+(Number(x.rating)||0)+'" data-search="'+escapeHtml(search)+'" data-status="'+escapeHtml(x.status||'')+'" href="#book/'+encodeURIComponent(x.id)+'">'+bookCoverMarkup(x,'book-cover-list')+'<div class="book-card-copy"><strong>'+escapeHtml(x.title)+'</strong><span>'+escapeHtml(x.author||'—')+'</span><small>'+escapeHtml([x.status,x.rating?'★ '+x.rating:''].filter(Boolean).join(' · '))+'</small></div></a>'}).join('')+'</div>'}
+function selectBookRating(rating){const el=document.getElementById('book-rating');if(!el)return;el.value=el.value===String(rating)?'all':String(rating);filterBooks()}
 function filterBooks(){
   const q=(document.getElementById('book-q')?.value||'').trim().toLocaleLowerCase('ko-KR');
   const s=document.getElementById('book-status')?.value||'';
+  const rating=document.getElementById('book-rating')?.value||'all';
+  const sort=document.getElementById('book-sort')?.value||'title';
+  const grid=document.querySelector('#books-list .book-grid');if(!grid)return;
+  const items=[...grid.querySelectorAll('.book-filter-item')];
+  items.sort((a,b)=>{const ar=Number(a.dataset.rating)||0,br=Number(b.dataset.rating)||0,orig=Number(a.dataset.index)-Number(b.dataset.index);return sort==='rating-desc'?(br-ar)||orig:sort==='rating-asc'?(ar-br)||orig:orig});
   let n=0;
-  document.querySelectorAll('#books-list .book-filter-item').forEach(el=>{
-    const ok=(!q||(el.dataset.search||'').includes(q))&&(!s||el.dataset.status===s);
-    el.hidden=!ok;if(ok)n++;
-  });
+  items.forEach(el=>{const r=Number(el.dataset.rating)||0;const matched=rating==='all'||(rating==='unrated'?r===0:(rating==='4.5+'?r>=4.5:r===Number(rating)));const ok=(!q||(el.dataset.search||'').includes(q))&&(!s||el.dataset.status===s)&&matched;el.hidden=!ok;if(ok)n++;grid.appendChild(el)});
   const count=document.getElementById('books-count');if(count)count.textContent=n;
   const list=document.getElementById('books-list');if(list)list.classList.toggle('is-empty',n===0);
+  document.querySelectorAll('[data-book-rating]').forEach(el=>el.classList.toggle('active',el.dataset.bookRating===rating));
 }
 
 function bookInline(s){

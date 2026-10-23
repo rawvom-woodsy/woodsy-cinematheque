@@ -5,7 +5,7 @@ function appHeader(active){
   const utilities=[['#notes','NOTES'],['#map','MAP'],['#import','IMPORT'],['#admin','ADMIN']];
   const p=progress(state.selectedMonth);
   const m=month();
-  const primaryHtml=primary.map(([r,l])=>`<a class="${active===r?'active':''}" href="${r}">${l}</a>`).join('');
+  const primaryHtml=primary.map(([r,l])=>`<a class="${active===r?'active':''}" href="${r}" ${r==='#library'?'onclick="resetFilmLibraryFromNav()"':''}>${l}</a>`).join('');
   const utilityHtml=utilities.map(([r,l])=>`<a class="${active===r?'active':''}" href="${r}">${l}</a>`).join('');
   const owner=cfg.brandOwner?` <span class="muted">${escapeHtml(cfg.brandJoiner||'for')}</span> ${escapeHtml(cfg.brandOwner)}`:'';
   const sub=p.total?`${escapeHtml(m.label)} · ${p.done}/${p.total}`:(cfg.mode==='club'?'SEPARATE CLUB WORKSPACE':'NO PROGRAM');
@@ -118,6 +118,11 @@ function curriculum(){
   </main>`
 }
 const filmLibraryViewState={q:'',type:'all',rating:'all',sort:'title'};
+function resetFilmLibraryFromNav(){
+  filmLibraryPage=0;
+  Object.assign(filmLibraryViewState,{q:'',type:'all',rating:'all',sort:'title'});
+  if(route()==='#library')render();
+}
 function restoreFilmLibraryView(){
   if(route()!=='#library')return;
   const values=[['lib-q',filmLibraryViewState.q],['lib-type',filmLibraryViewState.type],['lib-rating',filmLibraryViewState.rating],['lib-sort',filmLibraryViewState.sort]];
@@ -144,7 +149,7 @@ function libraryPage(){
       <div class="eyebrow accent-label">RATING DISTRIBUTION <span class="small muted">· ${rated.length} rated / ${rows.length} titles</span></div>
       <div class="rating-bars">${distribution.map(d=>`<button type="button" class="rating-bar" data-rating="${d.rating}" onclick="selectLibraryRating('${d.rating}')" aria-label="${d.rating.toFixed(1)}점 ${d.count}편" title="${d.rating.toFixed(1)}점 · ${d.count}편"><span class="rating-bar-count">${d.count}</span><span class="rating-bar-track"><span class="rating-bar-fill" style="height:${Math.round(d.count/maxCount*100)}%"></span></span><span class="rating-bar-label">${d.rating.toFixed(1)}</span></button>`).join('')}</div>
     </div>
-    <div id="film-library-list" class="film-grid">${filmRows(rows.slice(0,20),poster)}</div><div id="film-library-pager" class="actions" style="justify-content:center;margin:28px 0">${rows.length>20?`<span class="small muted" style="align-self:center">1 / ${Math.ceil(rows.length/20)}</span><button class="btn secondary" onclick="filmLibraryGoPage(1)">다음</button>`:""}</div>
+    <div id="film-library-list" class="film-grid">${filmRows(rows.slice(0,20),poster)}</div><div id="film-library-pager" class="actions" style="justify-content:center;margin:28px 0">${rows.length>20?`<button class="btn secondary" disabled>처음</button><button class="btn secondary" disabled>이전</button><span class="small muted" style="align-self:center">1 / ${Math.ceil(rows.length/20)}</span><button class="btn secondary" onclick="filmLibraryGoPage(1)">다음</button><button class="btn secondary" onclick="filmLibraryGoPage(${Math.ceil(rows.length/20)-1})">마지막</button>`:""}</div>
   </section></main>`;
 }
 function filmRows(rows,poster){
@@ -182,7 +187,12 @@ function filterFilmLibrary(reset=true){
   root.innerHTML=filmRows(indexed.slice(filmLibraryPage*per,(filmLibraryPage+1)*per).map(x=>x.r),poster);
   const count=document.getElementById('library-count');if(count)count.textContent=indexed.length;
   const pager=document.getElementById('film-library-pager');
-  if(pager)pager.innerHTML=indexed.length>per?'<button class="btn secondary" onclick="filmLibraryGoPage('+(filmLibraryPage-1)+')" '+(filmLibraryPage===0?'disabled':'')+'>이전</button><span class="small muted" style="align-self:center">'+(filmLibraryPage+1)+' / '+total+'</span><button class="btn secondary" onclick="filmLibraryGoPage('+(filmLibraryPage+1)+')" '+(filmLibraryPage===total-1?'disabled':'')+'>다음</button>':'';
+  if(pager)pager.innerHTML=indexed.length>per?
+    '<button class="btn secondary" onclick="filmLibraryGoPage(0)" '+(filmLibraryPage===0?'disabled':'')+'>처음</button>'+
+    '<button class="btn secondary" onclick="filmLibraryGoPage('+(filmLibraryPage-1)+')" '+(filmLibraryPage===0?'disabled':'')+'>이전</button>'+
+    '<span class="small muted" style="align-self:center">'+(filmLibraryPage+1)+' / '+total+'</span>'+
+    '<button class="btn secondary" onclick="filmLibraryGoPage('+(filmLibraryPage+1)+')" '+(filmLibraryPage===total-1?'disabled':'')+'>다음</button>'+
+    '<button class="btn secondary" onclick="filmLibraryGoPage('+(total-1)+')" '+(filmLibraryPage===total-1?'disabled':'')+'>마지막</button>':'';
   document.querySelectorAll('.rating-bar').forEach(el=>el.classList.toggle('active',el.dataset.rating===rating));
 }
 

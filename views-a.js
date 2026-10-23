@@ -136,7 +136,7 @@ function libraryPage(){
       <div class="eyebrow accent-label">RATING DISTRIBUTION <span class="small muted">· ${rated.length} rated / ${rows.length} titles</span></div>
       <div class="rating-bars">${distribution.map(d=>`<button type="button" class="rating-bar" data-rating="${d.rating}" onclick="selectLibraryRating('${d.rating}')" aria-label="${d.rating.toFixed(1)}점 ${d.count}편" title="${d.rating.toFixed(1)}점 · ${d.count}편"><span class="rating-bar-count">${d.count}</span><span class="rating-bar-track"><span class="rating-bar-fill" style="height:${Math.round(d.count/maxCount*100)}%"></span></span><span class="rating-bar-label">${d.rating.toFixed(1)}</span></button>`).join('')}</div>
     </div>
-    <div id="film-library-list" class="film-grid">${filmRows(rows.slice(0,24),poster)}</div><div id="film-library-pager" class="actions" style="justify-content:center;margin:28px 0">${rows.length>24?`<span class="small muted" style="align-self:center">1 / ${Math.ceil(rows.length/24)}</span><button class="btn secondary" onclick="filmLibraryGoPage(1)">다음</button>`:""}</div>
+    <div id="film-library-list" class="film-grid">${filmRows(rows.slice(0,20),poster)}</div><div id="film-library-pager" class="actions" style="justify-content:center;margin:28px 0">${rows.length>20?`<span class="small muted" style="align-self:center">1 / ${Math.ceil(rows.length/20)}</span><button class="btn secondary" onclick="filmLibraryGoPage(1)">다음</button>`:""}</div>
   </section></main>`;
 }
 function filmRows(rows,poster){
@@ -168,7 +168,7 @@ function filterFilmLibrary(reset=true){
     if(sort==='year-asc')return ay-by||String(a.r.title).localeCompare(b.r.title,'ko');
     return String(a.r.title).localeCompare(b.r.title,'ko');
   });
-  const per=24,total=Math.max(1,Math.ceil(indexed.length/per));
+  const per=20,total=Math.max(1,Math.ceil(indexed.length/per));
   filmLibraryPage=Math.min(filmLibraryPage,total-1);
   root.innerHTML=filmRows(indexed.slice(filmLibraryPage*per,(filmLibraryPage+1)*per).map(x=>x.r),poster);
   const count=document.getElementById('library-count');if(count)count.textContent=indexed.length;

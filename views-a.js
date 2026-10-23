@@ -136,41 +136,44 @@ function libraryPage(){
       <div class="eyebrow accent-label">RATING DISTRIBUTION <span class="small muted">· ${rated.length} rated / ${rows.length} titles</span></div>
       <div class="rating-bars">${distribution.map(d=>`<button type="button" class="rating-bar" data-rating="${d.rating}" onclick="selectLibraryRating('${d.rating}')" aria-label="${d.rating.toFixed(1)}점 ${d.count}편" title="${d.rating.toFixed(1)}점 · ${d.count}편"><span class="rating-bar-count">${d.count}</span><span class="rating-bar-track"><span class="rating-bar-fill" style="height:${Math.round(d.count/maxCount*100)}%"></span></span><span class="rating-bar-label">${d.rating.toFixed(1)}</span></button>`).join('')}</div>
     </div>
-    <div id="film-library-list" class="film-grid">${filmRows(rows,poster)}</div>
+    <div id="film-library-list" class="film-grid">${filmRows(rows.slice(0,48),poster)}</div><div id="film-library-pager" class="actions" style="justify-content:center;margin:28px 0"></div>
   </section></main>`;
 }
 function filmRows(rows,poster){
-  return rows.map((r,i)=>{const search=[r.title,r.originalTitle,r.creator].join(' ').toLowerCase();const img=poster(r);return `<article class="film-card library-item" data-index="${i}" data-year="${Number(r.year)||0}" data-rating="${Number(r.rating)||0}" data-search="${escapeAttr(search)}" data-type="${escapeAttr(r.type||'')}"><a href="#work/${r.canonicalId||r.id}" class="film-card-link"><div class="film-poster">${img?`<img src="${escapeAttr(img)}" alt="" loading="lazy" style="object-position:${escapeAttr(r.posterUrl?'center':(r.cropPosition||'center'))}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="film-poster-placeholder" style="display:none"><span>${escapeHtml(r.title)}</span></div>`:`<div class="film-poster-placeholder"><span>${escapeHtml(r.title)}</span></div>`}</div><div class="film-card-meta"><strong>${escapeHtml(r.title)}</strong><div class="small muted">${[r.year,r.creator].filter(Boolean).map(escapeHtml).join(' · ')}</div><div class="film-card-foot"><span>${(r.type||'film').toUpperCase()}</span>${r.rating?`<span>★ ${r.rating}</span>`:''}</div></div></a></article>` }).join('')
+  return rows.map((r,i)=>{const search=[r.title,r.originalTitle,r.creator].join(' ').toLowerCase();const img=poster(r);return `<article class="film-card library-item" data-index="${i}" data-year="${Number(r.year)||0}" data-rating="${Number(r.rating)||0}" data-search="${escapeAttr(search)}" data-type="${escapeAttr(r.type||'')}"><a href="#work/${r.canonicalId||r.id}" class="film-card-link"><div class="film-poster">${img?`<img src="${escapeAttr(img)}" alt="" loading="${i<8?'eager':'lazy'}" decoding="async" ${i<4?'fetchpriority="high"':''} style="object-position:${escapeAttr(r.posterUrl?'center':(r.cropPosition||'center'))}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="film-poster-placeholder" style="display:none"><span>${escapeHtml(r.title)}</span></div>`:`<div class="film-poster-placeholder"><span>${escapeHtml(r.title)}</span></div>`}</div><div class="film-card-meta"><strong>${escapeHtml(r.title)}</strong><div class="small muted">${[r.year,r.creator].filter(Boolean).map(escapeHtml).join(' · ')}</div><div class="film-card-foot"><span>${(r.type||'film').toUpperCase()}</span>${r.rating?`<span>★ ${r.rating}</span>`:''}</div></div></a></article>` }).join('')
 }
 function selectLibraryRating(rating){
   const el=document.getElementById('lib-rating');if(!el)return;
   el.value=el.value===String(rating)?'all':String(rating);filterFilmLibrary();
 }
-function filterFilmLibrary(){
+let filmLibraryPage=0;
+function filmLibraryGoPage(page){filmLibraryPage=Math.max(0,page);filterFilmLibrary(false);document.querySelector('.archive-toolbar')?.scrollIntoView({block:'start',behavior:'smooth'});}
+function filterFilmLibrary(reset=true){
+  if(reset)filmLibraryPage=0;
   const q=(document.getElementById('lib-q')?.value||'').trim().toLowerCase();
   const t=document.getElementById('lib-type')?.value||'all';
   const rating=document.getElementById('lib-rating')?.value||'all';
   const sort=document.getElementById('lib-sort')?.value||'title';
   const root=document.getElementById('film-library-list');if(!root)return;
-  const items=[...root.querySelectorAll('.library-item')];
-  items.sort((a,b)=>{
-    const ar=Number(a.dataset.rating)||0,br=Number(b.dataset.rating)||0;
-    const ay=Number(a.dataset.year)||0,by=Number(b.dataset.year)||0;
-    const orig=Number(a.dataset.index)-Number(b.dataset.index);
-    if(sort==='rating-desc')return (br-ar)||orig;
-    if(sort==='rating-asc')return (ar-br)||orig;
-    if(sort==='year-desc')return (by-ay)||orig;
-    if(sort==='year-asc')return (ay-by)||orig;
-    return orig;
+  const poster=r=>r.poster||r.image||r.posterUrl||r.stillUrl||'';
+  const indexed=library.filter(r=>r.type!=='book').map((r,i)=>({r,i})).filter(({r})=>{
+    const val=Number(r.rating)||0;
+    return (!q||[r.title,r.originalTitle,r.creator].join(' ').toLowerCase().includes(q))&&(t==='all'||r.type===t)&&(rating==='all'||(rating==='unrated'?val===0:(rating==='4.5+'?val>=4.5:val===Number(rating))));
   });
-  let n=0;
-  items.forEach(el=>{
-    const r=Number(el.dataset.rating)||0;
-    const matchesRating=rating==='all'||(rating==='unrated'?r===0:(rating==='4.5+'?r>=4.5:r===Number(rating)));
-    const ok=(!q||(el.dataset.search||'').includes(q))&&(t==='all'||el.dataset.type===t)&&matchesRating;
-    el.style.display=ok?'':'none';if(ok)n++;root.appendChild(el);
+  indexed.sort((a,b)=>{
+    const ar=Number(a.r.rating)||0,br=Number(b.r.rating)||0,ay=Number(a.r.year)||0,by=Number(b.r.year)||0;
+    if(sort==='rating-desc')return br-ar||String(a.r.title).localeCompare(b.r.title,'ko');
+    if(sort==='rating-asc')return ar-br||String(a.r.title).localeCompare(b.r.title,'ko');
+    if(sort==='year-desc')return by-ay||String(a.r.title).localeCompare(b.r.title,'ko');
+    if(sort==='year-asc')return ay-by||String(a.r.title).localeCompare(b.r.title,'ko');
+    return String(a.r.title).localeCompare(b.r.title,'ko');
   });
-  const count=document.getElementById('library-count');if(count)count.textContent=n;
+  const per=48,total=Math.max(1,Math.ceil(indexed.length/per));
+  filmLibraryPage=Math.min(filmLibraryPage,total-1);
+  root.innerHTML=filmRows(indexed.slice(filmLibraryPage*per,(filmLibraryPage+1)*per).map(x=>x.r),poster);
+  const count=document.getElementById('library-count');if(count)count.textContent=indexed.length;
+  const pager=document.getElementById('film-library-pager');
+  if(pager)pager.innerHTML=indexed.length>per?'<button class="btn secondary" onclick="filmLibraryGoPage('+(filmLibraryPage-1)+')" '+(filmLibraryPage===0?'disabled':'')+'>이전</button><span class="small muted" style="align-self:center">'+(filmLibraryPage+1)+' / '+total+'</span><button class="btn secondary" onclick="filmLibraryGoPage('+(filmLibraryPage+1)+')" '+(filmLibraryPage===total-1?'disabled':'')+'>다음</button>':'';
   document.querySelectorAll('.rating-bar').forEach(el=>el.classList.toggle('active',el.dataset.rating===rating));
 }
 

@@ -71,17 +71,19 @@ function thumbImageError(img){
   img.remove();
 }
 function visualHtml(w){
-  const label=String(w?.type||'film').toUpperCase();
+  const poster=w?.posterUrl||w?.poster||w?.image||'';
   const title=escapeHtml(w?.title||'UNTITLED');
-  const titleLength=Array.from(String(w?.title||'')).length;
-  const titleClass=titleLength>18?' type-title-long':titleLength>10?' type-title-medium':'';
-  const original=w?.originalTitle&&w.originalTitle!==w.title?'<div class="type-original">'+escapeHtml(w.originalTitle)+'</div>':'';
-  const creator=w?.creator?escapeHtml(w.creator):'UNKNOWN CREATOR';
-  const year=w?.year||'—';
-  return `<div class="visual visual-type-card" aria-label="${escapeAttr(w?.title||'')} typography">
-    <div class="type-card-header"><span>WOODSY / PERSONAL CINEMATHEQUE</span><span>ARCHIVE · ${escapeHtml(label)}</span></div>
-    <div class="type-card-center"><div class="type-title${titleClass}">${title}</div>${original}</div>
-    <div class="type-card-footer"><span>${creator}</span><span>${year}</span></div>
+  const year=escapeHtml(String(w?.year||''));
+  if(poster){
+    return `<div class="visual visual-detail-poster">
+      <img src="${escapeAttr(poster)}" alt="${escapeAttr(w?.title||'')} 포스터" loading="eager" decoding="async" onerror="this.style.display='none';this.parentElement.querySelector('.poster-missing-fallback').style.display='flex'">
+      <div class="poster-missing-fallback" style="display:none"><span>${title}</span></div>
+    </div>`;
+  }
+  return `<div class="visual visual-type-card visual-no-poster">
+    <div class="type-card-header"><span>WOODSY / PERSONAL CINEMATHEQUE</span><span>${escapeHtml(String(w?.type||'film').toUpperCase())}</span></div>
+    <div class="type-card-center"><div class="type-title">${title}</div></div>
+    <div class="type-card-footer"><span>NO POSTER</span><span>${year}</span></div>
   </div>`;
 }
 

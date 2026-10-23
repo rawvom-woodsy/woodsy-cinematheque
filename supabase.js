@@ -167,7 +167,7 @@ async function uploadFilmPoster(id){
   const {data:urlData}=supabaseClient.storage.from('film-posters').getPublicUrl(path);
   const url=urlData?.publicUrl;
   if(!url)return toast('포스터 주소를 만들지 못했어요.');
-  const {data,error}=await supabaseClient.from('films').update({poster_url:url,image_source:'WOODSY ARCHIVE / Supabase Storage'}).eq('id',id).select().single();
+  const {data,error}=await supabaseClient.from('films').update({poster_url:url,image_source:'WOODSY ARCHIVE / Supabase Storage',poster_auto_status:'saved',poster_auto_note:'Manually uploaded by archive owner'}).eq('id',id).select().single();
   if(error)return toast('포스터 정보를 저장하지 못했어요.');
   const x=library.find(v=>v.id===id);if(x){x.posterUrl=data.poster_url||url;x.imageSource=data.image_source||'WOODSY ARCHIVE / Supabase Storage'}
   toast('포스터를 저장했어요.');render();

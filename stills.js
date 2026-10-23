@@ -71,19 +71,18 @@ function thumbImageError(img){
   img.remove();
 }
 function visualHtml(w){
-  const s=stills[w?.id]||(w?.stillUrl?{url:w.stillUrl,source:w.imageSource||'ARCHIVE'}:null);
-  const poster=w?.posterUrl||w?.poster||w?.image||'';
-  const typography=`<div class="visual visual-fallback"><div class="visual-top"><span class="eyebrow">${escapeHtml(String(w?.type||'work').toUpperCase())} · ${w?.year||''}</span><span class="glyph">${escapeHtml(String((w?.year||'').toString().slice(-2)||'•'))}</span></div><div class="big">${escapeHtml(w?.title||'')}</div></div>`;
-  if(!s&&!poster)return typography;
-  if(!s)return `<div class="visual visual-still"><div class="fallback-layer" style="display:none">${typography}</div><img src="${escapeAttr(poster)}" alt="${escapeAttr(w?.title||'')} poster" loading="eager" decoding="async" style="object-fit:contain;background:#161616" onerror="visualImageError(this)"><div class="still-credit">POSTER</div></div>`;
-  const primary=s.local||proxyStillUrl(s.url);
-  const direct=s.local?(s.url||''):(s.fallback||'');
-  return `<div class="visual visual-still">
-    <div class="fallback-layer" style="display:none">${typography}</div>
-    <img src="${escapeAttr(primary)}" data-fallback="${escapeAttr(direct||poster)}" alt="${escapeAttr(w?.title||'')} film still" style="object-position:${escapeAttr(focalFor(w.id))}" referrerpolicy="no-referrer" loading="eager" onerror="visualImageError(this)">
-    <div class="still-credit">STILL · ${escapeHtml(s.source||'ARCHIVE')}</div>
+  const label=String(w?.type||'film').toUpperCase();
+  const title=escapeHtml(w?.title||'UNTITLED');
+  const original=w?.originalTitle&&w.originalTitle!==w.title?'<div class="type-original">'+escapeHtml(w.originalTitle)+'</div>':'';
+  const creator=w?.creator?escapeHtml(w.creator):'UNKNOWN CREATOR';
+  const year=w?.year||'—';
+  return `<div class="visual visual-type-card" aria-label="${escapeAttr(w?.title||'')} typography">
+    <div class="type-card-header"><span>WOODSY / PERSONAL CINEMATHEQUE</span><span>ARCHIVE · ${escapeHtml(label)}</span></div>
+    <div class="type-card-center"><div class="type-title">${title}</div>${original}</div>
+    <div class="type-card-footer"><span>${creator}</span><span>${year}</span></div>
   </div>`;
 }
+
 function thumbHtml(w){
   const s=stills[w?.id];
   if(s){

@@ -136,7 +136,7 @@ function libraryPage(){
       <div class="eyebrow accent-label">RATING DISTRIBUTION <span class="small muted">· ${rated.length} rated / ${rows.length} titles</span></div>
       <div class="rating-bars">${distribution.map(d=>`<button type="button" class="rating-bar" data-rating="${d.rating}" onclick="selectLibraryRating('${d.rating}')" aria-label="${d.rating.toFixed(1)}점 ${d.count}편" title="${d.rating.toFixed(1)}점 · ${d.count}편"><span class="rating-bar-count">${d.count}</span><span class="rating-bar-track"><span class="rating-bar-fill" style="height:${Math.round(d.count/maxCount*100)}%"></span></span><span class="rating-bar-label">${d.rating.toFixed(1)}</span></button>`).join('')}</div>
     </div>
-    <div id="film-library-list" class="film-grid">${filmRows(rows.slice(0,48),poster)}</div><div id="film-library-pager" class="actions" style="justify-content:center;margin:28px 0"></div>
+    <div id="film-library-list" class="film-grid">${filmRows(rows.slice(0,48),poster)}</div><div id="film-library-pager" class="actions" style="justify-content:center;margin:28px 0">${rows.length>48?`<span class="small muted" style="align-self:center">1 / ${Math.ceil(rows.length/48)}</span><button class="btn secondary" onclick="filmLibraryGoPage(1)">다음</button>`:""}</div>
   </section></main>`;
 }
 function filmRows(rows,poster){

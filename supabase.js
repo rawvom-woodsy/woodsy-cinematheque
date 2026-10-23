@@ -43,7 +43,7 @@ async function requestArchivePasswordReset(){
   if(!supabaseClient)return toast('Supabase 연결을 불러오는 중이에요.');
   const email=(document.getElementById('archive-email')?.value||'').trim();
   if(!email)return toast('먼저 관리자 이메일을 입력해줘.');
-  const redirectTo=location.origin+location.pathname+'#admin';
+  const redirectTo=location.origin+location.pathname+'?archive_recovery=1';
   const {error}=await supabaseClient.auth.resetPasswordForEmail(email,{redirectTo});
   if(error)return toast('재설정 메일을 요청하지 못했어요: '+error.message);
   toast('비밀번호 재설정 메일을 요청했어요. 받은편지함과 스팸함을 확인해줘.');

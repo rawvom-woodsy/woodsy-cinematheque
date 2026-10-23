@@ -117,7 +117,15 @@ function curriculum(){
     <section class="section supplementary-modern"><div class="section-head"><div><div class="eyebrow accent-label">SUPPLEMENTARY TEXTS</div><h2>분기하는 시리즈와 책</h2></div></div>${supplementaryEditorial(state.selectedMonth)}</section>
   </main>`
 }
+const filmLibraryViewState={q:'',type:'all',rating:'all',sort:'title'};
+function restoreFilmLibraryView(){
+  if(route()!=='#library')return;
+  const values=[['lib-q',filmLibraryViewState.q],['lib-type',filmLibraryViewState.type],['lib-rating',filmLibraryViewState.rating],['lib-sort',filmLibraryViewState.sort]];
+  values.forEach(([id,value])=>{const el=document.getElementById(id);if(el)el.value=value;});
+  filterFilmLibrary(false);
+}
 function libraryPage(){
+  setTimeout(restoreFilmLibraryView,0);
   const rows=[...library].filter(r=>r.type!=='book').sort((a,b)=>String(a.title).localeCompare(String(b.title),'ko'));
   const poster=(r)=>r.poster||r.image||r.posterUrl||r.stillUrl||'';
   const rated=rows.filter(r=>Number(r.rating)>0);
@@ -154,6 +162,7 @@ function filterFilmLibrary(reset=true){
   const t=document.getElementById('lib-type')?.value||'all';
   const rating=document.getElementById('lib-rating')?.value||'all';
   const sort=document.getElementById('lib-sort')?.value||'title';
+  Object.assign(filmLibraryViewState,{q,type:t,rating,sort});
   const root=document.getElementById('film-library-list');if(!root)return;
   const poster=r=>r.poster||r.image||r.posterUrl||r.stillUrl||'';
   const indexed=library.filter(r=>r.type!=='book').map((r,i)=>({r,i})).filter(({r})=>{

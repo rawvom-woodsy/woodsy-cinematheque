@@ -183,10 +183,17 @@ async function uploadFilmPoster(id){
 }
 async function saveFilmArchive(id){
   if(!archiveSignedIn()||!supabaseClient)return toast('ADMIN 로그인이 필요해요.');
-  const rating=parseFloat(document.getElementById('archive-rating')?.value)||null,review=document.getElementById('archive-review')?.value||'';
-  const {data,error}=await supabaseClient.from('films').update({rating,review}).eq('id',id).select().single();
-  if(error)return toast('기록을 저장하지 못했어요.');
-  const x=library.find(v=>v.id===id);if(x){x.rating=data.rating;x.review=data.review||''}toast('별점과 공개 리뷰를 저장했어요.');render();
+  const rating=parseFloat(document.getElementById('archive-rating')?.value)||null;
+  const review=document.getElementById('archive-review')?.value||'';
+  const creator=(document.getElementById('archive-creator')?.value||'').trim();
+  const yearValue=(document.getElementById('archive-year')?.value||'').trim();
+  if(yearValue&&!/^[0-9]{4}$/.test(yearValue))return toast('제작연도는 네 자리 숫자로 입력해주세요.');
+  const year=yearValue?Number(yearValue):null;
+  const {data,error}=await supabaseClient.from('films').update({rating,review,creator,year}).eq('id',id).select().single();
+  if(error)return toast('기록을 저장하지 못했어요: '+error.message);
+  for(const x of library.filter(v=>v.id===id)){x.rating=data.rating;x.review=data.review||'';x.creator=data.creator||'';x.year=data.year}
+  if(typeof byId!=='undefined'&&byId[id]){byId[id].creator=data.creator||'';byId[id].year=data.year}
+  toast('작품 정보와 리뷰를 저장했어요.');render();
 }
 async function saveBookArchive(id){
   if(!archiveSignedIn()||!supabaseClient)return toast('ADMIN 로그인이 필요해요.');
@@ -206,6 +213,7 @@ function archiveRecordSection(x,itemType){
   setTimeout(()=>hydratePrivateMemo(itemType,x.id),0);
   const options=['','0.5','1','1.5','2','2.5','3','3.5','4','4.5','5'].map(v=>'<option value="'+v+'" '+(String(x.rating||'')===v?'selected':'')+'>'+(v?'★ '+v:'—')+'</option>').join('');
   const saveFn=itemType==='book'?'saveBookArchive':'saveFilmArchive';
+  const filmMetadataEditor=(itemType==='film'||itemType==='series')?'<div class="private-memo-box"><div class="eyebrow accent-label">FILM INFORMATION</div><label class="admin-label">DIRECTOR / CREATOR<input id="archive-creator" class="input" type="text" value="'+escapeAttr(x.creator||'')+'" placeholder="감독 또는 제작자 이름"></label><label class="admin-label">YEAR<input id="archive-year" class="input" type="text" inputmode="numeric" maxlength="4" value="'+escapeAttr(x.year||'')+'" placeholder="제작연도"></label></div>':'';
   const posterEditor=(itemType==='film'||itemType==='series')?'<div class="private-memo-box"><div class="eyebrow accent-label">POSTER</div><p class="small muted">원본 이미지 URL을 가져오거나 파일을 직접 올리면, 우리 Supabase Storage에 영구 보관합니다.</p><label class="admin-label">IMPORT FROM URL<input id="archive-poster-url" class="input" type="url" placeholder="https://…"></label><div class="actions"><button class="btn" onclick="importFilmPosterUrl(\''+escapeAttr(x.id)+'\')">IMPORT TO ARCHIVE</button></div><div class="poster-upload-divider">OR UPLOAD FILE</div><input id="archive-poster-file" type="file" accept="image/jpeg,image/png,image/webp"><div class="actions"><button class="btn secondary" onclick="uploadFilmPoster(\''+escapeAttr(x.id)+'\')">UPLOAD POSTER</button></div></div>':'';
-  return publicView+'<section class="section archive-editor"><div class="archive-editor-head"><div><div class="eyebrow accent-label">EDIT RECORD</div><h2>별점과 리뷰 수정</h2></div><button class="archive-edit-close" onclick="closeArchiveEditor()">CLOSE</button></div><div class="admin-grid"><label class="admin-label">RATING<select id="archive-rating" class="select">'+options+'</select></label></div><label class="admin-label">PUBLIC REVIEW<textarea id="archive-review">'+escapeHtml(x.review||'')+'</textarea></label><div class="actions"><button class="btn" onclick="'+saveFn+"('"+escapeAttr(x.id)+"')"+'">SAVE REVIEW</button></div><div class="private-memo-box"><div class="eyebrow accent-label">PRIVATE MEMO</div><p class="small muted">로그인한 본인에게만 보입니다.</p><textarea id="private-memo"></textarea><div class="actions"><button class="btn secondary" onclick="savePrivateMemo(\''+itemType+'\',\''+escapeAttr(x.id)+'\')">SAVE MEMO</button></div></div>'+posterEditor+'</section>';
+  return publicView+'<section class="section archive-editor"><div class="archive-editor-head"><div><div class="eyebrow accent-label">EDIT RECORD</div><h2>작품 정보 및 리뷰 수정</h2></div><button class="archive-edit-close" onclick="closeArchiveEditor()">CLOSE</button></div>'+filmMetadataEditor+'<div class="admin-grid"><label class="admin-label">RATING<select id="archive-rating" class="select">'+options+'</select></label></div><label class="admin-label">PUBLIC REVIEW<textarea id="archive-review">'+escapeHtml(x.review||'')+'</textarea></label><div class="actions"><button class="btn" onclick="'+saveFn+"('"+escapeAttr(x.id)+"')"+'">SAVE CHANGES</button></div><div class="private-memo-box"><div class="eyebrow accent-label">PRIVATE MEMO</div><p class="small muted">로그인한 본인에게만 보입니다.</p><textarea id="private-memo"></textarea><div class="actions"><button class="btn secondary" onclick="savePrivateMemo(\''+itemType+'\',\''+escapeAttr(x.id)+'\')">SAVE MEMO</button></div></div>'+posterEditor+'</section>';
 }

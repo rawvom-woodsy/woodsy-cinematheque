@@ -4,7 +4,7 @@ const stills = {
   'personal-shopper': {url:'https://www.cinematheque.fr/media/01-films/personal-shopper-_olivier-assayas.jpg', fallback:'https://images.bauerhosting.com/legacy/empire-images/reviews_films/58bd4769a4b446cc2ad31e95/film_personalshopper.jpg?ar=16%3A9&auto=format&crop=top&fit=crop&q=80&w=1440', source:'Cinémathèque française / Empire'},
   'atlantics': {url:'https://idsb.tmgrup.com.tr/ly/uploads/images/2020/04/28/32829.jpg', source:'Daily Sabah'},
   'holy-motors': {url:'https://cdn.infooggi.it/images/uploads/public/5b9/f9e/72e/5b9f9e72e9acd311508284.jpg/webp', source:'InfoOggi'},
-  'perfect-days': {url:'https://cineuropa.org/imgCache/2023/05/26/1685106393232_0620x0413_0x18x1000x666_1685106555083.jpg', source:'Cineuropa'},
+  'perfect-days': {url:'https://cdn.craft.cloud/26ed9c78-feb7-4ee6-8ddf-262fd7bafb2d/assets/tco/images/2023_05_Perfect-Days-Wim-Wenders-scaled.jpeg?fit=crop&format=webp&quality=75&s=FU78YQyPsyn2iSQ2VVvUlhZ9UqdYKt9xkX4m_aEmOh0&width=1024', fallback:'https://taz.de/picture/6721366/1200/03-PerfectDays-c-2023-MASTER-MIND-Ltd-1.jpeg', source:'Little White Lies / taz'},
   'the-master': {url:'https://fr.web.img2.acsta.net/r_1280_720/medias/nmedia/18/90/81/61/20204388.jpg', source:'AlloCiné'},
   'ending-things': {url:'https://www.irishtimes.com/resizer/v2/SCUNWIWYLJB565G52PI4EYS5PQ.jpg?auth=22ec12cec282f9182007d63d43d1d8cc105c89a350bb90f9165178b0d3a7193b&height=1600&smart=true&width=1600', source:'The Irish Times'},
   'passing': {url:'https://cdn.theasc.com/_1200x630_crop_center-center_82_none/Passing_Sc-71_Irene-and-Clare-on-the-Stoop-Reverse-Angle_CR.jpg?mtime=1627492605', source:'American Society of Cinematographers'},

@@ -71,6 +71,17 @@ function thumbImageError(img){
   img.remove();
 }
 function visualHtml(w){
+  // Editorial film images take precedence over poster metadata on the homepage and film detail views.
+  const still=(w?.type==='film' && typeof stills!=='undefined')?stills[w?.id]:null;
+  if(still?.url){
+    const primary=proxyStillUrl(still.url);
+    const alternate=still.fallback||'';
+    return `<div class="visual visual-still">
+      <div class="fallback-layer" style="display:none"><div class="big">${escapeHtml(w?.title||'')}</div></div>
+      <img src="${escapeAttr(primary)}" data-fallback="${escapeAttr(alternate)}" alt="${escapeAttr(w?.title||'')} 스틸" style="object-position:${escapeAttr(still.position||focalFor(w.id))}" referrerpolicy="no-referrer" loading="eager" onerror="visualImageError(this)">
+      ${still.source?`<div class="still-credit">STILL · ${escapeHtml(still.source)}</div>`:''}
+    </div>`;
+  }
   const poster=w?.posterUrl||w?.poster||w?.image||'';
   const title=escapeHtml(w?.title||'UNTITLED');
   const year=escapeHtml(String(w?.year||''));
